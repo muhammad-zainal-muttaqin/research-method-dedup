@@ -1,5 +1,5 @@
 # Dedup Research V8 Report
-**Date:** 2026-04-23
+**Date:** 2026-04-24
 **Goal:** Break 94.30% (v7 best) — target 95% Acc±1
 
 ## Key Gap from v7 Error Analysis
@@ -11,8 +11,8 @@
 ## Full-Dataset Method Comparison
 ```
                method   acc    mae
-  stacking_density_v7 94.30 0.2708
 stacking_bracketed_v7 94.30 0.2643
+  stacking_density_v7 94.30 0.2708
     entropy_modulated 94.30 0.2763
   v8_entropy_stacking 94.30 0.2763
        b2_boosted_112 93.42 0.2719
@@ -30,17 +30,17 @@ stacking_bracketed_v7 94.30 0.2643
       per_side_median 18.86 0.9583
 ```
 
-## Best Method: stacking_density_v7
+## Best Method: stacking_bracketed_v7
 - Acc±1: 94.30%  (v7 was 94.30%)
-- MAE: 0.2708
+- MAE: 0.2643
 - Failing trees: 13 / 228
-- Gap to 95%: need 1 more trees correct
+- Gap to 95%: need 2 more trees correct
 
 ## Per-Split (Best Method)
 ```
 split   n    acc    mae
  test  31  83.87 0.4274
-train 196  95.92 0.2449
+train 196  95.92 0.2372
   val   1 100.00 0.5000
 ```
 

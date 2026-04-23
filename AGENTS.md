@@ -29,6 +29,9 @@ python scripts/dedup_research_v7.py
 # Dedup research v8
 python scripts/dedup_research_v8.py
 
+# Dedup research v9
+python scripts/dedup_research_v9.py
+
 # Final dedup all 953 pohon (228 JSON-validated + 717 non-JSON)
 python scripts/dedup_all_trees_final.py
 
@@ -38,19 +41,19 @@ python scripts/dedup_nonjson_compare.py
 
 Semua script dijalankan dari workspace root dan menulis output ke `reports/`.
 
-## 2026-04-23 Status Override
+## 2026-04-24 Status Override
 
-Jika ada bagian AGENTS.md di bawah yang masih menyebut ceiling `92%`, `93.86%`, atau `v7` sebagai current best, abaikan dan pakai blok ini.
+Jika ada bagian AGENTS.md di bawah yang masih menyebut ceiling `92%`, `93.86%`, `94.30%`, atau `v6_selector` sebagai current best, abaikan dan pakai blok ini.
 
 | Rank | Method | Acc ±1 | MAE |
 |---:|---|---:|---:|
-| 1 | `v6_selector` | **96.49%** | **0.2632** |
-| 2 | `stacking_bracketed_v7` | 94.30% | 0.2643 |
-| 3 | `stacking_density_v7` | 94.30% | 0.2708 |
-| 4 | `entropy_modulated_v8` | 94.30% | 0.2763 |
-| 5 | `adaptive_corrected` | 93.86% | 0.2774 |
+| 1 | `v9_selector` | **98.68%** | **0.2533** |
+| 2 | `v9_b2_median_v6` | 96.49% | 0.2588 |
+| 3 | `v6_selector` | 96.49% | 0.2632 |
+| 4 | `v9_median_strong5` | 95.18% | 0.2390 |
+| 5 | `stacking_bracketed_v7` | 94.30% | 0.2643 |
 
-- JSON with GT: use **`v6_selector`**.
+- JSON with GT: use **`v9_selector`**.
 - Non-JSON without GT: prefer `hybrid_vis_corr`, `side_coverage`, `stacking_density_v7`, `best_visibility_grid`, or `visibility`.
 
 ## Project Context
@@ -136,6 +139,7 @@ Naive sum = sum of all `annotations` across 4 sides without dedup → ~79% overc
 | Dedup v1 | Heuristic grid search (corrected, visibility, graph, cluster) | **DONE** | Best: corrected, 90.8% ±1 acc |
 | Dedup v2 | Visibility + adaptive ridge + ensemble stack | **DONE** | Best: visibility, 92.1% ±1 acc |
 | Dedup v3 | Learned thresholds + per-class Ridge | **DONE** | Best: per_class_ridge, 90.8% ±1 acc |
+| Dedup v9 | Regime-aware selector on top of v6/v7/v8 | **DONE** | Best: `v9_selector`, **98.68%** ±1 acc, MAE **0.2533** |
 | Dedup Final | All methods on 953 trees (228 JSON + 717 non-JSON) | **DONE** | corrected & visibility viable; graph/cascade fail on TXT |
 | JSON-02/03/04 | Retrain paths | Deferred | Run only if needed |
 
@@ -143,7 +147,7 @@ Naive sum = sum of all `annotations` across 4 sides without dedup → ~79% overc
 
 **Full GT counting (all 953 trees):** `scripts/count_all_trees.py` — DONE. Output di `reports/full_gt_count/`.
 
-**Dedup research verdict:** Heuristic bbox ceiling ≈ **92%** (visibility method). Graph matching, cascade, and clustering **fail** on noisy TXT labels (< 20% accuracy). To break past 92% need embedding-based cross-view matching.
+**Dedup research verdict:** single global heuristics plateau around **94.3%**, but a **regime-aware selector** reaches **98.68%** on the 228-tree JSON benchmark. Graph matching, cascade, and clustering **fail** on noisy TXT labels (< 20% accuracy).
 
 ## Non-JSON Dedup Pipeline (717 pohon tanpa JSON)
 
@@ -185,7 +189,7 @@ Pohon non-JSON hanya memiliki YOLO TXT labels (prediksi model), bukan anotasi ma
 
 ## Next Step: Algorithmic Advancement
 
-Berdasarkan hasil dedup research, **heuristic bbox ceiling ≈ 92%** (visibility method). Ini dicapai dengan **pure algorithmic** approach — tanpa training apapun.
+Berdasarkan hasil dedup research, **single global heuristics** plateau di sekitar **94.3%**, tetapi **selector heuristic per-regime** sudah mencapai **98.68%** tanpa training apapun.
 
 ### Current Algorithmic Methods (ALL No-Training)
 

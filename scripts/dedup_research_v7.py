@@ -17,10 +17,13 @@ Constraints:
 """
 
 import json
+import math
+from collections import Counter
+from datetime import date
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from collections import Counter
 
 JSON_DIR = Path(r"D:\Work\Assisten Dosen\research-method-dedup\json")
 OUT_DIR = Path(r"D:\Work\Assisten Dosen\research-method-dedup\reports\dedup_research_v7")
@@ -544,7 +547,7 @@ def main():
         method_details[name] = r
         print(f"  {r['method']:35} Acc={r['acc']:.2f}%  MAE={r['mae']:.4f}")
 
-    comp_df = pd.DataFrame(full_results).sort_values("acc", ascending=False)
+    comp_df = pd.DataFrame(full_results).sort_values(["acc", "mae", "method"], ascending=[False, True, True])
 
     # ---- LOTO evaluation (Direction 1) ----
     print("\nRunning LOTO cross-validation (228 folds)... this takes ~30s")
@@ -565,7 +568,7 @@ def main():
     baseline_split = split_breakdown(baseline_df)
 
     # ---- Save outputs ----
-    comp_df_full = pd.DataFrame(full_results).sort_values("acc", ascending=False)
+    comp_df_full = pd.DataFrame(full_results).sort_values(["acc", "mae", "method"], ascending=[False, True, True])
     comp_df_full.to_csv(OUT_DIR / "method_comparison_v7.csv", index=False)
 
     # Error analysis for best method
@@ -593,7 +596,7 @@ def main():
     b3_err_mean = err_df["err_B3"].mean() if len(err_df) > 0 else 0.0
 
     report = f"""# Dedup Research V7 Report
-**Date:** 2026-04-23
+**Date:** {date.today().isoformat()}
 **Goal:** Break 93.86% ceiling with generalization-first approach
 
 ## Governance
@@ -626,7 +629,7 @@ def main():
 - Trees with error > 1: {len(failing_indices)} / {len(tree_data)}
 - Mean MAE on failing trees: {err_mean:.4f}  (baseline was 0.7357 avg per failing tree)
 - B3 mean error on failing trees: {b3_err_mean:.4f}
-- Gap to 95%: need {max(0, int(len(tree_data) * 0.95) - int(point_acc / 100 * len(tree_data)))} more trees correct
+- Gap to 95%: need {max(0, math.ceil(len(tree_data) * 0.95) - int(round(comp_df_full.iloc[0]['acc'] / 100 * len(tree_data))))} more trees correct
 
 ## Direction-by-Direction Findings
 | Direction | Method | Acc | MAE | vs Baseline |
@@ -641,7 +644,7 @@ def main():
 ## Conclusions
 - LOTO gap = {loto_gap:.2f}pp {'→ current 93.86% is largely real' if loto_gap <= 1.5 else '→ some overfit present'}
 - Best new method: {best_name} @ {comp_df_full.iloc[0]['acc']:.2f}%
-- Target 95% = {int(len(tree_data) * 0.95)} correct trees ({int(len(tree_data) * 0.95) - int(comp_df_full.iloc[0]['acc'] / 100 * len(tree_data))} still needed)
+- Target 95% = {math.ceil(len(tree_data) * 0.95)} correct trees ({max(0, math.ceil(len(tree_data) * 0.95) - int(round(comp_df_full.iloc[0]['acc'] / 100 * len(tree_data))))} still needed)
 """
     (OUT_DIR / "summary_v7.md").write_text(report, encoding="utf-8")
     print(f"\nSaved to {OUT_DIR}")

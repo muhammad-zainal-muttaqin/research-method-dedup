@@ -1,0 +1,17 @@
+method,B1_over_gt1,B1_under_gt1,B1_over_any,B1_under_any,B2_over_gt1,B2_under_gt1,B2_over_any,B2_under_any,B3_over_gt1,B3_under_gt1,B3_over_any,B3_under_any,B4_over_gt1,B4_under_gt1,B4_over_any,B4_under_any
+v5_adaptive_corrected,0,0,17,8,2,2,32,18,6,1,50,42,3,1,42,29
+v5_best_visibility_grid,0,0,22,1,0,5,18,28,2,7,29,64,0,4,9,54
+v5_class_aware_vis,0,0,22,1,5,0,67,12,26,0,124,19,0,4,9,54
+v6_selector,0,0,17,7,4,0,34,17,2,0,48,41,1,1,39,29
+v9_selector,0,0,17,7,1,0,32,17,1,0,46,41,0,1,39,29
+v7_stacking_density,0,0,14,8,1,2,31,21,6,2,43,46,2,1,39,31
+v7_stacking_bracketed,0,0,14,4,1,2,31,21,6,2,43,46,2,1,39,29
+v7_ordinal_b3,0,0,17,4,2,2,32,18,5,8,34,73,3,1,42,27
+v8_entropy_modulated,0,0,19,3,1,2,36,19,6,2,49,42,2,1,47,23
+v8_side_agreement,0,0,2,21,0,6,7,55,2,22,22,106,1,10,9,63
+v8_floor_anchor_50,0,0,12,11,0,12,11,45,0,53,5,156,0,8,7,51
+v8_per_side_median,0,8,0,56,0,42,0,113,0,156,0,207,0,39,0,113
+v8_multi_consensus,0,8,0,56,0,42,0,113,0,156,0,207,0,39,0,113
+v8_b2_b4_boosted,0,0,14,4,0,5,13,41,6,2,43,46,2,3,17,42
+v9_median_strong5,0,0,14,4,0,4,14,32,2,2,38,47,0,3,19,38
+v9_b2_median_v6,0,0,17,7,0,4,14,32,2,0,48,41,1,1,39,29

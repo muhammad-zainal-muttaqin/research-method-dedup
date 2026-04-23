@@ -1,0 +1,9 @@
+tree_id,split,v6_error_sum,v5_best_visibility_grid_ok,v5_best_visibility_grid_error_sum,v5_class_aware_vis_ok,v5_class_aware_vis_error_sum,v7_stacking_bracketed_ok,v7_stacking_bracketed_error_sum,v8_entropy_modulated_ok,v8_entropy_modulated_error_sum,v8_side_agreement_ok,v8_side_agreement_error_sum,v8_floor_anchor_50_ok,v8_floor_anchor_50_error_sum,v8_per_side_median_ok,v8_per_side_median_error_sum,v8_multi_consensus_ok,v8_multi_consensus_error_sum,v8_b2_b4_boosted_ok,v8_b2_b4_boosted_error_sum,v9_selector_ok,v9_selector_error_sum,v9_median_strong5_ok,v9_median_strong5_error_sum,v9_b2_median_v6_ok,v9_b2_median_v6_error_sum
+DAMIMAS_A21B_0244,train,2,True,1,True,1,True,1,True,1,True,1,True,1,False,3,False,3,True,1,True,1,True,1,False,2
+DAMIMAS_A21B_0263,train,2,True,1,False,2,True,1,True,1,True,1,True,1,False,4,False,4,True,0,True,0,True,0,True,0
+DAMIMAS_A21B_0546,test,2,True,2,False,3,False,2,False,2,True,3,True,1,False,4,False,4,True,1,True,1,True,1,True,1
+DAMIMAS_A21B_0547,test,3,True,1,False,3,True,1,True,1,True,1,True,1,False,3,False,3,True,0,True,0,True,0,True,1
+DAMIMAS_A21B_0557,test,4,False,3,False,4,False,4,False,4,True,1,True,2,True,1,True,1,False,4,False,4,False,4,False,4
+DAMIMAS_A21B_0558,test,4,True,2,False,4,True,3,True,3,True,1,True,0,True,3,True,3,True,2,False,4,True,2,True,3
+DAMIMAS_A21B_0569,test,3,False,3,False,4,False,4,False,4,False,3,False,5,False,6,False,6,False,4,False,3,False,3,False,3
+DAMIMAS_A21B_0574,test,2,False,2,False,3,False,2,False,2,True,1,True,1,True,1,True,1,False,2,True,1,False,2,False,2

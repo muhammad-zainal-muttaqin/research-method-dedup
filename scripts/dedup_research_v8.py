@@ -22,10 +22,13 @@ Constraints: NO training, NO gradients. All closed-form or per-tree statistics.
 """
 
 import json
+import math
+from collections import Counter
+from datetime import date
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from collections import Counter
 
 JSON_DIR = Path(r"D:\Work\Assisten Dosen\research-method-dedup\json")
 OUT_DIR = Path(r"D:\Work\Assisten Dosen\research-method-dedup\reports\dedup_research_v8")
@@ -663,7 +666,7 @@ def main():
         method_details[name] = r
         print(f"  {r['method']:35} Acc={r['acc']:.2f}%  MAE={r['mae']:.4f}")
 
-    comp_df = pd.DataFrame(full_results).sort_values("acc", ascending=False)
+    comp_df = pd.DataFrame(full_results).sort_values(["acc", "mae", "method"], ascending=[False, True, True])
 
     # ---- Per-split for top methods ----
     print("\nPer-split breakdown (top methods):")
@@ -708,7 +711,7 @@ def main():
     v7_acc = 94.30
 
     report = f"""# Dedup Research V8 Report
-**Date:** 2026-04-23
+**Date:** {date.today().isoformat()}
 **Goal:** Break 94.30% (v7 best) — target 95% Acc±1
 
 ## Key Gap from v7 Error Analysis
@@ -726,7 +729,7 @@ def main():
 - Acc±1: {best_acc:.2f}%  (v7 was {v7_acc:.2f}%)
 - MAE: {best_mae:.4f}
 - Failing trees: {n_failing} / {len(tree_data)}
-- Gap to 95%: need {max(0, int(len(tree_data) * 0.95) - int(best_acc / 100 * len(tree_data)))} more trees correct
+- Gap to 95%: need {max(0, math.ceil(len(tree_data) * 0.95) - int(round(best_acc / 100 * len(tree_data))))} more trees correct
 
 ## Per-Split (Best Method)
 ```
