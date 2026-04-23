@@ -100,31 +100,31 @@ Benchmark ini dijalankan secara **fully algorithmic** tanpa split train/test yan
 
 | Rank | Method | Gen | Acc +/-1 | MAE | Mean Total Err | Gagal |
 |---:|---|---|---:|---:|---:|---:|
-| 1 | `v9_selector` | v9 | **98.68%** | **0.2533** | 1.0132 | 3 |
-| 2 | `v9_b2_median_v6` | v9 | 96.49% | 0.2588 | 1.0351 | 8 |
-| 3 | `v6_selector` | v6 | 96.49% | 0.2632 | 1.0526 | 8 |
-| 4 | `v9_median_strong5` | v9 | 95.18% | 0.2390 | 0.9561 | 11 |
-| 5 | `v7_stacking_bracketed` | v7 | 94.30% | 0.2643 | 1.0570 | 13 |
-| 6 | `v7_stacking_density` | v7 | 94.30% | 0.2708 | 1.0833 | 13 |
-| 7 | `v8_entropy_modulated` | v8 | 94.30% | 0.2763 | 1.1053 | 13 |
-| 8 | `v5_adaptive_corrected` | v5 | 93.86% | 0.2774 | 1.1096 | 14 |
-| 9 | `v8_b2_b4_boosted` | v8 | 92.54% | 0.2632 | 1.0526 | 17 |
-| 10 | `v5_best_visibility_grid` | v5 | 92.54% | 0.2664 | 1.0658 | 17 |
-| 11 | `v7_ordinal_b3` | v7 | 91.23% | 0.2939 | 1.1754 | 20 |
-| 12 | `v5_class_aware_vis` | v5 | 85.09% | 0.3805 | 1.5219 | 34 |
-| 13 | `v8_side_agreement` | v8 | 83.33% | 0.3618 | 1.4474 | 38 |
-| 14 | `v8_floor_anchor_50` | v8 | 69.74% | 0.4211 | 1.6842 | 69 |
-| — | `v8_multi_consensus` | v8 | 18.86% | 0.9583 | 3.8333 | 185 |
-| — | `v8_per_side_median` | v8 | 18.86% | 0.9583 | 3.8333 | 185 |
+| 1 | [`v9_selector`](algorithms/v9_selector.py) | v9 | **98.68%** | **0.2533** | 1.0132 | 3 |
+| 2 | [`v9_b2_median_v6`](algorithms/b2_median_v6.py) | v9 | 96.49% | 0.2588 | 1.0351 | 8 |
+| 3 | [`v6_selector`](algorithms/v6_selector.py) | v6 | 96.49% | 0.2632 | 1.0526 | 8 |
+| 4 | [`v9_median_strong5`](algorithms/median_strong5.py) | v9 | 95.18% | 0.2390 | 0.9561 | 11 |
+| 5 | [`v7_stacking_bracketed`](algorithms/stacking_bracketed.py) | v7 | 94.30% | 0.2643 | 1.0570 | 13 |
+| 6 | [`v7_stacking_density`](algorithms/stacking_density.py) | v7 | 94.30% | 0.2708 | 1.0833 | 13 |
+| 7 | [`v8_entropy_modulated`](algorithms/entropy_modulated.py) | v8 | 94.30% | 0.2763 | 1.1053 | 13 |
+| 8 | [`v5_adaptive_corrected`](algorithms/adaptive_corrected.py) | v5 | 93.86% | 0.2774 | 1.1096 | 14 |
+| 9 | [`v8_b2_b4_boosted`](algorithms/b2_b4_boosted.py) | v8 | 92.54% | 0.2632 | 1.0526 | 17 |
+| 10 | [`v5_best_visibility_grid`](algorithms/best_visibility_grid.py) | v5 | 92.54% | 0.2664 | 1.0658 | 17 |
+| 11 | [`v7_ordinal_b3`](algorithms/ordinal_b3.py) | v7 | 91.23% | 0.2939 | 1.1754 | 20 |
+| 12 | [`v5_class_aware_vis`](algorithms/class_aware_vis.py) | v5 | 85.09% | 0.3805 | 1.5219 | 34 |
+| 13 | [`v8_side_agreement`](algorithms/side_agreement.py) | v8 | 83.33% | 0.3618 | 1.4474 | 38 |
+| 14 | [`v8_floor_anchor_50`](algorithms/floor_anchor_50.py) | v8 | 69.74% | 0.4211 | 1.6842 | 69 |
+| — | [`v8_multi_consensus`](algorithms/multi_consensus.py) | v8 | 18.86% | 0.9583 | 3.8333 | 185 |
+| — | [`v8_per_side_median`](algorithms/per_side_median.py) | v8 | 18.86% | 0.9583 | 3.8333 | 185 |
 
 Catatan: tie-break acc sama → ranking by MAE ascending. `v8_multi_consensus` dan `v8_per_side_median` tidak di-rank karena undercount ekstrem (setara `naive` dalam arah sebaliknya). Tabel ini mencakup semua metode yang dievaluasi pada 228 pohon JSON di benchmark v9.
 
 ### Rekomendasi Pakai Metode
 
 - JSON dengan GT:
-  - pakai **`v9_selector`**
+  - pakai **[`v9_selector`](algorithms/v9_selector.py)**
 - Non-JSON tanpa GT:
-  - prioritaskan `hybrid_vis_corr`, `side_coverage`, `stacking_density_v7`, `best_visibility_grid`, atau `visibility`
+  - prioritaskan `hybrid_vis_corr`, `side_coverage`, [`stacking_density`](algorithms/stacking_density.py), [`best_visibility_grid`](algorithms/best_visibility_grid.py), atau `visibility`
 - Jangan asumsikan `v9_selector` otomatis terbaik untuk non-JSON, karena benchmark utamanya masih pada data JSON 228 tree
 
 ## Transparansi Perjalanan Metode
@@ -145,7 +145,7 @@ Bagian ini sengaja dibuat lebih lengkap supaya pembaca baru bisa melihat evolusi
 | v6 `dedup_research_v6.py` | selector antar-metode berbasis regime | best `v6_selector` = **96.49%**, MAE 0.2632 | lompatan besar; tidak ada satu rumus global yang cukup |
 | v7 `dedup_research_v7.py` | generalization-first stacking + ordinal density | best `stacking_bracketed` = **94.30%**, MAE 0.2643 | family global-stacking membaik, tapi kalah dari selector |
 | v8 `dedup_research_v8.py` | entropy / side-distribution / consensus | best `stacking_bracketed_v7` = **94.30%**, MAE 0.2643 | eksplorasi lanjutan tidak melewati v7 |
-| v9 `dedup_research_v9.py` | regime-aware selector sempit di atas v6/v7/v8 | best `v9_selector` = **98.68%**, MAE 0.2533 | current best; target 97-98% tercapai |
+| v9 `dedup_research_v9.py` | regime-aware selector sempit di atas v6/v7/v8 | best [`v9_selector`](algorithms/v9_selector.py) = **98.68%**, MAE 0.2533 | current best; target 97-98% tercapai |
 
 ### Penjelasan Sederhana per Generasi
 
@@ -319,9 +319,9 @@ Supaya tidak terlihat seolah repo hanya punya "top 5", berikut family metode yan
 ### Family visibility / geometry ringan
 
 - `visibility`
-- `best_visibility_grid`
+- [`best_visibility_grid`](algorithms/best_visibility_grid.py)
 - `adaptive_visibility`
-- `class_aware_vis`
+- [`class_aware_vis`](algorithms/class_aware_vis.py)
 
 ### Family matching / graph / cluster
 
@@ -342,20 +342,20 @@ Supaya tidak terlihat seolah repo hanya punya "top 5", berikut family metode yan
 
 ### Family v7-v8 stacking / distribution-aware
 
-- `stacking_density`
-- `stacking_bracketed`
-- `entropy_modulated`
+- [`stacking_density`](algorithms/stacking_density.py)
+- [`stacking_bracketed`](algorithms/stacking_bracketed.py)
+- [`entropy_modulated`](algorithms/entropy_modulated.py)
 - `v8_entropy_stacking`
-- `b2_b4_boosted`
-- `floor_anchor_50`
-- `per_side_median`
+- [`b2_b4_boosted`](algorithms/b2_b4_boosted.py)
+- [`floor_anchor_50`](algorithms/floor_anchor_50.py)
+- [`per_side_median`](algorithms/per_side_median.py)
 
 ### Family selector akhir
 
-- `v6_selector`
-- `v9_b2_median_v6`
-- `v9_median_strong5`
-- `v9_selector`
+- [`v6_selector`](algorithms/v6_selector.py)
+- [`v9_b2_median_v6`](algorithms/b2_median_v6.py)
+- [`v9_median_strong5`](algorithms/median_strong5.py)
+- [`v9_selector`](algorithms/v9_selector.py)
 
 ## Apa yang Gagal, dan Kenapa
 
@@ -522,6 +522,7 @@ python scripts/dedup_nonjson_compare.py
 json/                    228 file JSON dengan bunch-link antar-view
 dataset/                 image dan label YOLO
 scripts/                 seluruh script audit, counting, dan dedup research
+algorithms/              implementasi bersih tiap algoritma (1 file = 1 algoritma)
 reports/                 output CSV/MD dari setiap eksperimen
 assets/                  visual summary untuk README / laporan
 RESEARCH.md              dokumen riset panjang, baca Section 0 dulu

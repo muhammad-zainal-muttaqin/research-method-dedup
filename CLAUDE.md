@@ -106,7 +106,13 @@ dataset/
   data.yaml            YOLO config (path: /workspace/dataset)
   images/{train,val,test}/
   labels/{train,val,test}/
+algorithms/            standalone algo modules — each exports predict(detections, params) -> dict
+  __init__.py          ranked performance table (read this for algo selection)
+  v9_selector.py       CURRENT BEST — imports v6_selector + 3 specialist algos
+  v6_selector.py       backbone + load_params() (reads reports/dedup_research_v5/...)
+  *.py                 one algo = one file, all deterministic, no training
 scripts/               see "Running Scripts" — count_*, dedup_research_v1..v9, dedup_*_final
+  dedup_all_953.py     run all methods on all 953 trees (newer than dedup_all_trees_final)
 reports/<script>/      every script writes its outputs here
 contract-work/         validation contracts, v4 analysis, dry-run + algorithmic-advancement reports
 RESEARCH.md            primary research doc — read Section 0 first
@@ -114,6 +120,18 @@ README.md              project overview + method evolution narrative
 AGENTS.md              agent configuration
 tod.md                 working notes
 ```
+
+## algorithms/ Package
+
+Each `algorithms/*.py` exports `predict(detections: list[dict], params: dict) -> dict[str, int]`.
+
+- `detections`: list of `{"class": "B1"–"B4", "x_norm": float, "y_norm": float, "side_index": int}`
+- `params`: from `v6_selector.load_params()` (reads CSV from reports/)
+- Returns: `{"B1": int, "B2": int, "B3": int, "B4": int}`
+
+`v6_selector.load_params()` must be called once and the result passed to all algo `predict()` calls. `v9_selector` internally calls `v6_selector` — don't double-call v6 separately.
+
+Algo ranked by JSON-228 Acc±1 (see `algorithms/__init__.py` for full table). For new code importing these, use `from algorithms.v9_selector import predict` or whichever rank is needed.
 
 ## JSON Schema (per tree)
 
