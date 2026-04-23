@@ -4,6 +4,7 @@ Final dedup comparison:
 - 725 non-JSON trees: use TXT labels, run dedup methods, output counts (no GT)
 """
 
+import ast
 import json
 import warnings
 from collections import Counter, defaultdict
@@ -131,6 +132,208 @@ def visibility_count(dets, alpha=1.0, sigma=0.3):
         total = sum(1.0 / (1.0 + alpha * np.exp(-((d["x_norm"] - 0.5)**2) / (2.0 * sigma**2))) for d in cdets)
         counts[c] = max(0, int(round(total)))
     return counts
+
+
+Y_PRIOR = None
+
+
+def compute_y_prior(tree_data):
+    global Y_PRIOR
+    y_vals = {c: [] for c in NAMES}
+    for _, dets, _, _ in tree_data:
+        for d in dets:
+            y_vals[d["class"]].append(d["y_norm"])
+
+    Y_PRIOR = {}
+    for c in NAMES:
+        vals = np.array(y_vals[c]) if y_vals[c] else np.array([0.5])
+        Y_PRIOR[c] = {
+            "y_mean": float(np.mean(vals)),
+            "y_std": float(np.std(vals)) if len(vals) > 1 else 0.1,
+            "y_min": float(np.min(vals)),
+            "y_max": float(np.max(vals)),
+        }
+    return Y_PRIOR
+
+
+def adaptive_visibility_count(dets, base_alpha=1.0, base_sigma=0.3,
+                               alpha_min=0.5, alpha_max=1.6,
+                               sigma_min=0.12, sigma_max=0.55):
+    n_total = len(dets)
+    y_vals = [d["y_norm"] for d in dets]
+    y_span = max(y_vals) - min(y_vals) if y_vals else 0.5
+
+    density = n_total / 12.0
+    alpha = base_alpha * (1.35 - 0.35 * min(density, 1.6))
+    sigma = base_sigma * (0.55 + 0.45 * min(density, 1.6))
+
+    if y_span > 0.7:
+        sigma *= 0.88
+        alpha *= 1.08
+    elif y_span < 0.3:
+        sigma *= 1.18
+        alpha *= 0.92
+
+    alpha = float(np.clip(alpha, alpha_min, alpha_max))
+    sigma = float(np.clip(sigma, sigma_min, sigma_max))
+    return visibility_count(dets, alpha=alpha, sigma=sigma)
+
+
+def adaptive_corrected_count(dets):
+    n_total = len(dets)
+    base_factors = {"B1": 1.986, "B2": 1.786, "B3": 1.795, "B4": 1.655}
+    dup_rate = 2.05 - 0.014 * n_total
+    dup_rate = np.clip(dup_rate, 1.45, 2.10)
+    scale = float(dup_rate / 1.79)
+    factors = {c: base_factors[c] * scale for c in NAMES}
+    naive = naive_count(dets)
+    return {c: max(0, round(naive[c] / factors[c])) for c in NAMES}
+
+
+def density_scaled_visibility(dets):
+    n_total = len(dets)
+    vis = visibility_count(dets)
+    density_boost = 1.0 + 0.025 * (n_total - 12) / 12.0
+    density_boost = np.clip(density_boost, 0.92, 1.15)
+    return {c: max(0, int(round(vis[c] * density_boost))) for c in NAMES}
+
+
+def class_aware_visibility_count(dets, alpha_B1B4=1.0, alpha_B2B3=0.65,
+                                  sigma_B1B4=0.35, sigma_B2B3=0.45):
+    counts = {}
+    for c in NAMES:
+        cdets = [d for d in dets if d["class"] == c]
+        if not cdets:
+            counts[c] = 0
+            continue
+        alpha = alpha_B2B3 if c in ("B2", "B3") else alpha_B1B4
+        sigma = sigma_B2B3 if c in ("B2", "B3") else sigma_B1B4
+        total = sum(1.0 / (1.0 + alpha * np.exp(-((d["x_norm"] - 0.5) ** 2) / (2.0 * sigma ** 2))) for d in cdets)
+        counts[c] = max(0, int(round(total)))
+    return counts
+
+
+def side_coverage_count(dets):
+    vis = visibility_count(dets)
+    naive = naive_count(dets)
+    counts = {}
+    for c in NAMES:
+        cdets = [d for d in dets if d["class"] == c]
+        if not cdets:
+            counts[c] = 0
+            continue
+        per_side = Counter(d["side_index"] for d in cdets)
+        max_per_side = max(per_side.values()) if per_side else 0
+        pred = vis[c]
+        pred = max(pred, max_per_side)
+        pred = min(pred, naive[c])
+        counts[c] = pred
+    return counts
+
+
+def hybrid_visibility_corrected(dets, vis_weight=0.6):
+    vis = visibility_count(dets)
+    corr = adaptive_corrected_count(dets)
+    return {c: max(0, int(round(vis_weight * vis[c] + (1 - vis_weight) * corr[c]))) for c in NAMES}
+
+
+def ordinal_prior_count(dets, flip_threshold_sigma=2.0):
+    global Y_PRIOR
+    if Y_PRIOR is None:
+        raise RuntimeError("Y_PRIOR not computed.")
+
+    counts = visibility_count(dets)
+    flagged = {c: 0 for c in NAMES}
+    for d in dets:
+        c = d["class"]
+        if c not in Y_PRIOR:
+            continue
+        y = d["y_norm"]
+        prior = Y_PRIOR[c]
+        if abs(y - prior["y_mean"]) > flip_threshold_sigma * prior["y_std"]:
+            flagged[c] += 1
+
+    b2_flag_rate = flagged["B2"] / max(counts["B2"], 1)
+    b3_flag_rate = flagged["B3"] / max(counts["B3"], 1)
+
+    if b2_flag_rate > b3_flag_rate + 0.15 and counts["B2"] > 0:
+        n_swap = max(1, int(round(0.35 * counts["B2"] * b2_flag_rate)))
+        counts["B2"] = max(0, counts["B2"] - n_swap)
+        counts["B3"] = counts["B3"] + n_swap
+    elif b3_flag_rate > b2_flag_rate + 0.15 and counts["B3"] > 0:
+        n_swap = max(1, int(round(0.35 * counts["B3"] * b3_flag_rate)))
+        counts["B3"] = max(0, counts["B3"] - n_swap)
+        counts["B2"] = counts["B2"] + n_swap
+
+    return counts
+
+
+def relaxed_matching_count(dets, y_thresh=0.15, area_thresh=0.12, cx_thresh=0.35):
+    counts = {}
+    for c in NAMES:
+        cdets = [d for d in dets if d["class"] == c]
+        n = len(cdets)
+        if n == 0:
+            counts[c] = 0
+            continue
+        if n == 1:
+            counts[c] = 1
+            continue
+        uf = UnionFind(n)
+        for i in range(n):
+            for j in range(i + 1, n):
+                di, dj = cdets[i], cdets[j]
+                if di["side_index"] == dj["side_index"]:
+                    continue
+                if abs(di["y_norm"] - dj["y_norm"]) > y_thresh:
+                    continue
+                da = np.sqrt(di["area_norm"])
+                db = np.sqrt(dj["area_norm"])
+                if abs(da - db) > area_thresh:
+                    continue
+                if abs(di["x_norm"] - dj["x_norm"]) > cx_thresh:
+                    continue
+                uf.union(i, j)
+        counts[c] = len({uf.find(i) for i in range(n)})
+    return counts
+
+
+def median_ensemble(preds_list):
+    result = {}
+    for c in NAMES:
+        vals = [p[c] for p in preds_list]
+        result[c] = int(round(np.median(vals)))
+    return result
+
+
+def trimmed_mean_ensemble(preds_list):
+    result = {}
+    for c in NAMES:
+        vals = sorted([p[c] for p in preds_list])
+        if len(vals) <= 2:
+            result[c] = int(round(np.mean(vals)))
+        else:
+            result[c] = int(round(np.mean(vals[1:-1])))
+    return result
+
+
+def load_v5_reference_params():
+    ref_path = BASE / "reports" / "dedup_research_v5" / "method_comparison_v5.csv"
+    df = pd.read_csv(ref_path)
+
+    def row(method):
+        r = df[df["method"] == method].iloc[0].to_dict()
+        return r
+
+    ens_row = row("best_ensemble_grid")
+    subset = ast.literal_eval(ens_row["subset"])
+    return {
+        "best_visibility": row("best_visibility_grid"),
+        "best_class_aware": row("best_class_aware_grid"),
+        "best_relaxed": row("best_relaxed_grid"),
+        "best_ensemble_subset": subset,
+        "best_ensemble_agg": ens_row["agg"],
+    }
 
 
 class UnionFind:
@@ -329,15 +532,45 @@ def main():
     txt_trees = load_txt_trees()
     print(f"  Trees from TXT: {len(txt_trees)}")
 
-    methods = {
+    refs = load_v5_reference_params()
+    compute_y_prior(list((tid, data["dets"], data["gt"], data["split"]) for tid, data in json_trees.items()))
+
+    best_vis = refs["best_visibility"]
+    best_cav = refs["best_class_aware"]
+    best_rel = refs["best_relaxed"]
+    best_ensemble_subset = tuple(refs["best_ensemble_subset"])
+    best_ensemble_agg = refs["best_ensemble_agg"]
+
+    direct_methods = {
         "naive": naive_count,
         "corrected": corrected_naive,
-        "feature_cluster": feature_cluster_count,
         "visibility": visibility_count,
-        "learned_graph": learned_graph_count,
-        "hungarian_match": hungarian_match_count,
-        "cascade_match": cascade_match_count,
+        "adaptive_visibility": adaptive_visibility_count,
+        "adaptive_corrected": adaptive_corrected_count,
+        "density_scaled_vis": density_scaled_visibility,
+        "class_aware_vis": class_aware_visibility_count,
+        "side_coverage": side_coverage_count,
+        "hybrid_vis_corr": hybrid_visibility_corrected,
+        "ordinal_prior": ordinal_prior_count,
+        "relaxed_match": relaxed_matching_count,
+        "best_visibility_grid": lambda dets, a=float(best_vis["alpha"]), s=float(best_vis["sigma"]): visibility_count(dets, alpha=a, sigma=s),
+        "best_class_aware_grid": lambda dets,
+                                         a14=float(best_cav["alpha_B1B4"]),
+                                         a23=float(best_cav["alpha_B2B3"]),
+                                         s14=float(best_cav["sigma_B1B4"]),
+                                         s23=float(best_cav["sigma_B2B3"]): class_aware_visibility_count(dets, a14, a23, s14, s23),
+        "best_relaxed_grid": lambda dets,
+                                      yt=float(best_rel["y_thresh"]),
+                                      at=float(best_rel["area_thresh"]),
+                                      ct=float(best_rel["cx_thresh"]): relaxed_matching_count(dets, yt, at, ct),
     }
+
+    ensemble_methods = {
+        "best_ensemble_grid": None,
+        "naive_mean_ensemble": None,
+    }
+
+    methods = {**direct_methods, **ensemble_methods}
 
     # ── Part A: Evaluate on 228 JSON trees using JSON data ──
     print("\nEvaluating methods on 228 JSON trees (using JSON annotations)...")
@@ -345,8 +578,10 @@ def main():
     for tree_id, data in sorted(json_trees.items()):
         dets = data["dets"]
         gt = data["gt"]
-        for mname, mfunc in methods.items():
+        pred_cache = {}
+        for mname, mfunc in direct_methods.items():
             pred = mfunc(dets)
+            pred_cache[mname] = pred
             mae, within1, err_sum = eval_preds(pred, gt)
             json_results.append({
                 "tree_id": tree_id, "split": data["split"], "method": mname,
@@ -354,6 +589,42 @@ def main():
                 **{f"gt_{c}": gt[c] for c in NAMES},
                 **{f"pred_{c}": pred.get(c, 0) for c in NAMES},
             })
+
+        ensemble_input = [pred_cache[name] for name in best_ensemble_subset]
+        if best_ensemble_agg == "median":
+            pred = median_ensemble(ensemble_input)
+        else:
+            pred = trimmed_mean_ensemble(ensemble_input)
+        mae, within1, err_sum = eval_preds(pred, gt)
+        json_results.append({
+            "tree_id": tree_id, "split": data["split"], "method": "best_ensemble_grid",
+            "MAE": mae, "within_1": within1, "err_sum": err_sum,
+            **{f"gt_{c}": gt[c] for c in NAMES},
+            **{f"pred_{c}": pred.get(c, 0) for c in NAMES},
+        })
+
+        mean_pred = {}
+        heuristic_pool = [
+            "visibility",
+            "adaptive_visibility",
+            "adaptive_corrected",
+            "corrected",
+            "density_scaled_vis",
+            "class_aware_vis",
+            "side_coverage",
+            "hybrid_vis_corr",
+            "ordinal_prior",
+            "relaxed_match",
+        ]
+        for c in NAMES:
+            mean_pred[c] = int(round(np.mean([pred_cache[name][c] for name in heuristic_pool])))
+        mae, within1, err_sum = eval_preds(mean_pred, gt)
+        json_results.append({
+            "tree_id": tree_id, "split": data["split"], "method": "naive_mean_ensemble",
+            "MAE": mae, "within_1": within1, "err_sum": err_sum,
+            **{f"gt_{c}": gt[c] for c in NAMES},
+            **{f"pred_{c}": mean_pred.get(c, 0) for c in NAMES},
+        })
 
     json_df = pd.DataFrame(json_results)
     json_summary = []
@@ -374,15 +645,53 @@ def main():
     nonjson_ids = sorted(set(txt_trees.keys()) - set(json_trees.keys()))
     print(f"\nRunning on {len(nonjson_ids)} non-JSON trees (TXT only)...")
     nonjson_rows = []
+    nonjson_preds = {name: [] for name in direct_methods}
     for tree_id in nonjson_ids:
         dets = txt_trees[tree_id]
         row = {"tree_id": tree_id, "n_dets": len(dets), "n_sides": len(set(d["side_index"] for d in dets))}
-        for mname, mfunc in methods.items():
+        for mname, mfunc in direct_methods.items():
             pred = mfunc(dets)
+            nonjson_preds[mname].append(pred)
             for c in NAMES:
                 row[f"{mname}_{c}"] = pred.get(c, 0)
             row[f"{mname}_total"] = sum(pred.values())
         nonjson_rows.append(row)
+
+    heuristic_pool = [
+        "visibility",
+        "adaptive_visibility",
+        "adaptive_corrected",
+        "corrected",
+        "density_scaled_vis",
+        "class_aware_vis",
+        "side_coverage",
+        "hybrid_vis_corr",
+        "ordinal_prior",
+        "relaxed_match",
+    ]
+    best_ensemble_preds = []
+    naive_mean_preds = []
+    for i in range(len(nonjson_rows)):
+        ensemble_input = [nonjson_preds[name][i] for name in best_ensemble_subset]
+        if best_ensemble_agg == "median":
+            best_ensemble_preds.append(median_ensemble(ensemble_input))
+        else:
+            best_ensemble_preds.append(trimmed_mean_ensemble(ensemble_input))
+
+        mean_pred = {}
+        for c in NAMES:
+            mean_pred[c] = int(round(np.mean([nonjson_preds[name][i][c] for name in heuristic_pool])))
+        naive_mean_preds.append(mean_pred)
+
+    for row, pred in zip(nonjson_rows, best_ensemble_preds):
+        for c in NAMES:
+            row[f"best_ensemble_grid_{c}"] = pred.get(c, 0)
+        row["best_ensemble_grid_total"] = sum(pred.values())
+
+    for row, pred in zip(nonjson_rows, naive_mean_preds):
+        for c in NAMES:
+            row[f"naive_mean_ensemble_{c}"] = pred.get(c, 0)
+        row["naive_mean_ensemble_total"] = sum(pred.values())
 
     nonjson_df = pd.DataFrame(nonjson_rows)
     nonjson_df.to_csv(OUT_DIR / "nonjson_725_counts.csv", index=False)

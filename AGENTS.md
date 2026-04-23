@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## Running Scripts
 
@@ -19,16 +19,6 @@ python scripts/dedup_research_v2.py
 
 # Dedup research v3 — learned thresholds dari _confirmedLinks, then predict
 python scripts/dedup_research_v3.py
-
-# Dedup research v4 — pixel-aware empirical geometry (HSV + Mahalanobis + Hungarian)
-python scripts/dedup_research_v4.py
-
-# Dedup research v5 — adaptive density-corrected (current best: 93.86% Acc±1)
-python scripts/dedup_research_v5.py
-python scripts/dedup_v5_focused.py
-
-# Dedup research v6 — exploration near 93.86% ceiling (multiple methods tie)
-python scripts/dedup_research_v6.py
 
 # Final dedup all 953 pohon (228 JSON-validated + 717 non-JSON)
 python scripts/dedup_all_trees_final.py
@@ -65,11 +55,6 @@ scripts/
   dedup_research.py           v1: Grid search heuristik (corrected, visibility, graph, cluster)
   dedup_research_v2.py        v2: Adaptive ridge + ensemble stack
   dedup_research_v3.py        v3: Learned thresholds dari _confirmedLinks + Ridge/Hungarian
-  dedup_research_v4.py        v4: Pixel-aware HSV + Mahalanobis + Hungarian
-  dedup_research_v5.py        v5: Adaptive density-corrected (93.86% Acc±1)
-  dedup_v5_focused.py         v5 focused variant
-  dedup_research_v6.py        v6: Exploration near 93.86% ceiling (7-way tie, plateau confirmed)
-  dedup_research_v7.py        v7: Generalization-first (stacking_density 94.30% — current best)
   dedup_all_trees_final.py    Final run: semua metode pada 953 pohon
   dedup_nonjson_compare.py    Validasi & report non-JSON dedup
 reports/
@@ -79,15 +64,9 @@ reports/
   dedup_research/             method_comparison.csv, best_method_details.csv, summary.md
   dedup_research_v2/          method_comparison_v2.csv, error_analysis_v2.csv, summary_v2.md
   dedup_research_v3/          method_comparison_v3.csv, error_analysis_v3.csv, learned_thresholds.json, summary_v3.md
-  dedup_research_v4/          summary_v4.md + comparison csvs
-  dedup_research_v5/          summary_v5.md + comparison csvs
-  dedup_research_v6/          summary_v6.md + comparison csvs
-  dedup_research_v7/          summary_v7.md + method_comparison_v7.csv + loto_results.csv + split_breakdown_v7.csv
   dedup_all_trees_final/      all_trees_dedup_counts.csv, json_228_accuracy.csv, nonjson_725_*.csv
   nonjson_dedup_compare/      all_trees_dedup_counts.csv, json_accuracy_validation.csv, nonjson_counts_by_method.csv
   nonjson_dedup_report.md     Laporan utama non-JSON dedup
-contract-work/                validation contracts, v4 analysis, dry-run & algorithmic-advancement reports
-AGENTS.md                     agent configuration
 ```
 
 ## JSON Schema (per tree)
@@ -133,10 +112,6 @@ Naive sum = sum of all `annotations` across 4 sides without dedup → ~79% overc
 | Dedup v1 | Heuristic grid search (corrected, visibility, graph, cluster) | **DONE** | Best: corrected, 90.8% ±1 acc |
 | Dedup v2 | Visibility + adaptive ridge + ensemble stack | **DONE** | Best: visibility, 92.1% ±1 acc |
 | Dedup v3 | Learned thresholds + per-class Ridge | **DONE** | Best: per_class_ridge, 90.8% ±1 acc |
-| Dedup v4 | Pixel-aware HSV + Mahalanobis + Hungarian | **DONE** | Best: visibility, 92.1% ±1 acc (no gain over v2) |
-| Dedup v5 | Adaptive density-corrected | **DONE** | **adaptive_corrected, 93.86% ±1 acc (CI 90.79–96.93%)** |
-| Dedup v6 | Exploration near 93.86% ceiling | **DONE** | 7 methods tie at 93.86%; gap to 95% = 2 trees |
-| Dedup v7 | Generalization-first: LOTO + stacking density + bracket constraint | **DONE** | **stacking_density 94.30% (−LOTO gap 2.19pp); gap to 95% = 1 tree** |
 | Dedup Final | All methods on 953 trees (228 JSON + 717 non-JSON) | **DONE** | corrected & visibility viable; graph/cascade fail on TXT |
 | JSON-02/03/04 | Retrain paths | Deferred | Run only if needed |
 
@@ -144,7 +119,7 @@ Naive sum = sum of all `annotations` across 4 sides without dedup → ~79% overc
 
 **Full GT counting (all 953 trees):** `scripts/count_all_trees.py` — DONE. Output di `reports/full_gt_count/`.
 
-**Dedup research verdict:** Heuristic bbox ceiling ≈ **93.86%** (v5 `adaptive_corrected`, bootstrap CI 90.79–96.93%). v6 confirms multiple methods (ceil/floor/adaptive corrected, tree_aware_switch, weighted_blend, residual_corrected) tie at 93.86% — plateau. Gap to 95% = 2 trees (14 trees with error > 1). Graph matching, cascade, and clustering **fail** on noisy TXT labels (< 20% accuracy). To break past 93.86% need embedding-based cross-view matching (excluded — project is algorithmic-only).
+**Dedup research verdict:** Heuristic bbox ceiling ≈ **92%** (visibility method). Graph matching, cascade, and clustering **fail** on noisy TXT labels (< 20% accuracy). To break past 92% need embedding-based cross-view matching.
 
 ## Non-JSON Dedup Pipeline (717 pohon tanpa JSON)
 
@@ -186,24 +161,20 @@ Pohon non-JSON hanya memiliki YOLO TXT labels (prediksi model), bukan anotasi ma
 
 ## Next Step: Algorithmic Advancement
 
-Berdasarkan hasil dedup research, **heuristic bbox ceiling ≈ 93.86%** (v5 `adaptive_corrected`, v6 confirmed plateau). Ini dicapai dengan **pure algorithmic** approach — tanpa training apapun.
+Berdasarkan hasil dedup research, **heuristic bbox ceiling ≈ 92%** (visibility method). Ini dicapai dengan **pure algorithmic** approach — tanpa training apapun.
 
 ### Current Algorithmic Methods (ALL No-Training)
 
 | Method | Accuracy | Type | Notes |
 |--------|----------|------|-------|
-| **stacking_density (v7)** | **94.30%** | Statistical | Per-class vertical stacking density correction |
-| stacking_bracketed (v7) | 94.30% | Statistical | Stacking density + floor/ceiling bracket |
-| adaptive_corrected (v5/v6) | 93.86% | Statistical | Density-corrected divisor per tree |
-| ceil/floor/residual/blend (v6) | 93.86% | Statistical | Tie with adaptive_corrected |
-| visibility | 92.1% | Heuristic | Geometric downweighting by `cx` |
+| **visibility** | **92.1%** | Heuristic | Best: geometric downweighting by `cx` |
 | corrected | 90.8% | Statistical | Fixed factor division |
 | hungarian_match | 18.9% | Algorithmic | Fails: too rigid for noisy TXT |
 | graph/cluster | <5% | Algorithmic | Fails: over-merge on noise |
 
 ### Research Direction: Pure Algorithmic Only
 
-To break past 93.86% **without any training**, we pursue:
+To break past 92% **without any training**, we pursue:
 
 1. **Multi-Camera Geometry** (Active)
    - Intrinsic/extrinsic calibration dari 4 views
@@ -253,7 +224,7 @@ For **counting pipeline**, primary metric = **% trees within ±1 error per class
 
 Per RESEARCH.md Section 30.4 — do not re-attempt: imgsz 800, focal loss, naive oversampling, two-stage classifiers (DINOv2/EfficientNet/CORAL), YOLOv9e, RT-DETR-L, RF-DETR, SGD/AdamW sweep, label_smoothing, long brute-force runs.
 
-**New:** v7 broke the v5/v6 plateau: `stacking_density` reaches 94.30% (gap to 95% = 1 tree). LOTO gap = 2.19pp (mild overfit). Test split still lags train by 12pp — likely irreducible without more test-similar training data or cross-view embeddings. Do NOT pursue further grid search. Graph/cascade/cluster methods on TXT labels are fundamentally broken due to coordinate noise.
+**New:** Do NOT tune heuristic bbox parameters further — ceiling ≈ 92% already reached. Graph/cascade/cluster methods on TXT labels are fundamentally broken due to coordinate noise.
 
 **CRITICAL:** Do NOT pursue learned approaches — project is **100% algorithmic/heuristic only**:
 - ❌ Siamese/CNN embedding (requires training)

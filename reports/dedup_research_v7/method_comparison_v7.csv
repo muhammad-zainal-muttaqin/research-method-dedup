@@ -1,0 +1,13 @@
+method,acc,mae
+stacking_density,94.3,0.2708
+stacking_bracketed,94.3,0.2643
+adaptive_bracketed,93.86,0.2708
+adaptive_corrected_v5,93.86,0.2774
+b3_quadratic_bracketed,93.86,0.2741
+b3_quadratic,93.86,0.2807
+v7_combined,93.86,0.2697
+visibility_v5,92.54,0.2664
+v7_combined_ordinal,92.11,0.2971
+LOTO_adaptive_corrected,91.67,0.2862
+ordinal_b3_modulated,91.23,0.2939
+merged_b23_diagnostic,46.05,0.8629

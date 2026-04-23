@@ -46,10 +46,13 @@ gantt
     Dedup v1 Heuristic    :done, a4, after a3, 5d
     Dedup v2 Visibility   :done, a5, after a4, 5d
     Dedup v3 Statistical  :done, a6, after a5, 5d
-    Dedup Final 953 Trees :done, a7, after a6, 3d
+    Dedup v4 Pixel-Aware  :done, a7, after a6, 3d
+    Dedup v5 Adaptive     :done, a8, after a7, 3d
+    Dedup v6 Plateau Probe:done, a9, after a8, 2d
+    Dedup Final 953 Trees :done, a10, after a9, 3d
     section Next (Algorithmic Only)
-    Geometry-Based Refinement :active, a8, after a7, 14d
-    Multi-Camera Calibration  :active, a9, after a8, 14d
+    Geometry-Based Refinement :active, a11, after a10, 14d
+    Multi-Camera Calibration  :active, a12, after a11, 14d
 ```
 
 | Experiment | Status | Key Result | Type |
@@ -58,8 +61,11 @@ gantt
 | JSON-05 GT Counting | **DONE** | 78.8% overcounting; dedup essential | **Algorithmic** |
 | JSON-01 Label Audit | **DONE** | 0% mismatch — labels clean | **Algorithmic** |
 | Dedup v1 Heuristic | **DONE** | corrected 90.8% ±1 | **Algorithmic** |
-| Dedup v2 Visibility | **DONE** | visibility **92.1% ±1** (heuristic ceiling) | **Algorithmic** |
+| Dedup v2 Visibility | **DONE** | visibility 92.1% ±1 | **Algorithmic** |
 | Dedup v3 Statistical | **DONE** | per_class_ridge 90.8% ±1 | **Algorithmic** |
+| Dedup v4 Pixel-Aware | **DONE** | HSV + Mahalanobis + Hungarian, 92.1% ±1 (no gain) | **Algorithmic** |
+| Dedup v5 Adaptive | **DONE** | **adaptive_corrected 93.86% ±1** (CI 90.79–96.93%) | **Algorithmic** |
+| Dedup v6 Plateau Probe | **DONE** | 7 methods tie at 93.86%; gap to 95% = 2 trees | **Algorithmic** |
 | Dedup Final 953 trees | **DONE** | corrected 57.4% ratio; visibility 55.7% ratio | **Algorithmic** |
 | Geometry Refinement | **NEXT** | Camera geometry, epipolar constraints | **Algorithmic** |
 | Multi-Camera Calibration | **NEXT** | Intrinsic/extrinsic calibration refinement | **Algorithmic** |
@@ -78,8 +84,11 @@ gantt
 
 | Method | Mean MAE | Acc ±1 | Mean Total Err | Score | Type | Verdict |
 |--------|---------:|-------:|---------------:|------:|------|---------|
-| **visibility** | **0.2719** | **92.11%** | 1.09 | 89.39 | **Heuristic** | **Best** |
-| **corrected** | 0.2851 | 90.79% | 1.14 | 87.94 | **Heuristic** | **Recommended** |
+| **adaptive_corrected (v5)** | **0.2774** | **93.86%** | 1.11 | **91.09** | **Statistical** | **Best** |
+| best_ensemble_grid (v5) | 0.2774 | 93.86% | 1.11 | 91.09 | Statistical | Tie |
+| ceil/floor/blend/residual (v6) | ~0.27–0.30 | 93.86% | ~1.1 | — | Statistical | Tie (plateau) |
+| visibility | 0.2719 | 92.11% | 1.09 | 89.39 | Heuristic | Strong |
+| corrected | 0.2851 | 90.79% | 1.14 | 87.94 | Heuristic | Strong |
 | per_class_ridge | 0.2741 | 90.79% | 1.10 | 88.05 | Statistical | Strong |
 | hungarian_match | 1.0976 | 18.86% | 4.39 | 7.88 | Algorithmic | Undercount |
 | cascade_match | 1.7730 | 4.39% | 7.09 | -13.34 | Algorithmic | Fail |
@@ -87,9 +96,9 @@ gantt
 | feature_cluster | 1.8728 | 3.51% | 7.49 | -15.22 | Algorithmic | Fail |
 | naive | 2.1294 | 2.63% | 8.52 | -18.66 | Baseline | Baseline |
 
-**Ceiling insight:** Heuristic bbox methods cap at **~92%**. Graph matching, cascade, and clustering **fail catastrophically** on noisy predictions because they rely on rigid geometric constraints that don't hold on YOLO-predicted bboxes.
+**Ceiling insight:** Statistical bbox methods now cap at **~93.86%** (v5 `adaptive_corrected`, v6 plateau: 7 methods tie). Only 14/228 trees exceed ±1 error; gap to 95% = 2 trees. Graph matching, cascade, and clustering **fail catastrophically** on noisy predictions because they rely on rigid geometric constraints that don't hold on YOLO-predicted bboxes.
 
-**To break past 92% algorithmically:** Requires better geometric modeling (epipolar constraints, 3D triangulation, camera calibration) — **not** learned embeddings.
+**To break past 93.86% algorithmically:** Requires better geometric modeling (epipolar constraints, 3D triangulation, camera calibration) — **not** learned embeddings.
 
 ### Per-Class Error Breakdown (Best Method: visibility)
 
@@ -180,6 +189,10 @@ scripts/
   dedup_research.py            v1: Heuristic grid search
   dedup_research_v2.py         v2: Visibility + adaptive ridge
   dedup_research_v3.py         v3: Learned thresholds + Ridge
+  dedup_research_v4.py         v4: Pixel-aware HSV + Mahalanobis + Hungarian
+  dedup_research_v5.py         v5: Adaptive density-corrected (93.86% ±1)
+  dedup_v5_focused.py          v5 focused variant
+  dedup_research_v6.py         v6: Plateau exploration near 93.86%
   dedup_all_trees_final.py     Final run on all 953 trees
   dedup_nonjson_compare.py     Non-JSON validation & report
 reports/
@@ -189,9 +202,13 @@ reports/
   dedup_research/              v1 results
   dedup_research_v2/           v2 results
   dedup_research_v3/           v3 results
+  dedup_research_v4/           v4 results
+  dedup_research_v5/           v5 results
+  dedup_research_v6/           v6 results
   dedup_all_trees_final/       Final CSV outputs
   nonjson_dedup_compare/       Non-JSON comparison tables
   nonjson_dedup_report.md      Full non-JSON report
+contract-work/                 validation contracts, v4 analysis, dry-run reports
 ```
 
 ---
@@ -202,8 +219,8 @@ reports/
 # GT counting (953 trees, no GPU, ~1 min)
 python scripts/count_all_trees.py
 
-# Dedup research v2 — best heuristic (228 JSON trees)
-python scripts/dedup_research_v2.py
+# Dedup research v5 — current best (93.86% ±1 on 228 JSON trees)
+python scripts/dedup_research_v5.py
 
 # Final dedup on all trees
 python scripts/dedup_all_trees_final.py
@@ -231,15 +248,21 @@ Project ini mengadopsi pendekatan **100% algorithmic** — setiap metode dedupli
 - ❌ Learned embeddings / Siamese networks
 - ❌ Deep learning-based matching
 
-> **Alasan:** Dataset 953 pohon dengan 228 JSON-labeled masih terlalu kecil untuk training reliable learned matcher. Heuristic methods achieve **92% ceiling** tanpa risiko overfitting.
+> **Alasan:** Dataset 953 pohon dengan 228 JSON-labeled masih terlalu kecil untuk training reliable learned matcher. Statistical/heuristic methods achieve **93.86% ceiling** (v5/v6) tanpa risiko overfitting.
 
 ---
 
-## Best Method: Visibility-Based Downweighting
+## Best Method: Adaptive Density-Corrected (v5)
 
-> **Current Best (2026-04-23):** `visibility` method — **92.1% accuracy** within ±1 error per class.
-> 
-> **Type:** Pure algorithmic (geometric heuristic + statistical correction)
+> **Current Best (2026-04-23):** `adaptive_corrected` method — **93.86% accuracy** within ±1 error per class (bootstrap CI 90.79–96.93%).
+>
+> **Type:** Pure algorithmic (density-aware statistical correction)
+>
+> v6 confirms this as a plateau: 7 methods tie at 93.86% (ceil/floor/adaptive corrected, tree_aware_switch, weighted_blend_60/70/80, residual_corrected). Only 14/228 trees exceed ±1 error.
+
+### Runner-Up: Visibility-Based Downweighting (v2)
+
+`visibility` remains the strongest **heuristic** approach (92.1% ±1) and is preferred when a simple formula is wanted over a density estimate.
 
 ### Intuition: Camera Visibility Bias
 
@@ -294,7 +317,8 @@ count_B3 = visibility_adjusted_count(tree_detections['B3'], decay=0.3)
 
 | Method | Accuracy (±1) | Mean MAE | Complexity | Robustness |
 |--------|--------------|----------|------------|------------|
-| **visibility** | **92.1%** | **0.272** | Low | **High** — robust to coordinate noise |
+| **adaptive_corrected (v5)** | **93.86%** | **0.277** | Low | **High** — density-aware |
+| visibility | 92.1% | 0.272 | Low | High — robust to coordinate noise |
 | corrected | 90.8% | 0.285 | Very Low | High — fixed factor |
 | hungarian | 18.9% | 1.098 | Medium | Low — fails on TXT noise |
 | graph/cluster | <5% | >1.8 | High | Very Low — catastrophic undercount |
@@ -312,16 +336,16 @@ count_B3 = visibility_adjusted_count(tree_detections['B3'], decay=0.3)
 
 1. **Naive sum overcounts by 78.8%** — deduplication across 4 views is non-optional.
 2. **Label noise is NOT the bottleneck** — JSON-01 falsified the label-noise hypothesis (0% mismatch).
-3. **Heuristic ceiling ≈ 92%** — `visibility` method with downweighting by horizontal position (`cx`) is the strongest bbox-only approach.
+3. **Algorithmic ceiling ≈ 93.86%** — `adaptive_corrected` (v5) beats the earlier 92% visibility ceiling via density-aware correction; v6 confirms plateau across 7 methods.
 4. **Graph/cascade/clustering fail on TXT labels** — coordinate and classification noise causes catastrophic undercounting (<20% accuracy).
-5. **To beat 92%** — need embedding-based cross-view matching (neck features / Siamese CNN on bbox crops).
+5. **Gap to 95% = 2 trees** (14/228 exceed ±1 error). Further progress likely requires cross-view embeddings — deliberately excluded to preserve algorithmic purity.
 6. **Estimated true dataset size** — ~10,108 unique bunches (not 16,131 naive count).
 
 ---
 
 ## Next Steps (Algorithmic Only)
 
-> **Goal:** Push heuristic ceiling past 92% without any learned components.
+> **Goal:** Push algorithmic ceiling past 93.86% without any learned components.
 
 ### Phase 1: Geometric Refinement (Active)
 
@@ -370,8 +394,8 @@ count_B3 = visibility_adjusted_count(tree_detections['B3'], decay=0.3)
 
 | Phase | Target | Method |
 |-------|--------|--------|
-| Current | 92.1% ±1 | `visibility` (heuristic) |
-| Phase 1 | 94-95% ±1 | Geometry + epipolar + 3D |
+| Current | 93.86% ±1 | `adaptive_corrected` (v5/v6 plateau) |
+| Phase 1 | 95-96% ±1 | Geometry + epipolar + 3D |
 | Phase 2 | 96-97% ±1 | Advanced heuristics |
 | Phase 3 | 95% ±1 (3-class) | Problem reformulation |
 
