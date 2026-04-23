@@ -69,18 +69,55 @@ Status terbaru yang harus dipakai adalah override **2026-04-24**. Jika ada file 
 
 ### Benchmark Utama: JSON 228 Tree
 
-Metric utama:
+#### Alur Benchmark
+
+Benchmark ini dijalankan secara **fully algorithmic** tanpa split train/test yang memisahkan data untuk training — karena tidak ada model yang dilatih. Alurnya:
+
+1. **Input:** 228 file JSON, masing-masing satu pohon. Setiap JSON berisi anotasi bbox dari 4–8 sisi foto beserta `summary.by_class` sebagai ground truth count unik per kelas.
+2. **Statistik image:** 228 pohon × rata-rata 4 sisi = **±912 gambar** yang masuk ke pipeline dedup. Sebagian pohon terbaru punya 8 sisi (±45 pohon), sisanya 4 sisi.
+3. **Proses per pohon:** semua bbox dari semua sisi digabung → metode dedup menghasilkan prediksi count per kelas (B1/B2/B3/B4) → dibandingkan ke GT.
+4. **Metrik keberhasilan:** sebuah pohon dianggap **pass** jika prediksi setiap kelas meleset maksimal ±1 dari GT. Acc ±1 = proporsi pohon yang pass dari total 228.
+5. **Split informasi:** data punya label `train/val/test` (dari pipeline YOLO asli), tapi label ini tidak dipakai untuk memisahkan training — hanya untuk audit distribusi error. Distribusi aktual: train 196 pohon, test 31 pohon, val 1 pohon.
+6. **Tidak ada data leakage:** parameter/threshold metode tidak di-fit ke 228 pohon ini. Semua metode closed-form dan deterministic.
+
+#### Ringkasan Angka
+
+| Item | Nilai |
+|---|---:|
+| Pohon dievaluasi | 228 |
+| Gambar diproses (est.) | ~912 |
+| Sisi per pohon | 4 (mayoritas), 8 (±45 pohon terbaru) |
+| Kelas dievaluasi | 4 (B1, B2, B3, B4) |
+| Metode yang dibandingkan | 25+ |
+| Metode terbaik | `v9_selector` |
+| Acc ±1 terbaik | 98.68% (225 / 228 pohon pass) |
+| Pohon yang masih gagal | 3 |
+
+#### Metric utama:
 
 - **Acc +/-1 per class per tree**
 - metrik sekunder: **MAE** dan **Mean Total Error**
 
-| Rank | Method | Acc +/-1 | MAE |
-|---:|---|---:|---:|
-| 1 | `v9_selector` | **98.68%** | **0.2533** |
-| 2 | `v9_b2_median_v6` | 96.49% | 0.2588 |
-| 3 | `v6_selector` | 96.49% | 0.2632 |
-| 4 | `v9_median_strong5` | 95.18% | 0.2390 |
-| 5 | `stacking_bracketed_v7` | 94.30% | 0.2643 |
+| Rank | Method | Gen | Acc +/-1 | MAE | Mean Total Err | Gagal |
+|---:|---|---|---:|---:|---:|---:|
+| 1 | `v9_selector` | v9 | **98.68%** | **0.2533** | 1.0132 | 3 |
+| 2 | `v9_b2_median_v6` | v9 | 96.49% | 0.2588 | 1.0351 | 8 |
+| 3 | `v6_selector` | v6 | 96.49% | 0.2632 | 1.0526 | 8 |
+| 4 | `v9_median_strong5` | v9 | 95.18% | 0.2390 | 0.9561 | 11 |
+| 5 | `v7_stacking_bracketed` | v7 | 94.30% | 0.2643 | 1.0570 | 13 |
+| 6 | `v7_stacking_density` | v7 | 94.30% | 0.2708 | 1.0833 | 13 |
+| 7 | `v8_entropy_modulated` | v8 | 94.30% | 0.2763 | 1.1053 | 13 |
+| 8 | `v5_adaptive_corrected` | v5 | 93.86% | 0.2774 | 1.1096 | 14 |
+| 9 | `v8_b2_b4_boosted` | v8 | 92.54% | 0.2632 | 1.0526 | 17 |
+| 10 | `v5_best_visibility_grid` | v5 | 92.54% | 0.2664 | 1.0658 | 17 |
+| 11 | `v7_ordinal_b3` | v7 | 91.23% | 0.2939 | 1.1754 | 20 |
+| 12 | `v5_class_aware_vis` | v5 | 85.09% | 0.3805 | 1.5219 | 34 |
+| 13 | `v8_side_agreement` | v8 | 83.33% | 0.3618 | 1.4474 | 38 |
+| 14 | `v8_floor_anchor_50` | v8 | 69.74% | 0.4211 | 1.6842 | 69 |
+| — | `v8_multi_consensus` | v8 | 18.86% | 0.9583 | 3.8333 | 185 |
+| — | `v8_per_side_median` | v8 | 18.86% | 0.9583 | 3.8333 | 185 |
+
+Catatan: tie-break acc sama → ranking by MAE ascending. `v8_multi_consensus` dan `v8_per_side_median` tidak di-rank karena undercount ekstrem (setara `naive` dalam arah sebaliknya). Tabel ini mencakup semua metode yang dievaluasi pada 228 pohon JSON di benchmark v9.
 
 ### Rekomendasi Pakai Metode
 
