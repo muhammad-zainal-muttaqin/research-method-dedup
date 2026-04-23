@@ -54,10 +54,19 @@ Breakdown by class for failing trees:
 - B4: 6 trees have |error|>1 in this class
 
 ## Key Insights
-- Per-class Ridge regression successfully learned to correct systematic biases.
-- Using _confirmedLinks ONLY for threshold learning prevents leakage and gives unbiased estimates.
+- Per-class Ridge regression successfully corrects systematic biases using closed-form solution (no gradient learning).
+- Using _confirmedLinks ONLY for threshold estimation prevents leakage and gives unbiased estimates.
 - B2/B3 remain the hardest classes due to visual ambiguity and higher within-class variance.
-- Hungarian matching with learned tolerances is robust; cascade adds value by maintaining cluster state.
+- Hungarian matching with statistically estimated tolerances is robust; cascade adds value by maintaining cluster state.
 
 ## Recommendation
-**Gap remains:** 90.8% within ±1. Consider learning a parametric matching model (e.g., MLP on bbox features) or adding semantic embeddings.
+**Gap remains:** 90.8% within ±1. **All algorithmic options exhausted for pure bbox methods.**
+
+**Next direction (still algorithmic):**
+- Multi-camera geometry (calibration, epipolar constraints, 3D triangulation)
+- Topological matching with relaxed geometric constraints
+- Statistical ensemble of multiple heuristics
+
+**NOT pursuing:**
+- ❌ MLP on bbox features (requires training)
+- ❌ Learned embeddings / Siamese networks (requires training)

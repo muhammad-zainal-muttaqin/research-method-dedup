@@ -29,6 +29,32 @@ Plateau seluruh rejim 4-kelas modern: **0.24–0.27 mAP50-95**.
 
 > **Decision metric utama: `mAP50-95`.** Bukan `mAP@0.5` (Section 8.1 lama harus dibaca dengan ini in mind).
 
+### 0.2a Algorithmic-Only Constraint (CRITICAL)
+
+> **Project Direction: 100% Algorithmic/Heuristic — No Training Allowed**
+
+This research project **explicitly rejects** learned approaches for the deduplication task. All methods must be:
+
+| Allowed | Not Allowed |
+|---------|-------------|
+| Handcrafted geometric rules | Neural network training |
+| Statistical corrections (closed-form) | Learned embeddings (Siamese, etc.) |
+| Graph algorithms (Hungarian, MST) | Gradient-based optimization |
+| Camera geometry / 3D triangulation | MLP on bbox features |
+| Combinatorial optimization | Model-dependent features (YOLO neck) |
+
+**Rationale:**
+- Only 228 labeled trees — too small for reliable learned matcher
+- Heuristic methods achieve 92% ceiling with zero overfitting risk
+- Algorithmic methods are interpretable, deterministic, and portable
+- Breaking 92% requires better geometric modeling, not more parameters
+
+**Verification requirement:** Any proposed method must satisfy:
+- ✅ No gradient computation
+- ✅ No parameter learning from data
+- ✅ Handcrafted rules or closed-form formulas only
+- ✅ Deterministic (same input → same output)
+
 ### 0.3 Bottleneck Struktural (Empirically Confirmed)
 
 1. **B2/B3 ambiguity** — linear probe precision B2=0.394, B3=0.420; E0 confusion B2→B3 ≈34%. Hipotesis kuat: **label-ceiling**, bukan optimization.

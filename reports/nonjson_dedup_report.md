@@ -131,11 +131,14 @@ Dengan kata lain, **rasio dedup yang benar ≈ 56%**.
 | **Pohon ber-JSON (228)** | Gunakan **`visibility`** (akurasi ±1 = 92.1%) atau `corrected` (90.8%) |
 | **Hindari** | `learned_graph`, `cascade_match`, `feature_cluster` untuk TXT labels — undercount parah |
 
-### Untuk Research Selanjutnya
+### Untuk Research Selanjutnya (Algorithmic Only)
 
 - **Tidak usah** tuning heuristic bbox lagi — ceiling ≈ 92%
-- **Langsung ke** embedding-based cross-view matching (Siamese/CNN pada bbox crops) untuk tembus >95%
-- **Pertimbangkan** retraining model YOLO dengan data JSON-annotated untuk meningkatkan kualitas TXT labels
+- **Langsung ke** geometric algorithmic methods untuk tembus >95%:
+  - Multi-camera geometry (calibration, epipolar constraints, 3D triangulation)
+  - Topological matching dengan relaxed constraints
+  - Statistical ensemble refinement
+- **JANGAN** gunakan embedding-based matching — requires training, overfitting risk on 228 samples
 
 ---
 

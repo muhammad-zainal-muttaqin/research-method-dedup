@@ -159,27 +159,60 @@ Pohon non-JSON hanya memiliki YOLO TXT labels (prediksi model), bukan anotasi ma
 | Pohon ber-JSON (228) | Gunakan **`visibility`** (92.1% ±1) atau `corrected` (90.8% ±1) |
 | Hindari | `learned_graph`, `cascade_match`, `feature_cluster` untuk TXT labels |
 
-## MultiViewAggregator & Next Step
+## Next Step: Algorithmic Advancement
 
-**Apa itu MultiViewAggregator?**
+Berdasarkan hasil dedup research, **heuristic bbox ceiling ≈ 92%** (visibility method). Ini dicapai dengan **pure algorithmic** approach — tanpa training apapun.
 
-`MultiViewAggregator` adalah pipeline inference-based counting yang menggunakan **feature embedding dari YOLO neck** (bukan hanya bbox koordinat) untuk melakukan cross-view matching. Cara kerjanya:
-1. Deteksi setiap sisi menggunakan model YOLO (AR29 weights)
-2. Capture feature map dari neck (pre-head layer) via forward hook
-3. ROI-pool embedding per bbox
-4. Link deteksi antar-sisi dengan greedy clustering berdasarkan **cosine similarity embedding** + intra-class constraint
-5. Output = unique bunch count per kelas per pohon
+### Current Algorithmic Methods (ALL No-Training)
 
-Detail implementasi ada di `RESEARCH.md` Section 23. Skrip evaluasi referensi: `scripts/eval_multiview.py`.
+| Method | Accuracy | Type | Notes |
+|--------|----------|------|-------|
+| **visibility** | **92.1%** | Heuristic | Best: geometric downweighting by `cx` |
+| corrected | 90.8% | Statistical | Fixed factor division |
+| hungarian_match | 18.9% | Algorithmic | Fails: too rigid for noisy TXT |
+| graph/cluster | <5% | Algorithmic | Fails: over-merge on noise |
 
-**Next step apa sekarang?**
+### Research Direction: Pure Algorithmic Only
 
-Berdasarkan hasil dedup research, **heuristic bbox ceiling ≈ 92%**. Untuk tembus > 95% butuh signal visual yang lebih kuat dari sekadar koordinat bbox. Dua jalur parallel:
+To break past 92% **without any training**, we pursue:
 
-1. **Implement & evaluasi MultiViewAggregator** — gunakan AR29 weights, jalankan pada 228 pohon JSON, bandingkan count MAE vs visibility/corrected. Target: beat 92.1% ±1 accuracy.
-2. **Siamese/CNN embedding pada bbox crops** — kalau neck embedding tidak cukup, latih network terpisah pada crop bbox untuk cross-view similarity.
+1. **Multi-Camera Geometry** (Active)
+   - Intrinsic/extrinsic calibration dari 4 views
+   - Fundamental matrix + epipolar constraints
+   - 3D triangulation dari 2D detections
+   - **Algorithmic:** Pure geometry, no learning
 
-Jika MultiViewAggregator tidak beat heuristic ceiling setelah tuning, rekomendasi = pivot ke retrain YOLO dengan data JSON-annotated untuk meningkatkan kualitas TXT labels, atau pertimbangkan task reframing (3-class: B1, B23, B4).
+2. **Topological Matching**
+   - Graph-based matching dengan geometric constraints
+   - Bipartite matching dengan relaxed thresholds
+   - **Algorithmic:** Combinatorial optimization
+
+3. **Stat Ensemble Refinement**
+   - Combining multiple heuristics (not learned weights)
+   - Median/consensus aggregation
+   - **Algorithmic:** Statistical voting
+
+4. **3-Class Reframing (Fallback)**
+   - Merge B2+B3 → B23 (unambiguous pair)
+   - Simpler 3-class problem
+   - **Algorithmic:** Problem reformulation, no training
+
+### What We Do NOT Do
+
+| Approach | Why Avoided |
+|----------|-------------|
+| MultiViewAggregator (neck features) | Model-dependent, uses learned features |
+| Siamese/CNN embedding | Requires training, overfitting risk on 228 samples |
+| Learned thresholds with backprop | Not algorithmic |
+| MLP on bbox features | Requires training |
+
+### Verification
+
+All methods must satisfy:
+- ✅ No gradient computation
+- ✅ No parameter learning from data
+- ✅ Handcrafted rules or closed-form formulas only
+- ✅ Deterministic (same input → same output)
 
 ## Decision Metric
 
@@ -192,3 +225,9 @@ For **counting pipeline**, primary metric = **% trees within ±1 error per class
 Per RESEARCH.md Section 30.4 — do not re-attempt: imgsz 800, focal loss, naive oversampling, two-stage classifiers (DINOv2/EfficientNet/CORAL), YOLOv9e, RT-DETR-L, RF-DETR, SGD/AdamW sweep, label_smoothing, long brute-force runs.
 
 **New:** Do NOT tune heuristic bbox parameters further — ceiling ≈ 92% already reached. Graph/cascade/cluster methods on TXT labels are fundamentally broken due to coordinate noise.
+
+**CRITICAL:** Do NOT pursue learned approaches — project is **100% algorithmic/heuristic only**:
+- ❌ Siamese/CNN embedding (requires training)
+- ❌ MultiViewAggregator with neck features (uses learned features)
+- ❌ MLP on bbox features (requires training)
+- ❌ Any learned thresholds via backprop

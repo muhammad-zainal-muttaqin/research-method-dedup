@@ -52,4 +52,13 @@ Breakdown by class for failing trees:
 - Ridge LOO-CV is fast and effective; RF offers marginal gains at higher compute.
 
 ## Recommendation
-**Gap remains:** 92.1% within ±1. Strongest remaining signal is likely visual appearance embedding; pursue embedding-based cross-view matching next.
+**Gap remains:** 92.1% within ±1. **All exhausted for pure bbox methods.**
+
+**Next direction (still algorithmic):**
+- Multi-camera geometry (calibration, epipolar constraints, 3D triangulation)
+- Topological matching with relaxed geometric constraints
+- Statistical ensemble of multiple heuristics
+
+**NOT pursuing:**
+- ❌ Embedding-based cross-view matching (requires learned features)
+- ❌ Siamese/CNN on bbox crops (requires training)
