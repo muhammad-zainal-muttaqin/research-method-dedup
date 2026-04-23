@@ -132,7 +132,7 @@ Pohon non-JSON only have **YOLO TXT predictions** (no manual linking). These lab
 
 ![Class Distribution](assets/class_distribution.png)
 
-| Class | JSON-Dedup (228) | Naive-Sum (725) | **Total** |
+| Class | JSON-Dedup (228) | Naive-Sum (717) | **Total** |
 |-------|-----------------:|----------------:|----------:|
 | B1 | 291 | 1,618 | **1,909** |
 | B2 | 532 | 2,974 | **3,506** |
@@ -142,7 +142,7 @@ Pohon non-JSON only have **YOLO TXT predictions** (no manual linking). These lab
 
 ### Estimated True Count (Non-JSON)
 
-Applying the verified dedup factor (÷1.788) to the 725 non-JSON trees:
+Applying the verified dedup factor (÷1.788) to the 717 non-JSON trees:
 
 | Class | Naive | Est. Unique |
 |-------|------:|------------:|
