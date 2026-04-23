@@ -2,113 +2,117 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Context
+
+**Task:** Multi-view oil palm fruit bunch counting. Convert detections from 4–8 photo sides per tree into **unique bunch count per maturity class**. Naive sum overcounts ~78.8% (same bunch seen across sides). Read `RESEARCH.md` Section 0 (esp. 0.6–0.9) before deep work.
+
+**Constraint:** **100% algorithmic / heuristic only.** No training, embeddings, backprop, or learned matchers. All methods must be deterministic and parameter-free (no gradient computation).
+
+**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. 228 have JSON GT (multi-view bunch links); 725 only have YOLO TXT predictions. Mostly 4 sides/tree, 45 newest have 8. Images 960×1280 JPEG. Classes ordinal B1→B4 (B1 ripest/lowest, B4 spiny/topmost). **Core hard problem: B2↔B3 visually ambiguous** (irreducible per JSON-01 audit, label noise = 0%).
+
+## Setup
+
+```bash
+pip install -r requirements.txt
+```
+
+Run all scripts from workspace root. Outputs go to `reports/<script>/`.
+
 ## Running Scripts
 
 ```bash
-# GT counting semua pohon (953) — no GPU, ~1 min
+# GT counting all 953 trees (no GPU, ~1 min)
 python scripts/count_all_trees.py
 
-# JSON-05 + JSON-01 audit (228 pohon JSON saja)
+# JSON-05 + JSON-01 audit (228 JSON trees)
 python scripts/count_gt_vs_naive.py
 
-# Dedup research heuristik pada 228 pohon JSON (v1 grid search)
-python scripts/dedup_research.py
+# Dedup research generations (each writes to reports/dedup_research_vN/)
+python scripts/dedup_research.py       # v1: grid search (corrected, visibility, graph, cluster)
+python scripts/dedup_research_v2.py    # v2: visibility + adaptive ridge + ensemble
+python scripts/dedup_research_v3.py    # v3: thresholds from _confirmedLinks
+python scripts/dedup_research_v4.py    # v4: pixel-aware HSV + Mahalanobis + Hungarian
+python scripts/dedup_research_v5.py    # v5: adaptive density-corrected
+python scripts/dedup_v5_focused.py     # v5 focused variant
+python scripts/dedup_research_v6.py    # v6: regime selector (96.49%)
+python scripts/dedup_research_v7.py    # v7: stacking + density family
+python scripts/dedup_research_v8.py    # v8: entropy + per-side distribution
+python scripts/dedup_research_v9.py    # v9: narrow regime overrides on v6 (CURRENT BEST 98.68%)
 
-# Dedup research v2 — visibility + adaptive ridge + ensemble stack
-python scripts/dedup_research_v2.py
-
-# Dedup research v3 — learned thresholds dari _confirmedLinks, then predict
-python scripts/dedup_research_v3.py
-
-# Dedup research v4 — pixel-aware empirical geometry (HSV + Mahalanobis + Hungarian)
-python scripts/dedup_research_v4.py
-
-# Dedup research v5 — adaptive density-corrected (current best: 93.86% Acc±1)
-python scripts/dedup_research_v5.py
-python scripts/dedup_v5_focused.py
-
-# Dedup research v6 — exploration near 93.86% ceiling (multiple methods tie)
-python scripts/dedup_research_v6.py
-
-# Dedup research v7
-python scripts/dedup_research_v7.py
-
-# Dedup research v8
-python scripts/dedup_research_v8.py
-
-# Final dedup all 953 pohon (228 JSON-validated + 717 non-JSON)
-python scripts/dedup_all_trees_final.py
-
-# Non-JSON dedup comparison & report generation
-python scripts/dedup_nonjson_compare.py
+# Final inference + comparison
+python scripts/dedup_all_trees_final.py    # all methods on 953 trees
+python scripts/dedup_nonjson_compare.py    # non-JSON validation + report
 ```
 
-Semua script dijalankan dari workspace root dan menulis output ke `reports/`.
+## Current Best (as of 2026-04-24)
 
-## 2026-04-23 Status Override
+Benchmark: 228 JSON trees, **Acc ±1 per class per tree** (primary), MAE + Mean Total Error (secondary).
 
-Jika ada bagian CLAUDE.md di bawah yang masih menyebut plateau `93.86%` atau `v7` sebagai current best, abaikan dan pakai blok ini.
+| Rank | Method | Acc ±1 | MAE | Notes |
+|---:|---|---:|---:|---|
+| 1 | `v9_selector` | **98.68%** | **0.2533** | Only 3/228 trees still fail |
+| 2 | `v9_b2_median_v6` | 96.49% | 0.2588 | |
+| 3 | `v6_selector` | 96.49% | 0.2632 | v9 default backbone |
+| 4 | `v9_median_strong5` | 95.18% | 0.2390 | |
+| 5 | `stacking_bracketed_v7` | 94.30% | 0.2643 | |
 
-| Rank | Method | Acc ±1 | MAE |
-|---:|---|---:|---:|
-| 1 | `v6_selector` | **96.49%** | **0.2632** |
-| 2 | `stacking_bracketed_v7` | 94.30% | 0.2643 |
-| 3 | `stacking_density_v7` | 94.30% | 0.2708 |
-| 4 | `entropy_modulated_v8` | 94.30% | 0.2763 |
-| 5 | `adaptive_corrected` | 93.86% | 0.2774 |
+**Recommendations:**
+- **JSON trees (228) with GT** → `v9_selector`
+- **Non-JSON trees (725) without GT** → prefer `hybrid_vis_corr`, `side_coverage`, `stacking_density_v7`, `best_visibility_grid`, or `visibility`. Don't assume v9_selector wins here — its benchmark is JSON-only.
 
-- JSON with GT: use **`v6_selector`**.
-- Non-JSON without GT: prefer `hybrid_vis_corr`, `side_coverage`, `stacking_density_v7`, `best_visibility_grid`, or `visibility`.
+**v9 logic (regime overrides on top of v6_selector):**
+1. default → `v6_selector`
+2. `b4_only_overlap` → `v7_stacking_bracketed`
+3. `classaware_compact_lowb4` → `v8_b2_b4_boosted`
+4. `b3b4_only_lowtotal` → `v8_floor_anchor_50`
+5. `dense_allside_moderatedup` → `v8_b2_b4_boosted`
 
-## Project Context
+## Method Evolution (Why v9 Wins)
 
-**Task:** Multi-view oil palm fruit bunch counting using ground truth JSON labels (no model inference yet). The research direction is defined in `RESEARCH.md` — read Section 0 first, especially 0.6–0.9, before anything else.
+| Gen | Best Method | Acc ±1 | Lesson |
+|---|---|---:|---|
+| naive | — | very poor | overcount ~78.8% baseline |
+| v1 | `corrected` | 90.79% | global divisor already beats naive hugely |
+| v2 | `visibility` | 92.11% | bbox geometry / position matters |
+| v3 | `per_class_ridge` | 90.79% | learned-from-link thresholds didn't break ceiling |
+| v4 | `visibility` | 92.11% | adding HSV + Hungarian didn't beat v2 |
+| v5 | `adaptive_corrected` | 93.86% | adaptive divisor + class-aware family — first stable >93% |
+| v6 | `v6_selector` | **96.49%** | **turning point** — no single global rule wins; route per regime |
+| v7 | `stacking_bracketed` | 94.30% | stacking/density family strong but loses to v6 |
+| v8 | `stacking_bracketed_v7` | 94.30% | entropy/per-side signals add nothing |
+| v9 | `v9_selector` | **98.68%** | narrow high-confidence overrides on v6 default |
 
-**Dataset:** DAMIMAS (854 pohon) + LONSUM (99 pohon) = **953 pohon total**. Mayoritas 4 sisi per pohon; 45 pohon terbaru punya 8 sisi. Total ~3,992+ images (960×1280 JPEG). 4 maturity classes:
-- `B1` — reddish, fully ripe, lowest position
-- `B2` — half-red/black transition, above B1
-- `B3` — fully black, above B2
-- `B4` — smallest, spiny, black→green, topmost
+**Key takeaway:** strict matching (Hungarian, graph, cluster) **fails** on noisy TXT labels (<20% accuracy). Adaptive statistical correction + regime-routing wins. B2↔B3 ambiguity is the irreducible ceiling, not label noise.
 
-**Key constraint:** B1→B4 is ordinal (maturity scale). B2↔B3 are visually ambiguous — this is the core hard problem.
+## Non-JSON Pipeline (725 trees, TXT-only)
+
+TXT labels have coordinate + classification noise (B2↔B3 swaps). Validation on 228 JSON trees (older method comparison):
+
+| Method | Acc ±1 | Verdict |
+|---|---:|---|
+| `visibility` | 92.11% | Recommended |
+| `corrected` | 90.79% | Recommended |
+| `hungarian_match` | 18.86% | Mild undercount |
+| `cascade_match` / `learned_graph` / `feature_cluster` | <5% | **Broken on TXT — do not use** |
+| `naive` | 2.63% | Baseline only |
+
+Verified dedup ratio ≈ 56% (from JSON-05: naive ÷ 1.788). On 725 non-JSON trees: `corrected` → 57.4%, `visibility` → 55.7% (both valid). v7+ methods may also apply but unvalidated.
 
 ## Repository Layout
 
 ```
-json/               228 JSON files (one per tree) with multi-view bunch-linking
+json/                  228 JSON files (multi-view bunch-linking GT)
 dataset/
-  data.yaml         YOLO dataset config (path: /workspace/dataset)
+  data.yaml            YOLO config (path: /workspace/dataset)
   images/{train,val,test}/
   labels/{train,val,test}/
-scripts/
-  count_all_trees.py          GT counting semua 953 pohon (228 JSON-dedup + 725 TXT-naive)
-  count_gt_vs_naive.py        JSON-05 + JSON-01 audit (228 pohon JSON)
-  dedup_research.py           v1: Grid search heuristik (corrected, visibility, graph, cluster)
-  dedup_research_v2.py        v2: Adaptive ridge + ensemble stack
-  dedup_research_v3.py        v3: Learned thresholds dari _confirmedLinks + Ridge/Hungarian
-  dedup_research_v4.py        v4: Pixel-aware HSV + Mahalanobis + Hungarian
-  dedup_research_v5.py        v5: Adaptive density-corrected (93.86% Acc±1)
-  dedup_v5_focused.py         v5 focused variant
-  dedup_research_v6.py        v6: Exploration near 93.86% ceiling (7-way tie, plateau confirmed)
-  dedup_research_v7.py        v7: Generalization-first (stacking_density 94.30% — current best)
-  dedup_all_trees_final.py    Final run: semua metode pada 953 pohon
-  dedup_nonjson_compare.py    Validasi & report non-JSON dedup
-reports/
-  full_gt_count/              count_all_trees.csv, summary_by_domain.csv, summary_by_split.csv, summary.md
-  json_05/                    count_mae_gt.csv — GT vs naive sum per tree (228 pohon)
-  label_audit/                per_class_inconsistency.csv, leak_pairs.csv, inconsistent_bunches.csv
-  dedup_research/             method_comparison.csv, best_method_details.csv, summary.md
-  dedup_research_v2/          method_comparison_v2.csv, error_analysis_v2.csv, summary_v2.md
-  dedup_research_v3/          method_comparison_v3.csv, error_analysis_v3.csv, learned_thresholds.json, summary_v3.md
-  dedup_research_v4/          summary_v4.md + comparison csvs
-  dedup_research_v5/          summary_v5.md + comparison csvs
-  dedup_research_v6/          summary_v6.md + comparison csvs
-  dedup_research_v7/          summary_v7.md + method_comparison_v7.csv + loto_results.csv + split_breakdown_v7.csv
-  dedup_all_trees_final/      all_trees_dedup_counts.csv, json_228_accuracy.csv, nonjson_725_*.csv
-  nonjson_dedup_compare/      all_trees_dedup_counts.csv, json_accuracy_validation.csv, nonjson_counts_by_method.csv
-  nonjson_dedup_report.md     Laporan utama non-JSON dedup
-contract-work/                validation contracts, v4 analysis, dry-run & algorithmic-advancement reports
-AGENTS.md                     agent configuration
+scripts/               see "Running Scripts" — count_*, dedup_research_v1..v9, dedup_*_final
+reports/<script>/      every script writes its outputs here
+contract-work/         validation contracts, v4 analysis, dry-run + algorithmic-advancement reports
+RESEARCH.md            primary research doc — read Section 0 first
+README.md              project overview + method evolution narrative
+AGENTS.md              agent configuration
+tod.md                 working notes
 ```
 
 ## JSON Schema (per tree)
@@ -116,168 +120,29 @@ AGENTS.md                     agent configuration
 ```json
 {
   "tree_id": "20260422-DAMIMAS-001",
-  "tree_name": "DAMIMAS_A21B_0001",
   "split": "train",
-  "images": {
-    "sisi_1": {
-      "annotations": [{"class_name": "B3", "bbox_yolo": [...], "box_index": 0}, ...]
-    }
-  },
-  "bunches": [
-    {
-      "bunch_id": 1,
-      "class": "B3",
-      "class_mismatch": false,
-      "appearance_count": 2,
-      "appearances": [{"side": "sisi_1", "box_index": 0, "class_name": "B3"}, ...]
-    }
-  ],
-  "summary": {
-    "total_unique_bunches": 8,
-    "total_detections": 17,
-    "by_class": {"B1": 1, "B2": 2, "B3": 5, "B4": 0}
-  }
+  "images": {"sisi_1": {"annotations": [{"class_name": "B3", "bbox_yolo": [...], "box_index": 0}]}},
+  "bunches": [{"bunch_id": 1, "class": "B3", "appearance_count": 2, "appearances": [...]}],
+  "summary": {"total_unique_bunches": 8, "by_class": {"B1": 1, "B2": 2, "B3": 5, "B4": 0}}
 }
 ```
 
-`summary.by_class` = GT unique bunch count per class (the dedup ground truth).  
-Naive sum = sum of all `annotations` across 4 sides without dedup → ~79% overcounting on average.
-
-## Experiment Status (as of 2026-04-23)
-
-| Exp | Description | Status | Key result |
-|-----|-------------|--------|------------|
-| AR29 | YOLO11l 640 b16 standard val | **Baseline** | 0.264 mAP50-95 |
-| AR34 | YOLO11l 80ep train+test | Upper bound (not fair) | 0.269 |
-| JSON-05 | GT counting vs naive sum | **DONE** | 78.8% overcounting; dedup essential |
-| JSON-01 | Label consistency audit | **DONE** | 0% mismatch all classes → labels clean |
-| Dedup v1 | Heuristic grid search (corrected, visibility, graph, cluster) | **DONE** | Best: corrected, 90.8% ±1 acc |
-| Dedup v2 | Visibility + adaptive ridge + ensemble stack | **DONE** | Best: visibility, 92.1% ±1 acc |
-| Dedup v3 | Learned thresholds + per-class Ridge | **DONE** | Best: per_class_ridge, 90.8% ±1 acc |
-| Dedup v4 | Pixel-aware HSV + Mahalanobis + Hungarian | **DONE** | Best: visibility, 92.1% ±1 acc (no gain over v2) |
-| Dedup v5 | Adaptive density-corrected | **DONE** | **adaptive_corrected, 93.86% ±1 acc (CI 90.79–96.93%)** |
-| Dedup v6 | Exploration near 93.86% ceiling | **DONE** | 7 methods tie at 93.86%; gap to 95% = 2 trees |
-| Dedup v7 | Generalization-first: LOTO + stacking density + bracket constraint | **DONE** | **stacking_density 94.30% (−LOTO gap 2.19pp); gap to 95% = 1 tree** |
-| Dedup Final | All methods on 953 trees (228 JSON + 717 non-JSON) | **DONE** | corrected & visibility viable; graph/cascade fail on TXT |
-| JSON-02/03/04 | Retrain paths | Deferred | Run only if needed |
-
-**JSON-01 verdict:** `H-LBL-1 FALSIFIED` — B2/B3 label noise is not the ceiling; B2↔B3 confusion is irreducible visual ambiguity.
-
-**Full GT counting (all 953 trees):** `scripts/count_all_trees.py` — DONE. Output di `reports/full_gt_count/`.
-
-**Dedup research verdict:** Heuristic bbox ceiling ≈ **93.86%** (v5 `adaptive_corrected`, bootstrap CI 90.79–96.93%). v6 confirms multiple methods (ceil/floor/adaptive corrected, tree_aware_switch, weighted_blend, residual_corrected) tie at 93.86% — plateau. Gap to 95% = 2 trees (14 trees with error > 1). Graph matching, cascade, and clustering **fail** on noisy TXT labels (< 20% accuracy). To break past 93.86% need embedding-based cross-view matching (excluded — project is algorithmic-only).
-
-## Non-JSON Dedup Pipeline (717 pohon tanpa JSON)
-
-Pohon non-JSON hanya memiliki YOLO TXT labels (prediksi model), bukan anotasi manual. TXT labels memiliki **noise koordinat** dan **noise klasifikasi** (B2↔B3 sering tertukar), sehingga metode yang bergantung pada matching ketat gagal.
-
-### Validasi Akurasi pada 228 Pohon JSON
-
-| Method | Mean MAE | Acc ±1 | Mean Total Err | Verdict |
-|--------|---------:|-------:|---------------:|---------|
-| **visibility** | 0.2719 | **92.11%** | 1.09 | **Recommended** |
-| **corrected** | 0.2851 | 90.79% | 1.14 | **Recommended** |
-| hungarian_match | 1.0976 | 18.86% | 4.39 | Undercount ringan |
-| cascade_match | 1.7730 | 4.39% | 7.09 | Undercount parah |
-| learned_graph | 1.8202 | 4.39% | 7.28 | Undercount parah |
-| feature_cluster | 1.8728 | 3.51% | 7.49 | Undercount parah |
-| naive | 2.1294 | 2.63% | 8.52 | Baseline (jangan pakai) |
-
-### Hasil Dedup pada 717 Pohon Non-JSON
-
-| Method | Total Count | Rasio vs Naive | Status |
-|--------|------------:|---------------:|--------|
-| naive | 13,665 | 100.0% | Overcount |
-| **corrected** | 7,779 | **57.4%** | **Valid** |
-| **visibility** | 7,510 | **55.7%** | **Valid** |
-| hungarian_match | 5,775 | 42.6% | Undercount |
-| learned_graph | 2,821 | 23.9% | Undercount parah |
-| cascade_match | 2,650 | 22.5% | Undercount parah |
-| feature_cluster | 2,411 | 20.6% | Undercount parah |
-
-**Rasio dedup yang benar ≈ 56%** (dari verifikasi JSON-05: naive / 1.788). corrected (57.4%) dan visibility (55.7%) sangat mendekati ground truth.
-
-### Rekomendasi Produksi
-
-| Skenario | Rekomendasi |
-|----------|-------------|
-| Pohon non-JSON (717) | Gunakan **`corrected`** atau **`visibility`**. Rasio ~55–57% sudah terverifikasi |
-| Pohon ber-JSON (228) | Gunakan **`visibility`** (92.1% ±1) atau `corrected` (90.8% ±1) |
-| Hindari | `learned_graph`, `cascade_match`, `feature_cluster` untuk TXT labels |
-
-## Next Step: Algorithmic Advancement
-
-Berdasarkan hasil dedup research, **heuristic bbox ceiling ≈ 93.86%** (v5 `adaptive_corrected`, v6 confirmed plateau). Ini dicapai dengan **pure algorithmic** approach — tanpa training apapun.
-
-### Current Algorithmic Methods (ALL No-Training)
-
-| Method | Accuracy | Type | Notes |
-|--------|----------|------|-------|
-| **stacking_density (v7)** | **94.30%** | Statistical | Per-class vertical stacking density correction |
-| stacking_bracketed (v7) | 94.30% | Statistical | Stacking density + floor/ceiling bracket |
-| adaptive_corrected (v5/v6) | 93.86% | Statistical | Density-corrected divisor per tree |
-| ceil/floor/residual/blend (v6) | 93.86% | Statistical | Tie with adaptive_corrected |
-| visibility | 92.1% | Heuristic | Geometric downweighting by `cx` |
-| corrected | 90.8% | Statistical | Fixed factor division |
-| hungarian_match | 18.9% | Algorithmic | Fails: too rigid for noisy TXT |
-| graph/cluster | <5% | Algorithmic | Fails: over-merge on noise |
-
-### Research Direction: Pure Algorithmic Only
-
-To break past 93.86% **without any training**, we pursue:
-
-1. **Multi-Camera Geometry** (Active)
-   - Intrinsic/extrinsic calibration dari 4 views
-   - Fundamental matrix + epipolar constraints
-   - 3D triangulation dari 2D detections
-   - **Algorithmic:** Pure geometry, no learning
-
-2. **Topological Matching**
-   - Graph-based matching dengan geometric constraints
-   - Bipartite matching dengan relaxed thresholds
-   - **Algorithmic:** Combinatorial optimization
-
-3. **Stat Ensemble Refinement**
-   - Combining multiple heuristics (not learned weights)
-   - Median/consensus aggregation
-   - **Algorithmic:** Statistical voting
-
-4. **3-Class Reframing (Fallback)**
-   - Merge B2+B3 → B23 (unambiguous pair)
-   - Simpler 3-class problem
-   - **Algorithmic:** Problem reformulation, no training
-
-### What We Do NOT Do
-
-| Approach | Why Avoided |
-|----------|-------------|
-| MultiViewAggregator (neck features) | Model-dependent, uses learned features |
-| Siamese/CNN embedding | Requires training, overfitting risk on 228 samples |
-| Learned thresholds with backprop | Not algorithmic |
-| MLP on bbox features | Requires training |
-
-### Verification
-
-All methods must satisfy:
-- ✅ No gradient computation
-- ✅ No parameter learning from data
-- ✅ Handcrafted rules or closed-form formulas only
-- ✅ Deterministic (same input → same output)
+`summary.by_class` is the dedup ground truth.
 
 ## Decision Metric
 
-`mAP50-95` is the primary metric (not `mAP@0.5`). All comparisons must include bootstrap 95% CI vs AR29. A gap < 0.005 mAP50-95 is noise.
+- **Counting (primary):** % trees within ±1 error per class. Secondary: MAE, Mean Total Error.
+- **YOLO model (legacy AR29 baseline):** mAP50-95 (not mAP@0.5). Bootstrap 95% CI required vs AR29; gap <0.005 = noise.
 
-For **counting pipeline**, primary metric = **% trees within ±1 error per class** (secondary: Mean MAE, Mean Total Error).
+## What NOT to Do
 
-## What NOT to re-run
+**Algorithmic constraint (hard):**
+- ❌ Siamese / CNN embedding (training)
+- ❌ MultiViewAggregator with neck features (learned features)
+- ❌ MLP on bbox features (training)
+- ❌ Learned thresholds via backprop
+- ❌ Strict matching (Hungarian/graph/cluster) on TXT labels — broken by coordinate noise
 
-Per RESEARCH.md Section 30.4 — do not re-attempt: imgsz 800, focal loss, naive oversampling, two-stage classifiers (DINOv2/EfficientNet/CORAL), YOLOv9e, RT-DETR-L, RF-DETR, SGD/AdamW sweep, label_smoothing, long brute-force runs.
+**Don't re-run** (per RESEARCH.md §30.4): imgsz 800, focal loss, naive oversampling, two-stage classifiers (DINOv2/EfficientNet/CORAL), YOLOv9e, RT-DETR-L, RF-DETR, SGD/AdamW sweep, label_smoothing, long brute-force grids.
 
-**New:** v7 broke the v5/v6 plateau: `stacking_density` reaches 94.30% (gap to 95% = 1 tree). LOTO gap = 2.19pp (mild overfit). Test split still lags train by 12pp — likely irreducible without more test-similar training data or cross-view embeddings. Do NOT pursue further grid search. Graph/cascade/cluster methods on TXT labels are fundamentally broken due to coordinate noise.
-
-**CRITICAL:** Do NOT pursue learned approaches — project is **100% algorithmic/heuristic only**:
-- ❌ Siamese/CNN embedding (requires training)
-- ❌ MultiViewAggregator with neck features (uses learned features)
-- ❌ MLP on bbox features (requires training)
-- ❌ Any learned thresholds via backprop
+**Don't pursue further grid search past v9.** 3/228 remaining failures are likely irreducible without cross-view embeddings (excluded by constraint).
