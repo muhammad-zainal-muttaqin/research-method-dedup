@@ -375,36 +375,54 @@ Hasil `scripts/dedup_all_953.py` — menjalankan semua metode ke 945 pohon unik 
 
 ### Jumlah Tandan Total per Metode
 
-| Metode | B1 | B2 | B3 | B4 | Total | Rasio vs Naive |
-|---|---:|---:|---:|---:|---:|---:|
-| `naive` | 2.196 | 3.924 | 8.471 | 3.482 | **18.073** | 1,000 |
-| `corrected` | 1.229 | 2.212 | 4.708 | 2.102 | **10.251** | 0,567 |
-| `adaptive_corrected` | 1.155 | 2.306 | 4.881 | 2.185 | **10.527** | 0,583 |
-| `density_scaled_vis` | 1.232 | 2.179 | 4.591 | 1.934 | **9.936** | 0,550 |
-| `side_coverage` | 1.234 | 2.187 | 4.570 | 1.952 | **9.943** | 0,550 |
-| `hybrid_vis_corr` | 1.232 | 2.190 | 4.610 | 1.956 | **9.988** | 0,553 |
-| `visibility` | 1.232 | 2.172 | 4.563 | 1.933 | **9.900** | 0,548 |
-| `best_visibility_grid` | 1.268 | 2.298 | 4.898 | 2.027 | **10.491** | 0,581 |
-| `adaptive_visibility` | 1.289 | 2.318 | 4.922 | 2.051 | **10.580** | 0,585 |
-| `class_aware_vis` | 1.229 | 2.433 | 5.253 | 1.928 | **10.843** | 0,600 |
-| `relaxed_match` | 691 | 893 | 950 | 811 | **3.345** | 0,185 ← undercount |
-| `v6_selector` | 1.158 | 2.317 | 4.836 | 2.156 | **10.467** | 0,579 |
-| `v7_stacking_density` | 1.128 | 2.260 | 4.807 | 2.144 | **10.339** | 0,572 |
-| `v7_stacking_bracketed` | 1.165 | 2.277 | 4.817 | 2.162 | **10.421** | 0,577 |
-| `v8_entropy_modulated` | 1.205 | 2.309 | 4.857 | 2.236 | **10.607** | 0,587 |
-| `v8_entropy_stacking` | 1.205 | 2.309 | 4.857 | 2.236 | **10.607** | 0,587 |
-| `v8_b2_b4_boosted` | 1.165 | 2.109 | 4.817 | 2.038 | **10.129** | 0,560 |
-| `v8_floor_anchor_50` | 1.118 | 2.006 | 3.920 | 1.905 | **8.949** | 0,495 |
-| `v8_per_side_median` | 869 | 1.511 | 2.777 | 1.421 | **6.578** | 0,364 ← undercount |
-| `v8_side_agreement` | 1.036 | 2.008 | 4.269 | 1.880 | **9.193** | 0,509 |
-| `v8_multi_consensus` | 869 | 1.511 | 2.777 | 1.421 | **6.578** | 0,364 ← undercount |
-| `v9_selector` | 1.158 | 2.303 | 4.833 | 2.155 | **10.449** | 0,578 |
-| `v9_b2_median_v6` | 1.158 | 2.153 | 4.836 | 2.156 | **10.303** | 0,570 |
-| `v9_median_strong5` | 1.165 | 2.153 | 4.767 | 2.045 | **10.130** | 0,561 |
+Diurutkan dari paling dekat ke target rasio empiris **0,5594** (dihitung dari 228 pohon ber-GT). `v7_ordinal_b3` dikecualikan karena broken (output negatif).
+
+| Rank | Metode | B1 | B2 | B3 | B4 | Total | Rasio | Jarak ke 0,56 |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|
+| 1 | `v8_b2_b4_boosted` | 1.165 | 2.109 | 4.817 | 2.038 | **10.129** | 0,5604 | 0,0010 |
+| 2 | `v9_median_strong5` | 1.165 | 2.153 | 4.767 | 2.045 | **10.130** | 0,5605 | 0,0011 |
+| 3 | `hybrid_vis_corr` | 1.232 | 2.190 | 4.610 | 1.956 | **9.988** | 0,5526 | 0,0068 |
+| 4 | `corrected` | 1.229 | 2.212 | 4.708 | 2.102 | **10.251** | 0,5672 | 0,0078 |
+| 5 | `side_coverage` | 1.234 | 2.187 | 4.570 | 1.952 | **9.943** | 0,5502 | 0,0092 |
+| 6 | `density_scaled_vis` | 1.232 | 2.179 | 4.591 | 1.934 | **9.936** | 0,5498 | 0,0096 |
+| 7 | `v9_b2_median_v6` | 1.158 | 2.153 | 4.836 | 2.156 | **10.303** | 0,5701 | 0,0107 |
+| 8 | `visibility` | 1.232 | 2.172 | 4.563 | 1.933 | **9.900** | 0,5478 | 0,0116 |
+| 9 | `v7_stacking_density` | 1.128 | 2.260 | 4.807 | 2.144 | **10.339** | 0,5721 | 0,0127 |
+| 10 | `v7_stacking_bracketed` | 1.165 | 2.277 | 4.817 | 2.162 | **10.421** | 0,5766 | 0,0172 |
+| 11 | `v9_selector` | 1.158 | 2.303 | 4.833 | 2.155 | **10.449** | 0,5782 | 0,0188 |
+| 12 | `v6_selector` | 1.158 | 2.317 | 4.836 | 2.156 | **10.467** | 0,5792 | 0,0198 |
+| 13 | `best_visibility_grid` | 1.268 | 2.298 | 4.898 | 2.027 | **10.491** | 0,5805 | 0,0211 |
+| 14 | `adaptive_corrected` | 1.155 | 2.306 | 4.881 | 2.185 | **10.527** | 0,5825 | 0,0231 |
+| 15 | `adaptive_visibility` | 1.289 | 2.318 | 4.922 | 2.051 | **10.580** | 0,5854 | 0,0260 |
+| 16 | `v8_entropy_modulated` | 1.205 | 2.309 | 4.857 | 2.236 | **10.607** | 0,5869 | 0,0275 |
+| 17 | `v8_entropy_stacking` | 1.205 | 2.309 | 4.857 | 2.236 | **10.607** | 0,5869 | 0,0275 |
+| 18 | `class_aware_vis` | 1.229 | 2.433 | 5.253 | 1.928 | **10.843** | 0,6000 | 0,0406 |
+| 19 | `v8_side_agreement` | 1.036 | 2.008 | 4.269 | 1.880 | **9.193** | 0,5087 | 0,0507 |
+| 20 | `v8_floor_anchor_50` | 1.118 | 2.006 | 3.920 | 1.905 | **8.949** | 0,4952 | 0,0642 |
+| — | `v8_per_side_median` | 869 | 1.511 | 2.777 | 1.421 | **6.578** | 0,3640 | 0,1954 ← undercount |
+| — | `v8_multi_consensus` | 869 | 1.511 | 2.777 | 1.421 | **6.578** | 0,3640 | 0,1954 ← undercount |
+| — | `relaxed_match` | 691 | 893 | 950 | 811 | **3.345** | 0,1851 | 0,3743 ← undercount |
+| — | `naive` | 2.196 | 3.924 | 8.471 | 3.482 | **18.073** | 1,0000 | 0,4406 ← overcount |
+
+### Mengapa Target Rasio ~0,56?
+
+Dari 228 pohon yang punya ground truth JSON, kita bisa hitung langsung:
+
+| | Naive sum | Unik (GT) | Rasio unik/naive |
+|---|---:|---:|---:|
+| B1 | 578 | 291 | 0,504 |
+| B2 | 950 | 532 | 0,560 |
+| B3 | 2.054 | 1.144 | 0,557 |
+| B4 | 826 | 499 | 0,604 |
+| **Total** | **4.408** | **2.466** | **0,5594** |
+
+Artinya: dari semua bbox yang terdeteksi pada 228 pohon ber-GT, hanya **55,94%** yang benar-benar tandan unik — sisanya adalah tandan yang sama terlihat dari sisi berbeda. Angka inilah yang jadi patokan: metode dedup yang baik harus menghasilkan rasio mendekati **~0,56** pada keseluruhan dataset.
+
+Metode yang jauh di bawah (misalnya `relaxed_match` = 0,185) artinya undercount parah. Metode yang mendekati 1,0 (naive) artinya tidak melakukan dedup sama sekali.
 
 ### Catatan Interpretasi
 
-- **Metode rekomendasi** (`v9_selector`, `v6_selector`, `corrected`, `visibility`, `hybrid_vis_corr`) → total sekitar **9.900–10.527**, rasio dedup ~0,55–0,58.
+- **Metode rekomendasi** (`v9_selector`, `v6_selector`, `corrected`, `visibility`, `hybrid_vis_corr`) → total sekitar **9.900–10.527**, rasio dedup ~0,55–0,58 — selaras dengan rasio GT empiris 0,5594.
 - **Naive** 18.073 → overcount ~78% dibanding metode dedup terbaik, sesuai temuan audit JSON-05.
 - **`relaxed_match`, `v8_per_side_median`, `v8_multi_consensus`** → undercount ekstrem, tidak layak pakai di luar JSON.
 - **`v7_ordinal_b3`** → broken (output negatif), dikecualikan.
@@ -414,20 +432,20 @@ Hasil `scripts/dedup_all_953.py` — menjalankan semua metode ke 945 pohon unik 
 
 | Lokasi | Isi |
 |---|---|
-| `reports/json_05/` | baseline GT vs naive pada 228 pohon JSON |
-| `reports/full_gt_count/` | ringkasan count semua 953 pohon |
-| `reports/dedup_research/` | hasil v1 |
-| `reports/dedup_research_v2/` | hasil v2 |
-| `reports/dedup_research_v3/` | hasil v3 |
-| `reports/dedup_research_v4/` | hasil v4 |
-| `reports/dedup_research_v5/` | hasil v5 |
-| `reports/dedup_research_v6/` | hasil v6 |
-| `reports/dedup_research_v7/` | hasil v7 |
-| `reports/dedup_research_v8/` | hasil v8 |
-| `reports/dedup_research_v9/` | benchmark terbaik saat ini untuk JSON |
-| `reports/nonjson_dedup_compare/` | evaluasi metode pada non-JSON |
-| `reports/nonjson_dedup_report.md` | laporan ringkas non-JSON |
-| `reports/dedup_all_953/` | semua metode pada 945 pohon — total count + accuracy |
+| [`reports/json_05/count_mae_gt.csv`](reports/json_05/count_mae_gt.csv) | baseline GT vs naive pada 228 pohon JSON |
+| [`reports/full_gt_count/summary.md`](reports/full_gt_count/summary.md) | ringkasan count semua 953 pohon |
+| [`reports/dedup_research/summary.md`](reports/dedup_research/summary.md) | hasil v1 |
+| [`reports/dedup_research_v2/summary_v2.md`](reports/dedup_research_v2/summary_v2.md) | hasil v2 |
+| [`reports/dedup_research_v3/summary_v3.md`](reports/dedup_research_v3/summary_v3.md) | hasil v3 |
+| [`reports/dedup_research_v4/summary_v4.md`](reports/dedup_research_v4/summary_v4.md) | hasil v4 |
+| [`reports/dedup_research_v5/summary_v5.md`](reports/dedup_research_v5/summary_v5.md) | hasil v5 |
+| [`reports/dedup_research_v6/summary_v6.md`](reports/dedup_research_v6/summary_v6.md) | hasil v6 |
+| [`reports/dedup_research_v7/summary_v7.md`](reports/dedup_research_v7/summary_v7.md) | hasil v7 |
+| [`reports/dedup_research_v8/summary_v8.md`](reports/dedup_research_v8/summary_v8.md) | hasil v8 |
+| [`reports/dedup_research_v9/summary_v9.md`](reports/dedup_research_v9/summary_v9.md) | benchmark terbaik saat ini untuk JSON |
+| [`reports/nonjson_dedup_compare/json_accuracy_validation.csv`](reports/nonjson_dedup_compare/json_accuracy_validation.csv) | evaluasi metode pada non-JSON |
+| [`reports/nonjson_dedup_report.md`](reports/nonjson_dedup_report.md) | laporan ringkas non-JSON |
+| [`reports/dedup_all_953/all_953_per_tree.csv`](reports/dedup_all_953/all_953_per_tree.csv) | semua metode pada 945 pohon — total count + accuracy |
 
 ## Menjalankan Script
 
@@ -535,11 +553,11 @@ Pendekatan berikut dianggap di luar scope:
 
 Untuk pembaca baru, urutan paling masuk akal:
 
-1. baca [README.md](/D:/Work/Assisten%20Dosen/research-method-dedup/README.md)
-2. lanjut ke [AGENTS.md](/D:/Work/Assisten%20Dosen/research-method-dedup/AGENTS.md) untuk status operasional repo
-3. baca [RESEARCH.md](/D:/Work/Assisten%20Dosen/research-method-dedup/RESEARCH.md), terutama Section 0
-4. kalau ingin hasil terbaru, buka [reports/dedup_research_v9/summary_v9.md](/D:/Work/Assisten%20Dosen/research-method-dedup/reports/dedup_research_v9/summary_v9.md)
-5. kalau ingin lihat sejarah lengkap, telusuri folder `reports/dedup_research*`
+1. baca [README.md](README.md)
+2. lanjut ke [AGENTS.md](AGENTS.md) untuk status operasional repo
+3. baca [RESEARCH.md](RESEARCH.md), terutama Section 0
+4. kalau ingin hasil terbaru, buka [reports/dedup_research_v9/summary_v9.md](reports/dedup_research_v9/summary_v9.md)
+5. kalau ingin lihat sejarah lengkap, telusuri folder [reports/](reports/)
 
 ## Ringkasan Satu Kalimat
 
