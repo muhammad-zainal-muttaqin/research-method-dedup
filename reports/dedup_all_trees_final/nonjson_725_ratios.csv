@@ -1,0 +1,7 @@
+method,mean_ratio,median_ratio,std_ratio
+corrected,0.5741,0.5714,0.048
+visibility,0.557,0.55,0.0509
+hungarian_match,0.4259,0.4,0.1535
+learned_graph,0.2389,0.2,0.1405
+cascade_match,0.2247,0.1944,0.1228
+feature_cluster,0.2061,0.1818,0.1113

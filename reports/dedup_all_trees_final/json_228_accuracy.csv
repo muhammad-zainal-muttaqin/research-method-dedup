@@ -1,0 +1,8 @@
+method,mean_MAE,acc_within_1,mean_total_err,score
+visibility,0.2719,92.11,1.09,89.39
+corrected,0.2851,90.79,1.14,87.94
+hungarian_match,1.0976,18.86,4.39,7.88
+cascade_match,1.773,4.39,7.09,-13.34
+learned_graph,1.8202,4.39,7.28,-13.82
+feature_cluster,1.8728,3.51,7.49,-15.22
+naive,2.1294,2.63,8.52,-18.66
