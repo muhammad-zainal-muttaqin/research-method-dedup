@@ -1,5 +1,5 @@
 method,mean_MAE,acc_within_1_error,mean_total_error,score,n_trees,alpha,sigma,alpha_B1B4,alpha_B2B3,sigma_B1B4,sigma_B2B3,y_thresh,area_thresh,cx_thresh,subset,agg,selector_default,selector_alt_1,selector_alt_2
-v6_selector,0.2654,96.05,1.06,93.4,228,,,,,,,,,,,,adaptive_corrected,best_visibility_grid,class_aware_vis
+v6_selector,0.2632,96.49,1.05,93.86,228,,,,,,,,,,,,adaptive_corrected,best_visibility_grid,class_aware_vis
 adaptive_corrected,0.2774,93.86,1.11,91.09,228,,,,,,,,,,,,,,
 best_ensemble_grid,0.2774,93.86,1.11,91.09,228,,,,,,,,,,"('adaptive_visibility', 'adaptive_corrected', 'relaxed_match')",median,,,
 best_visibility_grid,0.2664,92.54,1.07,89.88,228,0.9,0.45,,,,,,,,,,,,

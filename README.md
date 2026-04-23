@@ -2,6 +2,41 @@
 
 > Ground-truth deduplication research for mature oil palm fresh fruit bunch (FFB) detection across 4-view tree photography.
 
+## 2026-04-23 Status Override
+
+Gunakan blok ini sebagai source-of-truth terbaru jika ada bagian README di bawah yang masih menyebut plateau lama.
+
+### Benchmark JSON 228 Tree
+
+| Rank | Method | Acc ±1 | MAE | Notes |
+|---:|---|---:|---:|---|
+| 1 | `v6_selector` | **96.49%** | **0.2632** | Best internal benchmark |
+| 2 | `stacking_bracketed_v7` | 94.30% | 0.2643 | Best v7 |
+| 3 | `stacking_density_v7` | 94.30% | 0.2708 | Ratio-stable compromise |
+| 4 | `entropy_modulated_v8` | 94.30% | 0.2763 | Best v8 tie |
+| 5 | `adaptive_corrected` | 93.86% | 0.2774 | Best v5 |
+
+### Current Interpretation
+
+- `v6_selector` is now the strongest method on the 228-tree JSON benchmark.
+- `v7` and `v8` remain relevant baselines, but neither beats `v6` on JSON.
+- For **non-JSON without GT**, the preferred methods are still those closest to the dedup target ratio `~0.56`, namely:
+  - `hybrid_vis_corr`
+  - `side_coverage`
+  - `stacking_density_v7`
+  - `best_visibility_grid`
+  - `visibility`
+- `v6_selector` should be read as the **best benchmarked JSON method**, not automatically the best non-JSON production method.
+
+### Scripts To Run
+
+```bash
+python scripts/dedup_research_v6.py
+python scripts/dedup_research_v7.py
+python scripts/dedup_research_v8.py
+python scripts/dedup_all_trees_final.py
+```
+
 | Metric | Value |
 |--------|------:|
 | **Total Trees** | 953 |

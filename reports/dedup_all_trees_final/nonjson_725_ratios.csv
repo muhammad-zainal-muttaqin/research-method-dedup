@@ -1,10 +1,15 @@
 method,mean_ratio,median_ratio,std_ratio
 class_aware_vis,0.6042,0.6,0.0497
+entropy_modulated_v8,0.5872,0.5833,0.0583
+v8_entropy_stacking,0.5872,0.5833,0.0583
 best_class_aware_grid,0.5799,0.5714,0.0492
+stacking_bracketed_v7,0.5763,0.5714,0.0589
 adaptive_visibility,0.5754,0.5833,0.0623
 corrected,0.5741,0.5714,0.048
 adaptive_corrected,0.5736,0.5769,0.0574
+v6_selector,0.5714,0.5714,0.0575
 best_ensemble_grid,0.566,0.5714,0.0514
+stacking_density_v7,0.5636,0.5652,0.0555
 side_coverage,0.5615,0.5556,0.0553
 hybrid_vis_corr,0.5601,0.5556,0.051
 best_visibility_grid,0.5587,0.5556,0.0501

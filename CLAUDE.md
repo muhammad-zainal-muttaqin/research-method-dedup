@@ -30,6 +30,12 @@ python scripts/dedup_v5_focused.py
 # Dedup research v6 — exploration near 93.86% ceiling (multiple methods tie)
 python scripts/dedup_research_v6.py
 
+# Dedup research v7
+python scripts/dedup_research_v7.py
+
+# Dedup research v8
+python scripts/dedup_research_v8.py
+
 # Final dedup all 953 pohon (228 JSON-validated + 717 non-JSON)
 python scripts/dedup_all_trees_final.py
 
@@ -38,6 +44,21 @@ python scripts/dedup_nonjson_compare.py
 ```
 
 Semua script dijalankan dari workspace root dan menulis output ke `reports/`.
+
+## 2026-04-23 Status Override
+
+Jika ada bagian CLAUDE.md di bawah yang masih menyebut plateau `93.86%` atau `v7` sebagai current best, abaikan dan pakai blok ini.
+
+| Rank | Method | Acc ±1 | MAE |
+|---:|---|---:|---:|
+| 1 | `v6_selector` | **96.49%** | **0.2632** |
+| 2 | `stacking_bracketed_v7` | 94.30% | 0.2643 |
+| 3 | `stacking_density_v7` | 94.30% | 0.2708 |
+| 4 | `entropy_modulated_v8` | 94.30% | 0.2763 |
+| 5 | `adaptive_corrected` | 93.86% | 0.2774 |
+
+- JSON with GT: use **`v6_selector`**.
+- Non-JSON without GT: prefer `hybrid_vis_corr`, `side_coverage`, `stacking_density_v7`, `best_visibility_grid`, or `visibility`.
 
 ## Project Context
 

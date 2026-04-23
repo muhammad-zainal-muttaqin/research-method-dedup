@@ -101,21 +101,21 @@ def unstable_tree_gate(feat: Dict[str, float]) -> bool:
             if feat["B2_naive"] <= 5.5:
                 if feat["B4_ratio"] <= 3.5:
                     return feat["d_ac_bvg_B3"] > 0.5
-                return feat["B4_yrange"] > 0.09
-            if feat["B4_yrange"] <= 0.05:
+                return feat["B4_yrange"] > 0.09450500085949898
+            if feat["B4_yrange"] <= 0.05225699953734875:
                 return feat["d_ac_cag_B2"] > -0.5
         return False
 
-    if feat["B4_yrange"] <= 0.10:
+    if feat["B4_yrange"] <= 0.09679850190877914:
         return False
-    if feat["B4_yrange"] <= 0.15:
+    if feat["B4_yrange"] <= 0.1491520032286644:
         return feat["B2_ratio"] <= 3.5
     return False
 
 
 def pick_v6_method(feat: Dict[str, float]) -> str:
-    if feat["B3_ratio"] <= 3.17:
-        if feat["B4_ratio"] <= 2.58:
+    if feat["B3_ratio"] <= 3.166666626930237:
+        if feat["B4_ratio"] <= 2.583333373069763:
             return "class_aware_vis"
         return "adaptive_corrected"
     return "best_visibility_grid"

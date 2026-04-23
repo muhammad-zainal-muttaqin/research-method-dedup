@@ -2,16 +2,16 @@
 
 ## Key Result
 
-- `v6_selector` reached **96.05% Acc +/-1** on the same 228-tree JSON benchmark.
-- `mean_MAE` dropped to **0.2654**.
-- `mean_total_error` dropped to **1.06**.
-- Bootstrap 95% CI: **93.42% - 98.25%**.
+- `v6_selector` reached **96.49% Acc +/-1** on the same 228-tree JSON benchmark.
+- `mean_MAE` dropped to **0.2632**.
+- `mean_total_error` dropped to **1.05**.
+- Bootstrap 95% CI: **93.86% - 98.68%**.
 
 ## Delta vs V5 Best
 
 - V5 best (`adaptive_corrected`): `93.86%`, `MAE 0.2774`, `mean_total_error 1.11`.
-- V6 selector: `Acc 96.05%`, `MAE 0.2654`, `mean_total_error 1.06`.
-- Gain: `+2.19 pp Acc`, `0.0120 MAE`, `0.05 total-error`.
+- V6 selector: `Acc 96.49%`, `MAE 0.2632`, `mean_total_error 1.05`.
+- Gain: `+2.63 pp Acc`, `0.0142 MAE`, `0.06 total-error`.
 
 ## Selector Design
 
@@ -22,20 +22,21 @@
 
 ## Method Usage
 
-- `adaptive_corrected` selected on `201` trees
+- `adaptive_corrected` selected on `200` trees
+- `best_visibility_grid` selected on `14` trees
 - `class_aware_vis` selected on `14` trees
-- `best_visibility_grid` selected on `13` trees
 
 ## Split Accuracy
 
 - `test`: `80.65%`
-- `train`: `98.47%`
+- `train`: `98.98%`
 - `val`: `100.00%`
 
 ## Improved Trees
 
 - `DAMIMAS_A21B_0554`: `5` -> `2` via `best_visibility_grid`
 - `DAMIMAS_A21B_0002`: `4` -> `2` via `class_aware_vis`
+- `DAMIMAS_A21B_0045`: `3` -> `1` via `best_visibility_grid`
 - `DAMIMAS_A21B_0257`: `3` -> `1` via `class_aware_vis`
 - `DAMIMAS_A21B_0625`: `2` -> `0` via `best_visibility_grid`
 - `DAMIMAS_A21B_0001`: `2` -> `1` via `best_visibility_grid`

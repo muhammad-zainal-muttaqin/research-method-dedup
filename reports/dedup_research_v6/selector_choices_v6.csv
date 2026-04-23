@@ -127,7 +127,7 @@ DAMIMAS_A21B_0043,train,best_visibility_grid,True,23,1.5,2.0,3.5,0.0,0.0,1,0,2,3
 DAMIMAS_A21B_0619,train,adaptive_corrected,False,26,2.75,2.5,3.3333,0.0,0.0,1,0,6,3,6,0,6,4,6,0
 DAMIMAS_A21B_0044,train,adaptive_corrected,False,16,4.0,2.0,2.6667,2.0,0.0068,0,0,2,1,4,1,2,1,4,1
 DAMIMAS_A21B_0620,train,adaptive_corrected,False,25,2.0,2.0,3.2,3.0,0.0585,0,0,2,1,9,2,2,1,9,2
-DAMIMAS_A21B_0045,train,adaptive_corrected,False,29,2.0,0.0,3.3333,2.3333,0.0997,1,0,1,0,12,5,1,0,10,4
+DAMIMAS_A21B_0045,train,best_visibility_grid,True,29,2.0,0.0,3.3333,2.3333,0.0997,1,0,1,0,11,4,1,0,10,4
 DAMIMAS_A21B_0621,train,adaptive_corrected,False,27,2.5,3.0,3.25,1.5,0.0244,1,0,3,4,8,2,3,3,8,2
 DAMIMAS_A21B_0622,train,adaptive_corrected,False,24,4.0,3.3333,3.0,2.0,0.1492,0,0,2,6,3,3,2,6,3,2
 DAMIMAS_A21B_0623,train,adaptive_corrected,False,23,2.0,3.0,3.3333,0.0,0.0,1,0,2,5,6,0,2,5,5,0
@@ -208,7 +208,7 @@ DAMIMAS_A21B_0554,test,best_visibility_grid,True,31,2.0,3.0,3.3333,3.6667,0.1479
 DAMIMAS_A21B_0555,test,best_visibility_grid,True,16,0.0,3.5,3.5,2.0,0.0336,0,0,0,4,4,1,0,3,3,1
 DAMIMAS_A21B_0556,test,adaptive_corrected,False,24,2.0,2.6667,4.0,2.0,0.0886,1,0,2,5,5,3,2,4,4,3
 DAMIMAS_A21B_0557,test,adaptive_corrected,True,22,3.0,2.0,3.0,2.6667,0.107,0,0,2,1,5,5,1,1,3,4
-DAMIMAS_A21B_0558,test,adaptive_corrected,False,23,0.0,4.0,3.0,3.0,0.0505,0,0,0,5,5,4,0,3,4,3
+DAMIMAS_A21B_0558,test,adaptive_corrected,True,23,0.0,4.0,3.0,3.0,0.0505,0,0,0,5,5,4,0,3,4,3
 DAMIMAS_A21B_0559,test,adaptive_corrected,False,11,0.0,0.0,0.0,2.75,0.2392,0,0,0,0,0,6,0,0,0,7
 DAMIMAS_A21B_0560,test,adaptive_corrected,False,10,0.0,2.0,3.0,0.0,0.0,0,0,0,2,3,0,0,2,3,0
 DAMIMAS_A21B_0561,test,adaptive_corrected,True,23,2.0,2.0,2.5,3.5,0.1125,1,0,1,2,6,4,1,2,6,3

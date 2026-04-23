@@ -2,6 +2,7 @@
 Final dedup comparison:
 - 228 JSON trees: use JSON annotations + GT for accuracy eval (same as v1/v2/v3)
 - 725 non-JSON trees: use TXT labels, run dedup methods, output counts (no GT)
+- Includes benchmark leaders from v5/v6/v7/v8 for one-pass comparison.
 """
 
 import ast
@@ -15,6 +16,19 @@ import pandas as pd
 from scipy.optimize import linear_sum_assignment
 from sklearn.cluster import DBSCAN
 from sklearn.linear_model import Ridge
+
+from dedup_research_v6 import (
+    load_v5_reference_params as load_v6_selector_params,
+    selector_v6 as v6_selector_count,
+)
+from dedup_research_v7 import (
+    stacking_bracketed as stacking_bracketed_v7_count,
+    stacking_density_corrected as stacking_density_v7_count,
+)
+from dedup_research_v8 import (
+    entropy_modulated as entropy_modulated_v8_count,
+    v8_entropy_stacking as v8_entropy_stacking_count,
+)
 
 warnings.filterwarnings("ignore")
 
@@ -533,6 +547,7 @@ def main():
     print(f"  Trees from TXT: {len(txt_trees)}")
 
     refs = load_v5_reference_params()
+    v6_selector_params = load_v6_selector_params()
     compute_y_prior(list((tid, data["dets"], data["gt"], data["split"]) for tid, data in json_trees.items()))
 
     best_vis = refs["best_visibility"]
@@ -547,6 +562,11 @@ def main():
         "visibility": visibility_count,
         "adaptive_visibility": adaptive_visibility_count,
         "adaptive_corrected": adaptive_corrected_count,
+        "v6_selector": lambda dets, params=v6_selector_params: v6_selector_count(dets, params),
+        "stacking_density_v7": stacking_density_v7_count,
+        "stacking_bracketed_v7": stacking_bracketed_v7_count,
+        "entropy_modulated_v8": entropy_modulated_v8_count,
+        "v8_entropy_stacking": v8_entropy_stacking_count,
         "density_scaled_vis": density_scaled_visibility,
         "class_aware_vis": class_aware_visibility_count,
         "side_coverage": side_coverage_count,
