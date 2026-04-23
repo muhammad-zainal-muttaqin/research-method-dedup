@@ -1,0 +1,1569 @@
+method,mean_MAE,acc_within_1_error,mean_total_error,score,n_trees,df
+vis_a0.5_s0.25,0.7434,44.3,2.97,36.86,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       2       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       1       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       2       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       2       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.5_s0.3,0.6864,52.19,2.75,45.33,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       1       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       2       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       2       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.5_s0.35,0.6546,57.46,2.62,50.91,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       1       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       2       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.5_s0.4,0.625,59.21,2.5,52.96,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       2       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.5_s0.45,0.6086,61.4,2.43,55.32,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.5_s0.5,0.5998,62.28,2.4,56.28,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.5_s0.55,0.5899,63.6,2.36,57.7,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.55_s0.25,0.6711,53.07,2.68,46.36,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       1       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       2       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       2       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.55_s0.3,0.614,60.96,2.46,54.82,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.55_s0.35,0.6009,61.84,2.4,55.83,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.55_s0.4,0.58,65.79,2.32,59.99,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.55_s0.45,0.5691,67.54,2.28,61.85,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.55_s0.5,0.5669,67.98,2.27,62.31,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       2       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.55_s0.55,0.5647,68.42,2.26,62.77,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.6_s0.25,0.6086,61.4,2.43,55.32,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       3
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       0
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.6_s0.3,0.5669,68.42,2.27,62.75,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.6_s0.35,0.5351,73.25,2.14,67.89,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.6_s0.4,0.5066,76.75,2.03,71.69,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       0       0
+
+[228 rows x 19 columns]"
+vis_a0.6_s0.45,0.4934,79.39,1.97,74.45,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.6_s0.5,0.4825,82.02,1.93,77.19,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.6_s0.55,0.4704,82.46,1.88,77.75,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.65_s0.25,0.5625,68.86,2.25,63.23,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       3
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       0       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       1
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       1       0
+
+[228 rows x 19 columns]"
+vis_a0.65_s0.3,0.5011,77.63,2.0,72.62,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       2       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       1
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       0       0
+
+[228 rows x 19 columns]"
+vis_a0.65_s0.35,0.4704,82.02,1.88,77.31,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.65_s0.4,0.4408,84.21,1.76,79.8,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.65_s0.45,0.4254,84.65,1.7,80.39,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.65_s0.5,0.4101,85.53,1.64,81.43,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.65_s0.55,0.4002,85.09,1.6,81.09,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.7_s0.25,0.5044,75.0,2.02,69.96,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       1       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       0       0       0
+
+[228 rows x 19 columns]"
+vis_a0.7_s0.3,0.4496,82.02,1.8,77.52,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.7_s0.35,0.4068,85.53,1.63,81.46,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.7_s0.4,0.3849,86.4,1.54,82.55,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.7_s0.45,0.3684,87.28,1.47,83.6,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.7_s0.5,0.3629,87.72,1.45,84.09,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.7_s0.55,0.3575,88.6,1.43,85.02,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.75_s0.25,0.4518,81.58,1.81,77.06,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.75_s0.3,0.398,85.96,1.59,81.98,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.75_s0.35,0.3596,89.04,1.44,85.44,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.75_s0.4,0.3443,90.35,1.38,86.91,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.75_s0.45,0.3246,92.11,1.3,88.86,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.75_s0.5,0.3169,92.11,1.27,88.94,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.75_s0.55,0.3048,92.54,1.22,89.5,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.8_s0.25,0.3958,85.53,1.58,81.57,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       0       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       0       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       2
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       3       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       0
+
+[228 rows x 19 columns]"
+vis_a0.8_s0.3,0.352,89.91,1.41,86.39,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.8_s0.35,0.3125,91.67,1.25,88.54,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.8_s0.4,0.3048,92.54,1.22,89.5,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.8_s0.45,0.2873,92.54,1.15,89.67,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.8_s0.5,0.2818,92.11,1.13,89.29,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.8_s0.55,0.2796,92.11,1.12,89.31,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.85_s0.25,0.3651,88.16,1.46,84.51,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       2
+2    DAMIMAS_A21B_0577  train      3      0  ...       1       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       1       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       1       1
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       1       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.85_s0.3,0.3037,91.23,1.21,88.19,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.85_s0.35,0.2906,90.79,1.16,87.88,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.85_s0.4,0.2807,91.67,1.12,88.86,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.85_s0.45,0.2752,91.23,1.1,88.48,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.85_s0.5,0.2741,90.79,1.1,88.05,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.85_s0.55,0.2719,91.23,1.09,88.51,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.9_s0.25,0.3289,90.79,1.32,87.5,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       1       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.9_s0.3,0.2895,90.35,1.16,87.46,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.9_s0.35,0.2741,91.67,1.1,88.93,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.9_s0.4,0.2741,91.67,1.1,88.93,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.9_s0.45,0.2664,92.54,1.07,89.88,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.9_s0.5,0.2664,92.11,1.07,89.44,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.9_s0.55,0.2654,92.11,1.06,89.45,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.95_s0.25,0.3092,90.35,1.24,87.26,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       2
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       1       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.95_s0.3,0.2752,92.54,1.1,89.79,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.95_s0.35,0.2664,92.11,1.07,89.44,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.95_s0.4,0.2643,92.11,1.06,89.46,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.95_s0.45,0.2643,92.11,1.06,89.46,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.95_s0.5,0.2599,92.11,1.04,89.51,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a0.95_s0.55,0.2632,91.67,1.05,89.04,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.0_s0.25,0.2884,92.11,1.15,89.22,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.0_s0.3,0.2719,92.11,1.09,89.39,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.0_s0.35,0.2643,92.11,1.06,89.46,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.0_s0.4,0.261,92.11,1.04,89.5,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.0_s0.45,0.2643,91.23,1.06,88.59,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.0_s0.5,0.2643,91.23,1.06,88.59,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.0_s0.55,0.2643,91.23,1.06,88.59,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.05_s0.25,0.2862,91.67,1.14,88.8,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.05_s0.3,0.2829,91.67,1.13,88.84,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       0
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.05_s0.35,0.2993,91.23,1.2,88.23,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.05_s0.4,0.3213,88.6,1.29,85.38,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.05_s0.45,0.3454,86.84,1.38,83.39,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.05_s0.5,0.3816,82.89,1.53,79.08,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       1       1
+
+[228 rows x 19 columns]"
+vis_a1.05_s0.55,0.4035,81.14,1.61,77.11,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       1       1
+
+[228 rows x 19 columns]"
+vis_a1.1_s0.25,0.3103,90.79,1.24,87.69,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       1
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.1_s0.3,0.3322,89.47,1.33,86.15,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.1_s0.35,0.3684,83.77,1.47,80.09,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       1       1
+
+[228 rows x 19 columns]"
+vis_a1.1_s0.4,0.4057,80.7,1.62,76.64,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       1       1       1
+
+[228 rows x 19 columns]"
+vis_a1.1_s0.45,0.4211,78.95,1.68,74.74,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.1_s0.5,0.4583,76.32,1.83,71.73,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.1_s0.55,0.4693,76.32,1.88,71.62,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.15_s0.25,0.3399,89.04,1.36,85.64,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       1       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       1       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       2
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       0       1
+
+[228 rows x 19 columns]"
+vis_a1.15_s0.3,0.386,82.89,1.54,79.04,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       1       1
+
+[228 rows x 19 columns]"
+vis_a1.15_s0.35,0.4112,80.26,1.64,76.15,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.15_s0.4,0.4507,76.75,1.8,72.25,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.15_s0.45,0.4693,76.32,1.88,71.62,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.15_s0.5,0.4781,76.32,1.91,71.54,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.15_s0.55,0.4792,76.32,1.92,71.52,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.2_s0.25,0.3651,84.65,1.46,81.0,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       0       0
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       1       1
+
+[228 rows x 19 columns]"
+vis_a1.2_s0.3,0.4101,80.7,1.64,76.6,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.2_s0.35,0.4507,76.75,1.8,72.25,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.2_s0.4,0.4704,76.32,1.88,71.61,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.2_s0.45,0.4792,76.32,1.92,71.52,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.2_s0.5,0.4792,76.32,1.92,71.52,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.2_s0.55,0.4825,75.88,1.93,71.05,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.25_s0.25,0.4024,82.02,1.61,77.99,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       1       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       2       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       0       1       1       1
+
+[228 rows x 19 columns]"
+vis_a1.25_s0.3,0.4298,77.63,1.72,73.33,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.25_s0.35,0.4682,76.32,1.87,71.63,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.25_s0.4,0.4803,76.32,1.92,71.51,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.25_s0.45,0.4836,75.0,1.93,70.16,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       0       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.25_s0.5,0.4901,75.0,1.96,70.1,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"
+vis_a1.25_s0.55,0.4956,73.68,1.98,68.73,228,"               tree_id  split  B1_gt  B2_gt  ...  err_B1  err_B2  err_B3  err_B4
+0    DAMIMAS_A21B_0001  train      1      2  ...       0       0       1       0
+1    DAMIMAS_A21B_0244  train      0      0  ...       0       0       0       0
+2    DAMIMAS_A21B_0577  train      3      0  ...       0       0       1       1
+3    DAMIMAS_A21B_0002  train      1      0  ...       1       0       2       1
+4    DAMIMAS_A21B_0245  train      0      0  ...       0       0       1       1
+..                 ...    ...    ...    ...  ...     ...     ...     ...     ...
+223  DAMIMAS_A21B_0572   test      2      3  ...       0       0       1       0
+224  DAMIMAS_A21B_0573   test      0      2  ...       0       0       0       3
+225  DAMIMAS_A21B_0574   test      0      0  ...       0       0       1       0
+226  DAMIMAS_A21B_0575   test      3      3  ...       0       0       1       1
+227  DAMIMAS_A21B_0576   test      3      5  ...       1       2       1       1
+
+[228 rows x 19 columns]"

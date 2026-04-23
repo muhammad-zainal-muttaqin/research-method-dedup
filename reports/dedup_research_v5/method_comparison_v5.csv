@@ -1,0 +1,17 @@
+method,mean_MAE,acc_within_1_error,mean_total_error,score,n_trees,alpha,sigma,alpha_B1B4,alpha_B2B3,sigma_B1B4,sigma_B2B3,y_thresh,area_thresh,cx_thresh,subset,agg
+adaptive_corrected,0.2774,93.86,1.11,91.09,228,,,,,,,,,,,
+best_ensemble_grid,0.2774,93.86,1.11,91.09,228,,,,,,,,,,"('adaptive_visibility', 'adaptive_corrected', 'relaxed_match')",median
+best_visibility_grid,0.2664,92.54,1.07,89.88,228,0.9,0.45,,,,,,,,,
+hybrid_vis_corr,0.2697,92.54,1.08,89.85,228,,,,,,,,,,,
+best_class_aware_grid,0.2917,92.54,1.17,89.63,228,,,0.9,0.75,0.45,0.55,,,,,
+side_coverage,0.2697,92.11,1.08,89.41,228,,,,,,,,,,,
+visibility,0.2719,92.11,1.09,89.39,228,,,,,,,,,,,
+density_scaled_vis,0.2719,92.11,1.09,89.39,228,,,,,,,,,,,
+adaptive_visibility,0.3366,91.67,1.35,88.3,228,,,,,,,,,,,
+corrected,0.2851,90.79,1.14,87.94,228,,,,,,,,,,,
+naive_mean_ensemble,0.2719,90.35,1.09,87.63,228,,,,,,,,,,,
+ordinal_prior,0.3158,89.04,1.26,85.88,228,,,,,,,,,,,
+class_aware_vis,0.3805,85.09,1.52,81.28,228,,,,,,,,,,,
+best_relaxed_grid,1.7456,6.58,6.98,-10.88,228,,,,,,,0.1,0.1,0.25,,
+relaxed_match,1.8969,2.63,7.59,-16.34,228,,,,,,,,,,,
+naive,2.1294,2.63,8.52,-18.66,228,,,,,,,,,,,

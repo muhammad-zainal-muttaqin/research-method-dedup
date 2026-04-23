@@ -1,0 +1,13 @@
+{
+  "best_method": "adaptive_corrected",
+  "best_score": 91.09,
+  "best_acc": 93.86,
+  "best_mae": 0.2774,
+  "bootstrap_ci": {
+    "mean": 93.87,
+    "ci_lower": 90.79,
+    "ci_upper": 96.93,
+    "se": 1.6087
+  },
+  "n_trees": 228
+}
