@@ -1,288 +1,267 @@
 # Multi-View Oil Palm Bunch Counting
 
-Riset deduplikasi multi-view untuk menghitung jumlah tandan sawit unik per pohon dari 4–8 sisi foto. Fokus: **counting berbasis label ground truth JSON** dan **dedup algorithmic-only** — tanpa training model baru.
+Dedup multi-view untuk menghitung tandan sawit unik per pohon dari 4–8 sisi foto. **Tanpa training.** Hanya heuristik + routing algoritmik.
 
-## Inti Masalah
+## Masalah
 
-Satu tandan yang sama bisa muncul di beberapa sisi foto. Tanpa dedup, tandan dihitung berulang kali. Naive sum overcount ~78.8%. Problem utama bukan sekadar menghitung bbox, tetapi **mengubah multi-view detection menjadi unique bunch count per kelas**.
+Satu tandan muncul di beberapa sisi. Penjumlahan naif overcount ~78.8%. Target: ubah deteksi per-sisi menjadi **unique bunch count per kelas kematangan**.
 
 ## Dataset
 
-| Item | Nilai |
+| Item | Jumlah |
 |---|---:|
-| Total pohon | 953 |
-| DAMIMAS | 854 |
-| LONSUM | 99 |
-| Pohon dengan JSON | 228 |
-| Pohon non-JSON | 725 |
-| Sisi per pohon | 4 (mayoritas), 8 (±45 pohon terbaru) |
+| Total pohon | 953 (DAMIMAS 854 + LONSUM 99) |
+| Dengan JSON GT | 228 |
+| Hanya TXT prediksi | 725 |
+| Sisi per pohon | 4 (mayoritas), 8 (~45 terbaru) |
 
-### Kelas Kematangan
-
-| Class | Deskripsi |
-|---|---|
-| `B1` | merah, paling matang, posisi paling bawah |
-| `B2` | transisi merah-hitam |
-| `B3` | hitam penuh, di atas B2 |
-| `B4` | paling kecil, berduri, paling atas |
-
-Kelas bersifat ordinal B1→B4. Ambiguitas utama: **B2 ↔ B3** (irreducible, bukan label noise).
+**Kelas ordinal B1→B4** — B1 merah paling matang (bawah), B2 transisi, B3 hitam, B4 kecil berduri (atas). Ambiguitas utama: **B2↔B3** (irreducible, bukan label noise).
 
 ---
 
-## Metrik yang Dilaporkan
+## Metrik Primer
 
-Benchmark utama pada 228 pohon JSON. Sebuah pohon **pass** jika prediksi setiap kelas meleset maksimal ±1 dari GT.
+Seluruh hasil di bawah dihitung pada 228 pohon ber-GT JSON.
 
-| Metrik | Definisi |
-|---|---|
-| **Per class MAE** | rata-rata \|pred − GT\| per kelas (B1/B2/B3/B4), dirata-rata lintas pohon |
-| **Macro class-MAE** | rata-rata dari 4 per-class MAE (bobot sama tiap kelas) |
-| **Exact accuracy** | % pohon dengan prediksi **tepat sama** dengan GT untuk semua kelas |
-| **Acc ±1** | % pohon dengan semua kelas dalam selisih ≤1 dari GT (primer) |
-| **Total count MAE** | rata-rata \|total_pred − total_GT\| per pohon (jumlah B1+B2+B3+B4) |
-| **Total ±1 accuracy** | % pohon dengan total count dalam ±1 dari GT total |
-| **Per class mean error** | rata-rata (pred − GT) per kelas — mengukur bias arah (positif = overcount, negatif = undercount) |
+| Metrik | Arah | Definisi |
+|---|:---:|---|
+| **Per-class MAE** | ↓ | rata-rata \|pred − GT\| tiap kelas (B1/B2/B3/B4), dirata-rata lintas pohon |
+| **Macro class-MAE** | ↓ | rata-rata dari 4 per-class MAE (bobot sama antar kelas) |
+| **Exact accuracy** | ↑ | % pohon dengan prediksi tepat sama GT di **semua** kelas |
+| **Total count MAE** | ↓ | rata-rata \|Σpred − ΣGT\| per pohon |
+| **Total ±1 accuracy** | ↑ | % pohon dengan total count dalam ±1 dari total GT |
+| **Per-class mean error** | →0 | rata-rata (pred − GT) per kelas — mengukur **bias arah** (+ overcount, − undercount) |
+
+> Legenda: **↓** makin kecil makin baik, **↑** makin besar makin baik, **→0** ideal mendekati nol.
+
+**Traceability.** Setiap nama metode di seluruh tabel README bisa diklik → halaman [`reports/methods/<method>.md`](reports/methods) yang berisi nilai semua metrik primer untuk metode itu, derivasi perhitungan, CSV sumber ([`accuracy_per_tree.csv`](reports/benchmark_multidim/accuracy_per_tree.csv), [`accuracy_per_class.csv`](reports/benchmark_multidim/accuracy_per_class.csv), [`accuracy_summary.csv`](reports/benchmark_multidim/accuracy_summary.csv), [`speed_summary.csv`](reports/benchmark_multidim/speed_summary.csv), [`robustness_summary.csv`](reports/benchmark_multidim/robustness_summary.csv)), daftar pohon yang gagal, dan sample per-tree rows. Reproduce:
+
+```bash
+python scripts/benchmark_multidim.py         # regenerate CSV mentah (benchmark)
+python scripts/generate_method_reports.py    # regenerate per-method breakdown
+```
 
 ---
 
-## Hasil Terkini (2026-04-24)
+## Hasil Utama — 11 Algoritma
 
-Dataset: 228 pohon JSON. Pohon **pass** jika semua 4 kelas dalam ±1 dari GT.
+Urut berdasarkan **macro class-MAE**. Nama metode link ke breakdown data mentah; kolom *Impl* link ke file algoritma.
 
-> Catatan: `dedup_research_v9.py` melaporkan 98.68% (225/228) karena perbedaan minor data loading pipeline — logika selector sama.
-
-### Akurasi Keseluruhan (Acc ±1 per kelas)
-
-| Rank | Method | Gen | Acc ±1 | MAE | MTE | Gagal |
+| Rank | Method | Impl | Macro MAE ↓ | Exact % ↑ | Total MAE ↓ | Total ±1 % ↑ |
 |---:|---|---|---:|---:|---:|---:|
-| 1 | [`v9_selector`](algorithms/v9_selector.py) | v9 | **97.37%** | **0.2533** | 1.0132 | 6 |
-| 2 | [`v9_b2_median_v6`](algorithms/b2_median_v6.py) | v9 | 96.05% | 0.2577 | 1.0307 | 9 |
-| 3 | [`v6_selector`](algorithms/v6_selector.py) | v6 | 96.05% | 0.2599 | 1.0395 | 9 |
-| 4 | [`v7_stacking_bracketed`](algorithms/stacking_bracketed.py) | v7 | 94.30% | 0.2643 | 1.0570 | 13 |
-| 5 | [`v7_stacking_density`](algorithms/stacking_density.py) | v7 | 94.30% | 0.2708 | 1.0833 | 13 |
-| 6 | [`v8_entropy_modulated`](algorithms/entropy_modulated.py) | v8 | 94.30% | 0.2763 | 1.1053 | 13 |
-| 7 | [`v5_adaptive_corrected`](algorithms/adaptive_corrected.py) | v5 | 93.86% | 0.2774 | 1.1096 | 14 |
-| 8 | [`v8_b2_b4_boosted`](algorithms/b2_b4_boosted.py) | v8 | 92.54% | 0.2632 | 1.0526 | 17 |
-| 9 | `v2_visibility` | v2 | 92.54% | 0.2664 | 1.0658 | 17 |
-| 10 | [`v5_best_visibility_grid`](algorithms/best_visibility_grid.py) | v5 | 92.54% | 0.2664 | 1.0658 | 17 |
-| 11 | `v1_corrected` | v1 | 90.79% | 0.2851 | 1.1404 | 21 |
+| 1 | [`v9_selector`](reports/methods/v9_selector.md) | [py](algorithms/v9_selector.py) | **0.2533** | 29.39% | **0.8553** | **83.77%** |
+| 2 | [`v9_b2_median_v6`](reports/methods/v9_b2_median_v6.md) | [py](algorithms/b2_median_v6.py) | 0.2577 | 29.82% | 0.8640 | 82.02% |
+| 3 | [`v6_selector`](reports/methods/v6_selector.md) | [py](algorithms/v6_selector.py) | 0.2599 | 28.07% | 0.8816 | 82.46% |
+| 4 | [`v8_b2_b4_boosted`](reports/methods/v8_b2_b4_boosted.md) | [py](algorithms/b2_b4_boosted.py) | 0.2632 | **31.14%** | 0.9035 | 80.26% |
+| 5 | [`v7_stacking_bracketed`](reports/methods/v7_stacking_bracketed.md) | [py](algorithms/stacking_bracketed.py) | 0.2643 | 31.14% | 0.8904 | 79.82% |
+| 6 | [`v2_visibility`](reports/methods/v2_visibility.md) | — | 0.2664 | **31.58%** | 0.8728 | 82.02% |
+| 7 | [`v5_best_visibility`](reports/methods/v5_best_visibility.md) | [py](algorithms/best_visibility_grid.py) | 0.2664 | 31.58% | 0.8728 | 82.02% |
+| 8 | [`v7_stacking_density`](reports/methods/v7_stacking_density.md) | [py](algorithms/stacking_density.py) | 0.2708 | 29.39% | 0.9079 | 79.39% |
+| 9 | [`v8_entropy_modulated`](reports/methods/v8_entropy_modulated.md) | [py](algorithms/entropy_modulated.py) | 0.2763 | 30.70% | 0.8772 | 78.95% |
+| 10 | [`v5_adaptive_corrected`](reports/methods/v5_adaptive_corrected.md) | [py](algorithms/adaptive_corrected.py) | 0.2774 | 26.32% | 0.9342 | 79.82% |
+| 11 | [`v1_corrected`](reports/methods/v1_corrected.md) | — | 0.2851 | 30.26% | 0.9035 | 78.51% |
 
-> MTE = Mean Total Error (jumlah absolut error semua kelas, rata-rata per pohon). Tie-break: MAE ascending.
+Sumber: [`accuracy_per_tree.csv`](reports/benchmark_multidim/accuracy_per_tree.csv) (228 pohon × 11 metode = 2508 baris). Derivasi tiap angka ada di breakdown per-metode.
 
-### Akurasi Per Kelas (% pohon dalam ±1)
+### Per-Class MAE (↓ lebih kecil lebih baik)
 
-B1 termudah — 100% semua metode. B2 dan B3 bottleneck utama.
+Sumber: kolom `err_B*` (sudah absolute) di [`accuracy_per_tree.csv`](reports/benchmark_multidim/accuracy_per_tree.csv); cross-check di [`accuracy_per_class.csv`](reports/benchmark_multidim/accuracy_per_class.csv).
 
-| Method | B1 | B2 | B3 | B4 |
+| Method | B1 ↓ | B2 ↓ | B3 ↓ | B4 ↓ |
 |---|---:|---:|---:|---:|
-| `v9_selector` | 100.0% | 98.7% | 99.1% | 99.6% |
-| `v9_b2_median_v6` | 100.0% | 98.2% | 98.7% | 99.1% |
-| `v6_selector` | 100.0% | 98.2% | 98.7% | 99.1% |
-| `v7_stacking_bracketed` | 100.0% | 98.7% | 96.5% | 98.7% |
-| `v7_stacking_density` | 100.0% | 98.7% | 96.5% | 98.7% |
-| `v8_entropy_modulated` | 100.0% | 98.7% | 96.5% | 98.7% |
-| `v5_adaptive_corrected` | 100.0% | 98.2% | 96.9% | 98.2% |
-| `v8_b2_b4_boosted` | 100.0% | 97.8% | 96.5% | 97.8% |
-| `v2_visibility` | 100.0% | 97.8% | 96.0% | 98.2% |
-| `v5_best_visibility` | 100.0% | 97.8% | 96.0% | 98.2% |
-| `v1_corrected` | 100.0% | 97.8% | 94.3% | 97.8% |
+| [`v9_selector`](reports/methods/v9_selector.md) | **0.105** | **0.219** | **0.386** | 0.303 |
+| [`v9_b2_median_v6`](reports/methods/v9_b2_median_v6.md) | 0.105 | 0.224 | 0.395 | 0.307 |
+| [`v6_selector`](reports/methods/v6_selector.md) | 0.105 | 0.232 | 0.395 | 0.307 |
+| [`v8_b2_b4_boosted`](reports/methods/v8_b2_b4_boosted.md) | **0.079** | 0.268 | 0.425 | **0.281** |
+| [`v7_stacking_bracketed`](reports/methods/v7_stacking_bracketed.md) | 0.079 | 0.241 | 0.425 | 0.311 |
+| [`v2_visibility`](reports/methods/v2_visibility.md) | 0.101 | 0.224 | 0.447 | 0.294 |
+| [`v5_best_visibility`](reports/methods/v5_best_visibility.md) | 0.101 | 0.224 | 0.447 | 0.294 |
+| [`v7_stacking_density`](reports/methods/v7_stacking_density.md) | 0.096 | 0.241 | 0.425 | 0.320 |
+| [`v8_entropy_modulated`](reports/methods/v8_entropy_modulated.md) | 0.096 | 0.254 | 0.434 | 0.320 |
+| [`v5_adaptive_corrected`](reports/methods/v5_adaptive_corrected.md) | 0.110 | 0.237 | 0.434 | 0.329 |
+| [`v1_corrected`](reports/methods/v1_corrected.md) | 0.101 | 0.224 | 0.487 | 0.329 |
 
-### Pola Error Per Kelas (jumlah pohon dengan error >±1)
+B1 termudah untuk semua metode. **B3 adalah bottleneck** universal.
 
-↑ = overcount ekstrem (pred − GT > 1), ↓ = undercount ekstrem (pred − GT < −1)
+### Per-Class Mean Error (Bias) (→0 ideal)
 
-| Method | B1↑ | B1↓ | B2↑ | B2↓ | B3↑ | B3↓ | B4↑ | B4↓ |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| `v9_selector` | 0 | 0 | 1 | 2 | 1 | 1 | 0 | 1 |
-| `v9_b2_median_v6` | 0 | 0 | 0 | 4 | 2 | 1 | 1 | 1 |
-| `v6_selector` | 0 | 0 | 2 | 2 | 2 | 1 | 1 | 1 |
-| `v7_stacking_bracketed` | 0 | 0 | 1 | 2 | 6 | 2 | 2 | 1 |
-| `v7_stacking_density` | 0 | 0 | 1 | 2 | 6 | 2 | 2 | 1 |
-| `v8_entropy_modulated` | 0 | 0 | 1 | 2 | 6 | 2 | 2 | 1 |
-| `v5_adaptive_corrected` | 0 | 0 | 2 | 2 | 6 | 1 | 3 | 1 |
-| `v8_b2_b4_boosted` | 0 | 0 | 0 | 5 | 6 | 2 | 2 | 3 |
-| `v2_visibility` | 0 | 0 | 0 | 5 | 2 | 7 | 0 | 4 |
-| `v5_best_visibility` | 0 | 0 | 0 | 5 | 2 | 7 | 0 | 4 |
-| `v1_corrected` | 0 | 0 | 0 | 5 | 7 | 6 | 4 | 1 |
+Nilai positif = overcount, negatif = undercount, nol = tidak bias. Sumber: `mean(pred_B* − gt_B*)` di [`accuracy_per_tree.csv`](reports/benchmark_multidim/accuracy_per_tree.csv).
+
+| Method | B1 →0 | B2 →0 | B3 →0 | B4 →0 |
+|---|---:|---:|---:|---:|
+| [`v9_selector`](reports/methods/v9_selector.md) | +0.044 | +0.044 | **0.000** | +0.039 |
+| [`v9_b2_median_v6`](reports/methods/v9_b2_median_v6.md) | +0.044 | −0.101 | +0.009 | +0.044 |
+| [`v6_selector`](reports/methods/v6_selector.md) | +0.044 | +0.057 | +0.009 | +0.044 |
+| [`v8_b2_b4_boosted`](reports/methods/v8_b2_b4_boosted.md) | +0.044 | −0.154 | +0.004 | −0.114 |
+| [`v7_stacking_bracketed`](reports/methods/v7_stacking_bracketed.md) | +0.044 | +0.039 | +0.004 | +0.048 |
+| [`v2_visibility`](reports/methods/v2_visibility.md) | +0.092 | −0.066 | −0.175 | −0.215 |
+| [`v5_best_visibility`](reports/methods/v5_best_visibility.md) | +0.092 | −0.066 | −0.175 | −0.215 |
+| [`v7_stacking_density`](reports/methods/v7_stacking_density.md) | +0.026 | +0.039 | +0.004 | +0.039 |
+| [`v8_entropy_modulated`](reports/methods/v8_entropy_modulated.md) | +0.070 | +0.070 | +0.048 | +0.110 |
+| [`v5_adaptive_corrected`](reports/methods/v5_adaptive_corrected.md) | +0.039 | +0.061 | +0.057 | +0.066 |
+| [`v1_corrected`](reports/methods/v1_corrected.md) | +0.092 | −0.048 | −0.039 | +0.022 |
+
+[`v9_selector`](reports/methods/v9_selector.md) punya profil bias paling seimbang: magnitude ≤0.044 di semua kelas, **tepat 0 di B3** (kelas tersulit).
+
+---
+
+## Metrik Pelengkap
+
+### Acc ±1 per kelas per pohon (pohon lulus jika semua 4 kelas meleset ≤1)
+
+Sumber: kolom `acc_pct` dan `n_fail` di [`accuracy_summary.csv`](reports/benchmark_multidim/accuracy_summary.csv).
+
+| Rank | Method | Acc ±1 ↑ | Gagal ↓ |
+|---:|---|---:|---:|
+| 1 | [`v9_selector`](reports/methods/v9_selector.md) | **97.37%** | 6 |
+| 2 | [`v9_b2_median_v6`](reports/methods/v9_b2_median_v6.md) | 96.05% | 9 |
+| 3 | [`v6_selector`](reports/methods/v6_selector.md) | 96.05% | 9 |
+| 4 | [`v7_stacking_bracketed`](reports/methods/v7_stacking_bracketed.md) | 94.30% | 13 |
+| 5 | [`v7_stacking_density`](reports/methods/v7_stacking_density.md) | 94.30% | 13 |
+| 6 | [`v8_entropy_modulated`](reports/methods/v8_entropy_modulated.md) | 94.30% | 13 |
+| 7 | [`v5_adaptive_corrected`](reports/methods/v5_adaptive_corrected.md) | 93.86% | 14 |
+| 8 | [`v8_b2_b4_boosted`](reports/methods/v8_b2_b4_boosted.md) | 92.54% | 17 |
+| 9 | [`v2_visibility`](reports/methods/v2_visibility.md) | 92.54% | 17 |
+| 10 | [`v5_best_visibility`](reports/methods/v5_best_visibility.md) | 92.54% | 17 |
+| 11 | [`v1_corrected`](reports/methods/v1_corrected.md) | 90.79% | 21 |
 
 ### Kecepatan (ms/pohon, 30 repetisi × 228 pohon)
 
-| Rank | Method | Mean ms | Median ms | Std ms | pohon/detik |
-|---:|---|---:|---:|---:|---:|
-| 1 | `v1_corrected` | 0.0036 | 0.0034 | 0.0005 | 279,830 |
-| 2 | `v5_adaptive_corrected` | 0.0073 | 0.0073 | 0.0003 | 136,242 |
-| 3 | `v7_stacking_density` | 0.0142 | 0.0138 | 0.0013 | 70,585 |
-| 4 | `v2_visibility` | 0.0222 | 0.0218 | 0.0009 | 45,146 |
-| 5 | `v5_best_visibility` | 0.0228 | 0.0227 | 0.0015 | 43,833 |
-| 6 | `v8_b2_b4_boosted` | 0.0477 | 0.0480 | 0.0021 | 20,951 |
-| 7 | `v7_stacking_bracketed` | 0.0480 | 0.0481 | 0.0018 | 20,830 |
-| 8 | `v9_selector` | **0.0792** | 0.0794 | 0.0023 | **12,619** |
-| 9 | `v6_selector` | 0.0993 | 0.0986 | 0.0035 | 10,074 |
-| 10 | `v8_entropy_modulated` | 0.1046 | 0.1044 | 0.0023 | 9,558 |
-| 11 | `v9_b2_median_v6` | 0.4291 | 0.4250 | 0.0140 | 2,330 |
+Sumber: [`speed_summary.csv`](reports/benchmark_multidim/speed_summary.csv).
 
-### Robustness terhadap Noise Koordinat
+| Method | ms ↓ | pohon/detik ↑ |
+|---|---:|---:|
+| [`v1_corrected`](reports/methods/v1_corrected.md) | 0.004 | 279,830 |
+| [`v5_adaptive_corrected`](reports/methods/v5_adaptive_corrected.md) | 0.007 | 136,242 |
+| [`v7_stacking_density`](reports/methods/v7_stacking_density.md) | 0.014 | 70,585 |
+| [`v2_visibility`](reports/methods/v2_visibility.md) | 0.022 | 45,146 |
+| [`v9_selector`](reports/methods/v9_selector.md) | 0.079 | 12,619 |
+| [`v6_selector`](reports/methods/v6_selector.md) | 0.099 | 10,074 |
+| [`v9_b2_median_v6`](reports/methods/v9_b2_median_v6.md) | 0.429 | 2,330 |
 
-Simulasi: Gaussian noise σ ke `x_norm`/`y_norm` tiap bbox. Drop@20% = selisih Acc antara σ=0% dan σ=20%.
+### Robustness (Gaussian noise σ=20% pada koordinat)
 
-| Method | σ=0% | σ=5% | σ=10% | σ=20% | Drop@20% |
-|---|---:|---:|---:|---:|---:|
-| `v9_selector` | 97.37% | 95.18% | 95.18% | 94.74% | 2.63% |
-| `v9_b2_median_v6` | 96.05% | 94.30% | 94.30% | 93.86% | 2.19% |
-| `v6_selector` | 96.05% | 94.30% | 94.30% | 93.86% | 2.19% |
-| `v7_stacking_bracketed` | 94.30% | 93.86% | 93.86% | 93.86% | 0.44% |
-| `v7_stacking_density` | 94.30% | 93.86% | 93.86% | 93.86% | 0.44% |
-| `v8_entropy_modulated` | 94.30% | 93.86% | 92.98% | 92.98% | 1.32% |
-| `v5_adaptive_corrected` | 93.86% | 93.86% | 93.86% | 93.86% | **0.00%** |
-| `v8_b2_b4_boosted` | 92.54% | 93.42% | 93.42% | 93.42% | **−0.88%** |
-| `v2_visibility` | 92.54% | 92.11% | 91.67% | 91.67% | 0.87% |
-| `v5_best_visibility` | 92.54% | 92.11% | 91.67% | 91.67% | 0.87% |
-| `v1_corrected` | 90.79% | 90.79% | 90.79% | 90.79% | **0.00%** |
+Sumber: [`robustness_summary.csv`](reports/benchmark_multidim/robustness_summary.csv).
 
-`v5_adaptive_corrected` dan `v1_corrected` drop 0% karena tidak memakai koordinat bbox — hanya menghitung kelas. `v8_b2_b4_boosted` bahkan naik karena noise mengurangi over-prediction-nya.
+| Method | Drop Acc @ σ=20% ↓ |
+|---|---:|
+| [`v1_corrected`](reports/methods/v1_corrected.md), [`v5_adaptive_corrected`](reports/methods/v5_adaptive_corrected.md) | 0.00% (tidak pakai koordinat) |
+| [`v8_b2_b4_boosted`](reports/methods/v8_b2_b4_boosted.md) | −0.88% (malah naik) |
+| [`v7_stacking_bracketed`](reports/methods/v7_stacking_bracketed.md), [`v7_stacking_density`](reports/methods/v7_stacking_density.md) | 0.44% |
+| [`v9_selector`](reports/methods/v9_selector.md) | 2.63% (paling sensitif) |
 
-### Breakdown Per Split (train=196, test=31, val=1)
+### Per Split (train=196, test=31, val=1)
 
-| Method | test Acc | train Acc | val Acc |
+Sumber: [`domain_breakdown.csv`](reports/benchmark_multidim/domain_breakdown.csv).
+
+| Method | test ↑ | train ↑ | val ↑ |
 |---|---:|---:|---:|
-| `v9_selector` | **90.32%** | **98.47%** | 100.00% |
-| `v9_b2_median_v6` | 87.10% | 97.45% | 100.00% |
-| `v6_selector` | 83.87% | 97.96% | 100.00% |
-| `v7_stacking_bracketed` | 83.87% | 95.92% | 100.00% |
-| `v7_stacking_density` | 83.87% | 95.92% | 100.00% |
-| `v8_entropy_modulated` | 83.87% | 95.92% | 100.00% |
-| `v5_adaptive_corrected` | 80.65% | 95.92% | 100.00% |
-| `v8_b2_b4_boosted` | 83.87% | 93.88% | 100.00% |
-| `v2_visibility` | 80.65% | 94.39% | 100.00% |
-| `v5_best_visibility` | 80.65% | 94.39% | 100.00% |
-| `v1_corrected` | 80.65% | 92.35% | 100.00% |
+| [`v9_selector`](reports/methods/v9_selector.md) | **90.32%** | **98.47%** | 100% |
+| [`v9_b2_median_v6`](reports/methods/v9_b2_median_v6.md) | 87.10% | 97.45% | 100% |
+| [`v6_selector`](reports/methods/v6_selector.md) | 83.87% | 97.96% | 100% |
 
-`v9_selector` memimpin di test set (90.32%) dengan selisih 6+ poin — perbedaan paling bermakna ada di split paling sulit.
+[`v9_selector`](reports/methods/v9_selector.md) unggul 6+ poin di test set — gap terbesar justru di split tersulit.
 
-### Ringkasan Tradeoff Antar Dimensi
+---
 
-| Method | Acc ±1 | Rank Acc | ms/pohon | Rank Speed | Drop@20% | Rank Robust |
-|---|---:|---:|---:|---:|---:|---:|
-| `v9_selector` | 97.37% | #1 | 0.079 | #8 | 2.63% | #11 |
-| `v9_b2_median_v6` | 96.05% | #2 | 0.429 | #11 | 2.19% | #10 |
-| `v6_selector` | 96.05% | #3 | 0.099 | #9 | 2.19% | #9 |
-| `v7_stacking_bracketed` | 94.30% | #4 | 0.048 | #7 | 0.44% | #5 |
-| `v7_stacking_density` | 94.30% | #5 | 0.014 | #3 | 0.44% | #4 |
-| `v8_entropy_modulated` | 94.30% | #6 | 0.105 | #10 | 1.32% | #8 |
-| `v5_adaptive_corrected` | 93.86% | #7 | 0.007 | #2 | 0.00% | #3 |
-| `v8_b2_b4_boosted` | 92.54% | #8 | 0.048 | #6 | −0.88% | #1 |
-| `v2_visibility` | 92.54% | #9 | 0.022 | #4 | 0.87% | #7 |
-| `v5_best_visibility` | 92.54% | #10 | 0.023 | #5 | 0.87% | #6 |
-| `v1_corrected` | 90.79% | #11 | 0.004 | #1 | 0.00% | #2 |
+## Rekomendasi
 
-| Kebutuhan | Rekomendasi | Alasan |
-|---|---|---|
-| Akurasi maksimal (JSON GT) | `v9_selector` | #1 Acc, test 90.32% |
-| Throughput tinggi, Acc >93% | `v5_adaptive_corrected` | 136k pohon/det, 0% noise drop |
-| Balance Acc + Speed | `v7_stacking_density` | Acc 94.30%, 70k pohon/det |
-| Pipeline noisy (TXT prediksi) | `v5_adaptive_corrected` | paling robust terhadap noise koordinat |
-| Tidak butuh koordinat bbox | `v1_corrected` | hanya butuh label kelas, 280k pohon/det |
+| Kebutuhan | Pilihan |
+|---|---|
+| Akurasi maksimal pada JSON GT | [`v9_selector`](reports/methods/v9_selector.md) |
+| Throughput tinggi + Acc ±1 >93% | [`v5_adaptive_corrected`](reports/methods/v5_adaptive_corrected.md) |
+| Tradeoff akurasi/kecepatan | [`v7_stacking_density`](reports/methods/v7_stacking_density.md) |
+| Pipeline TXT noisy (tanpa GT) | [`v5_adaptive_corrected`](reports/methods/v5_adaptive_corrected.md) atau [`v1_corrected`](reports/methods/v1_corrected.md) |
+| Tidak butuh koordinat bbox | [`v1_corrected`](reports/methods/v1_corrected.md) |
 
 ---
 
 ## Evolusi Metode
 
-| Gen | Method | Acc ±1 | Catatan |
+| Gen | Method | Macro MAE ↓ | Catatan |
 |---|---|---:|---|
-| naive | — | ~2% | overcount ~78.8% |
-| v1 | `corrected` | 90.79% | divisor global |
-| v2 | `visibility` | 92.54% | geometri sederhana |
-| v3 | `per_class_ridge` | 90.79% | threshold dari links — tidak breakthrough |
-| v4 | `visibility` | 92.54% | HSV + Hungarian tidak menembus v2 |
-| v5 | `adaptive_corrected` | 93.86% | adaptive divisor, >93% stabil |
-| v6 | `v6_selector` | 96.05% | **titik balik** — routing per regime |
-| v7 | `stacking_bracketed` | 94.30% | stacking family, unggul di throughput |
-| v8 | `stacking_bracketed_v7` | 94.30% | entropy/per-side tidak breakthrough |
-| v9 | `v9_selector` | **97.37%** | narrow overrides di atas v6 |
+| naive | — | — | overcount ~78.8% |
+| v1 | [`v1_corrected`](reports/methods/v1_corrected.md) | 0.2851 | divisor global |
+| v2 | [`v2_visibility`](reports/methods/v2_visibility.md) | 0.2664 | geometri sederhana |
+| v5 | [`v5_adaptive_corrected`](reports/methods/v5_adaptive_corrected.md) | 0.2774 | adaptive divisor, >93% Acc±1 |
+| v6 | [`v6_selector`](reports/methods/v6_selector.md) | 0.2599 | **titik balik** — routing per regime |
+| v7 | [`v7_stacking_bracketed`](reports/methods/v7_stacking_bracketed.md) | 0.2643 | stacking density family |
+| v8 | [`v8_b2_b4_boosted`](reports/methods/v8_b2_b4_boosted.md) | 0.2632 | per-kelas boosting |
+| v9 | [`v9_selector`](reports/methods/v9_selector.md) | **0.2533** | narrow overrides di atas v6 |
 
-**Logika override v9:**
-1. default → `v6_selector`
-2. `b4_only_overlap` → `v7_stacking_bracketed`
-3. `classaware_compact_lowb4` → `v8_b2_b4_boosted`
+**Logika [`v9_selector`](reports/methods/v9_selector.md):**
+1. default → [`v6_selector`](reports/methods/v6_selector.md)
+2. `b4_only_overlap` → [`v7_stacking_bracketed`](reports/methods/v7_stacking_bracketed.md)
+3. `classaware_compact_lowb4` → [`v8_b2_b4_boosted`](reports/methods/v8_b2_b4_boosted.md)
 4. `b3b4_only_lowtotal` → `v8_floor_anchor_50`
-5. `dense_allside_moderatedup` → `v8_b2_b4_boosted`
+5. `dense_allside_moderatedup` → [`v8_b2_b4_boosted`](reports/methods/v8_b2_b4_boosted.md)
 
 ---
 
-## Total Tandan Seluruh Dataset (945 Pohon)
+## Total Tandan 945 Pohon
 
-Target rasio empiris **0.5594** (dari 228 pohon ber-GT: unique/naive = 2466/4408).
+Target rasio empiris **0.5594** (unique/naive dari 228 JSON = 2466/4408). Sumber: [`reports/dedup_all_953/all_953_totals.csv`](reports/dedup_all_953/all_953_totals.csv), detail per-pohon di [`all_953_per_tree.csv`](reports/dedup_all_953/all_953_per_tree.csv).
 
-| Rank | Metode | Total | Rasio | Jarak ke 0.56 |
-|---:|---|---:|---:|---:|
-| 1 | `v8_b2_b4_boosted` | 10,129 | 0.5604 | 0.0010 |
-| 2 | `v9_median_strong5` | 10,130 | 0.5605 | 0.0011 |
-| 3 | `hybrid_vis_corr` | 9,988 | 0.5526 | 0.0068 |
-| 11 | `v9_selector` | 10,449 | 0.5782 | 0.0188 |
-| 12 | `v6_selector` | 10,467 | 0.5792 | 0.0198 |
-| — | `naive` | 18,073 | 1.0000 | 0.4406 ← overcount |
-| — | `relaxed_match` | 3,345 | 0.1851 | 0.3743 ← undercount |
+| Metode | Total | Rasio →0.5594 | Jarak ↓ |
+|---|---:|---:|---:|
+| `v8_b2_b4_boosted` | 10,129 | 0.5604 | **0.0010** |
+| `v9_median_strong5` | 10,130 | 0.5605 | 0.0011 |
+| `hybrid_vis_corr` | 9,988 | 0.5526 | 0.0068 |
+| `v9_selector` | 10,449 | 0.5782 | 0.0188 |
+| `v6_selector` | 10,467 | 0.5792 | 0.0198 |
+| naive | 18,073 | 1.0000 | 0.4406 |
 
-Detail per pohon: `reports/dedup_all_953/all_953_per_tree.csv`
+> Breakdown per-metode di section ini memakai CSV terpisah (`dedup_all_953/`) — bukan subset 228. Link breakdown per metode tidak mencakup 945 ini.
 
 ---
 
-## Menjalankan Script
+## Menjalankan
 
 ```bash
-python scripts/count_all_trees.py          # GT counting semua 953 pohon
-python scripts/count_gt_vs_naive.py        # JSON-05 + JSON-01 audit
-python scripts/benchmark_multidim.py       # benchmark 4 dimensi (11 algoritma)
-python scripts/dedup_research_v9.py        # v9 research script
-python scripts/dedup_all_953.py            # semua metode pada 945 pohon
-python scripts/dedup_nonjson_compare.py    # non-JSON + report
-```
+pip install -r requirements.txt
 
----
+python scripts/count_all_trees.py            # GT counting 953 pohon
+python scripts/count_gt_vs_naive.py          # audit JSON-05 + JSON-01
+python scripts/benchmark_multidim.py         # benchmark 4-dimensi 11 algoritma → reports/benchmark_multidim/
+python scripts/generate_method_reports.py    # regenerate reports/methods/<method>.md dari CSV di atas
+python scripts/dedup_research_v9.py          # research script v9
+python scripts/dedup_all_953.py              # semua metode pada 945 pohon
+python scripts/dedup_nonjson_compare.py      # validasi non-JSON
+```
 
 ## Struktur Repo
 
 ```
-json/                    228 file JSON dengan bunch-link antar-view
-dataset/                 image dan label YOLO
-scripts/                 audit, counting, dan dedup research
-algorithms/              implementasi bersih tiap algoritma
+json/                    228 file JSON multi-view bunch links
+dataset/                 image + label YOLO
+algorithms/              satu file per algoritma
+scripts/                 audit, counting, dedup research, report generator
 reports/
-  benchmark_multidim/    akurasi + kecepatan + robustness + per-split
-  dedup_research_v9/     benchmark script riset terbaru
+  benchmark_multidim/    CSV mentah: accuracy_per_tree, accuracy_per_class, speed, robustness, domain_breakdown
+  methods/               per-method markdown breakdown + per-tree CSV slice (linked dari README)
+  dedup_research_v9/     research script terbaru
   dedup_all_953/         semua metode pada 945 pohon
-RESEARCH.md              dokumen riset panjang — baca Section 0 dulu
-AGENTS.md                instruksi operasional repo
+RESEARCH.md              dokumen riset panjang (baca Section 0)
+AGENTS.md                instruksi operasional
 ```
 
----
-
-## Schema JSON Ringkas
+## Schema JSON
 
 ```json
 {
   "tree_id": "20260422-DAMIMAS-001",
   "images": {
-    "sisi_1": {
-      "annotations": [{"class_name": "B3", "bbox_yolo": [0.5, 0.5, 0.1, 0.2], "box_index": 0}]
-    }
+    "sisi_1": {"annotations": [{"class_name": "B3", "bbox_yolo": [0.5, 0.5, 0.1, 0.2], "box_index": 0}]}
   },
   "bunches": [{"bunch_id": 1, "class": "B3", "appearance_count": 2}],
   "summary": {"by_class": {"B1": 1, "B2": 2, "B3": 5, "B4": 0}}
 }
 ```
 
-`summary.by_class` = ground truth count unik per kelas.
-
----
+`summary.by_class` = GT unique count per kelas.
 
 ## Batasan Riset
 
-**100% algorithmic / heuristic.** Tidak boleh:
-- Siamese / CNN embedding
-- Learned thresholds via backprop
-- MLP pada fitur bbox
-- Strict matching (Hungarian/graph/cluster) pada TXT labels — broken oleh coordinate noise
+100% algoritmik. Tidak boleh: Siamese / CNN embedding, MLP pada fitur bbox, learned threshold via backprop, strict matching (Hungarian / graph / cluster) pada TXT (broken oleh coordinate noise).
 
-Laporan lengkap: [`reports/benchmark_multidim/REPORT.md`](reports/benchmark_multidim/REPORT.md)
+Laporan multi-dimensi lengkap: [`reports/benchmark_multidim/REPORT.md`](reports/benchmark_multidim/REPORT.md).
