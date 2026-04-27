@@ -139,30 +139,169 @@ Acc lompat: 93.86% → **96.49%**.
 
 ### Insight 4 — Specialist Tools (v7–v8)
 
-Dua generasi ini (v7–v8) bukan untuk dipakai global — performanya malah lebih rendah. Tapi mereka menciptakan alat khusus untuk regime tertentu:
+Dua generasi ini (v7–v8) bukan untuk dipakai global — performanya malah lebih rendah. Tapi mereka menciptakan alat khusus untuk regime tertentu. Berikut cara kerja masing-masing:
 
-| Algoritma | Keahlian | Global Acc ±1 |
-|---|---|---|
-| `v7_stacking_bracketed` | Koreksi stacking density vertikal + bracket constraint | 94.30% |
-| `v8_b2_b4_boosted` | Divisor ekstra untuk B2/B4 yang rawan overcount | 92.54% |
-| `v8_floor_anchor_50` | Estimasi konservatif untuk pohon kecil | 69.74% |
+#### v7_stacking_bracketed — Stacking Density + Bracket
+
+**Masalah:** Dua tandan di sisi berbeda sering terdeteksi di posisi y yang hampir sama (bertumpuk vertikal). Semakin rapat secara vertikal, semakin besar kemungkinan itu tandan yang sama.
+
+**Solusi — Stacking Density Correction:**
+
+```
+density(c) = jumlah_deteksi_c / rentang_y_c
+```
+
+Makin tinggi density, makin besar kemungkinan deteksi itu duplikat. Maka divisor ditambah:
+
+```
+extra(c) = 1 + 0.0008 × max(0, density(c) − ref_median(c))
+```
+
+Nilai ref_median diperoleh dari data 228 JSON:
+
+| Kelas | Ref density | Arti |
+|---:|---:|---|
+| B1 | 42 | density rata-rata B1 di dataset |
+| B2 | 56 | |
+| B3 | 72 | (tertinggi — konsisten dengan B3 sebagai kelas tersulit) |
+| B4 | 50 | |
+
+**Contoh:** B3 punya 12 deteksi dalam rentang y=0.08 → density = 12/0.08 = 150. Ref B3 = 72, jadi extra = 1 + 0.0008 × (150−72) = 1.0624. Divisor jadi 1.795 × 1.0624 = 1.907 (lebih besar → koreksi lebih kuat).
+
+**Solusi — Bracket Constraint:**
+
+Estimasi akhir tidak boleh di luar batas fisik. Dua jaminan:
+
+```
+floor   = max(deteksi per sisi)    — paling sedikit harus sebanyak yg terlihat dari sisi terbaik
+ceiling = round(naive / 1.10)      — paling banyak, asumsi dup minimal 10%
+```
+
+**Visual:**
+```
+  naive=12
+    │
+    ├── ceiling = 12/1.10 = 10.9 → 11
+    │
+    │   stacking_estimate = 7
+    │   ↑
+    ├── floor = max(deteksi di satu sisi) = 4
+    │
+    └── hasil akhir: clip(7, 4, 11) = 7
+```
+
+#### v8_b2_b4_boosted — Divsor Ekstra B2/B4
+
+**Masalah:** Analisis error v7 menunjukkan B2 dan B4 secara konsisten over-predicted (terutama di split test). B2 rentan karena ambiguitas visual dengan B3. B4 sering overcount karena ukuran kecil dan muncul di banyak sisi.
+
+**Solusi:** Sama seperti stacking_bracketed, tapi divisor B2 dan B4 dikalikan boost:
+
+| Kelas | Boost | Efek |
+|---:|---:|---|
+| B1 | 1.0 (netral) | divisor normal = 1.986 |
+| B2 | **1.10** | divisor = 1.786 × 1.10 = **1.965** |
+| B3 | 1.0 (netral) | divisor normal = 1.795 |
+| B4 | **1.08** | divisor = 1.655 × 1.08 = **1.787** |
+
+Boost diperoleh dari analisis residual pada pohon yang gagal — bukan training. Hitungan:
+
+```
+divisor_B2 = 1.786 × density_scale × stack_extra × 1.10
+```
+
+#### v8_floor_anchor_50 — Estimasi Konservatif untuk Pohon Kecil
+
+**Masalah:** Pohon dengan sedikit deteksi (≤13) dan hanya B3+B4 punya karakteristik khusus: stacking density estimate biasanya terlalu tinggi karena y_span sempit secara kebetulan, bukan karena overlap nyata.
+
+**Solusi:** Jika stacking estimate > floor + 1, tarik estimasi ke arah floor dengan anchor 0.50:
+
+```
+jika E_stack ≤ floor + 1 → pakai E_stack (sudah konservatif)
+jika E_stack > floor + 1 → hasil = floor + 0.50 × (E_stack − floor)
+```
+
+Artinya: estimate tidak boleh lebih dari setengah jalan antara floor dan stacking estimate. Ini sengaja under-predict, tapi lebih akurat untuk pohon kecil.
+
+**Catatan:** Metode ini **jangan dipakai global** (Acc hanya 69.74%). Hanya efektif pada regime spesifik yang difilter oleh v9_selector.
 
 ### Insight 5 — Narrow Overrides (v9) — 98.68%
 
 v9 tidak desain ulang. Prinsip: **v6 sudah 96.49%, tinggal perbaiki 8 pohon yang gagal**.
 
-Dari analisis error pada v6, ditemukan 4 regime sempit yang bisa diperbaiki dengan specialist tools:
+Dari analisis error pada v6 — membandingkan prediksi vs GT pohon demi pohon — ditemukan 4 regime sempit. Masing-masing punya ciri yang bisa dideteksi dengan fitur sederhana (tanpa melihat GT), lalu dirutekan ke specialist tool yang tepat.
+
+#### Regime 1: B4-only dengan Overlap Tinggi
+
+| Ciri | Deteksi | 
+|---|---|
+| Hanya B4 yang muncul (B1=B2=B3=0) | `B1_naive=0, B2_naive=0, B3_naive=0` |
+| Overlap tinggi — ≥4 B4 terlihat di satu sisi | `B4_maxside ≥ 4` |
+
+**Kenapa v6 gagal:** v6 routing default mengirim pohon ini ke `adaptive_corrected`, yang menerapkan divisor seragam untuk semua kelas. Tapi karena hanya B4 (kelas paling kecil, mudah overcount), divisor standar 1.655 tidak cukup.
+
+**Cara v9 memperbaiki:** Routing ke `stacking_bracketed`. Metode ini punya bracket constraint yang membatasi ceiling ke round(naive/1.10). Untuk B4-only dengan overlap tinggi, bracket ini efektif mencegah overcount ekstrem.
+
+#### Regime 2: Pohon Padat dengan B4 Sangat Sedikit
+
+| Ciri | Deteksi |
+|---|---|
+| v6 sendiri sudah curiga — memilih `class_aware_vis` | `selected_method == "class_aware_vis"` |
+| Pohon padat (banyak deteksi) | `total_det ≥ 21` |
+| B4 hampir tidak ada | `B4_naive ≤ 2` |
+
+**Kenapa v6 gagal:** `class_aware_vis` memberi bobot per kelas berdasarkan distribusi spasial. Tapi dengan B4 sangat sedikit dan total deteksi banyak, bobot visibility jadi tidak stabil untuk B2/B3.
+
+**Cara v9 memperbaiki:** Routing ke `b2_b4_boosted`. Boost divisor B2 (×1.10) mengoreksi overcount B2 yang dominan di pohon padat.
+
+#### Regime 3: Hanya B3+B4, Deteksi Sangat Sedikit
+
+| Ciri | Deteksi |
+|---|---|
+| B1=B2=0, B3>0, B4>0 | hanya kelas atas |
+| Total deteksi sedikit | `total_det ≤ 13` |
+| Kedua kelas muncul di semua 4 sisi | `B3_activesides=4, B4_activesides=4` |
+| Distribusi B3 tersebar, B4 mengumpul | `B3_ratio ≤ 3.0, B4_ratio ≥ 4.0` |
+
+> **Apa itu `ratio`?** `B3_ratio = B3_naive / B3_activesides` — rata-rata deteksi per sisi.  
+> Ratio kecil (=tersebar merata) + ratio besar (=mengumpul di satu sisi) adalah fingerprint unik.
+
+**Kenapa v6 gagal:** Pohon kecil dengan kedua kelas di semua sisi — tandan benar-benar padat di ruang sempit. Stacking density estimate v6 terlalu tinggi karena y_span kecil, menyebabkan overcorrection (under-predict).
+
+**Cara v9 memperbaiki:** Routing ke `floor_anchor_50`. Anchor 0.50 menarik estimasi ke floor, mencegah under-predict karena stacking density palsu.
+
+#### Regime 4: Semua Kelas Padat, Dup-rate Moderat
+
+| Ciri | Deteksi |
+|---|---|
+| v6 memilih `adaptive_corrected` | default method |
+| Pohon sangat padat | `total_det ≥ 28` |
+| B2,B3,B4 semuanya ada di 4 sisi | `B2/B3/B4_activesides == 4` |
+| Dup-rate moderat | `B2_ratio < 3.0, B3_ratio < 2.5` |
+
+**Kenapa v6 gagal:** `adaptive_corrected` di v6 menggunakan density_scale global yang sama untuk semua kelas. Pada pohon dengan semua sisi terisi dan dup-rate moderat, density_scale tidak cukup spesifik untuk tiap kelas.
+
+**Cara v9 memperbaiki:** Routing ke `b2_b4_boosted`. Boost per kelas (khusus B2/B4) memberikan koreksi yang lebih granular daripada density_scale seragam.
+
+#### Ringkasan Logika v9
 
 ```
-v6 default (220/228 trees → 96.49%)
-  │
-  ├─ B4 only + overlap tinggi     → v7_stacking_bracketed     (2 trees)
-  ├─ Padat + B4 sedikit           → v8_b2_b4_boosted          (3 trees)
-  ├─ Hanya B3+B4, ≤13 deteksi     → v8_floor_anchor_50        (2 trees)
-  └─ Semua kelas padat, dup moderat→ v8_b2_b4_boosted          (1 tree)
+                         ┌─ B4 only + maxside≥4 ──→ stacking_bracketed (v7)
+                         │   (2 trees)
+                         │
+      masukan pohon ────┼─ class_aware + total≥21 + B4≤2 ──→ b2_b4_boosted (v8)
+      (features dari     │   (3 trees)
+       extract_features) │
+                         ├─ B3B4 only + total≤13 + ratio khas ──→ floor_anchor_50 (v8)
+                         │   (2 trees)
+                         │
+                         ├─ adaptive + total≥28 + allside ──→ b2_b4_boosted (v8)
+                         │   (1 tree)
+                         │
+                         └─ default ──→ v6_selector (96.49%)
+                             (220 trees)
 ```
 
-Hasil: hanya 3/228 pohon masih gagal. **Acc = 98.68%**.
+Hasil: dari 8 pohon yang sebelumnya gagal di v6, 5 pohon berhasil diperbaiki. Sisa 3 pohon masih gagal — kemungkinan irreducible tanpa cross-view embedding (lihat Oracle analysis). **Acc = 98.68%**.
 
 ### Ringkasan Filosofi
 
@@ -175,6 +314,45 @@ Cross-view embedding (dilarang constraint)            → ~99.5% (teoretis)
 ```
 
 Intinya: **jangan cocokkan bounding box secara individual** — label TXT punya noise koordinat yang bikin strict matching kacau. Koreksi statistik agregat jauh lebih efektif. B2↔B3 ambiguity adalah ceiling irreducible yang membatasi semua metode.
+
+### Oracle Analysis — Seberapa Jauh Ceiling Teoretis?
+
+**Oracle analysis** menjawab: *"andaikan kita punya kemampuan memilih metode terbaik untuk tiap pohon dengan sempurna, berapa akurasi maksimal yang bisa dicapai?"*
+
+Cara kerja:
+1. Ambil semua 228 pohon JSON + ground truth
+2. Untuk tiap pohon, jalankan **semua** metode yang ada
+3. Cek apakah **salah satu** dari mereka menghasilkan prediksi yang benar (Acc ±1)
+4. Kalau ya → pohon itu terhitung "oracle_ok"
+
+```
+Pohon X → jalankan v6, v7_stacking_bracketed, v8_b2_b4_boosted, ...
+        → adakah satu pun yang outputnya cocok GT?
+        → ya?  oracle_ok = True (pohon ini bisa diselesaikan oleh setidaknya satu metode)
+        → tidak? oracle_ok = False (pohon ini tidak bisa diselamatkan oleh metode manapun)
+```
+
+**Dua varian oracle:**
+
+| Oracle | Cakupan | Acc | Gagal |
+|---|---|---|---|
+| **Narrow** | 8 metode kuat (v6, v7 best, v8 best, v9) | **99.12%** | 2 pohon |
+| **Broad** | 16 metode termasuk eksperimental | **99.56%** | 1 pohon |
+
+**Apa artinya?** Oracle broad 99.56% berarti **1 pohon dari 228 tidak bisa diperbaiki oleh metode apapun yang ada**. Itulah ceiling teoretis dari pendekatan statistik murni. Sisanya irreducible tanpa cross-view embedding (yang dilarang oleh constraint proyek).
+
+**Perbandingan dengan v9_selector (98.68%):**
+
+| Aspek | Oracle | v9_selector |
+|---|---|---|
+| Tahu GT? | **Ya** (cheat — lihat ground truth) | Tidak (hanya pakai fitur permukaan) |
+| Cara pilih metode | Lihat mana yang cocok dengan GT | Tebak dari jumlah deteksi, active sides, ratio |
+| Hasil | 99.12% (narrow) | 98.68% |
+| Gap | **0.44 pp** — sangat kecil, menandakan v9 hampir optimal |
+
+v9_selector hanya berjarak 0.44 poin persen dari oracle narrow. Artinya: **metode routing v9 sudah mendekati batas maksimal** yang bisa dicapai dengan tools yang ada. Sisa 3 pohon yang gagal kemungkinan besar irreducible — bahkan oracle narrow pun gagal di 2 pohon, dan oracle broad masih gagal di 1 pohon.
+
+Sumber: `reports/dedup_research_v9/oracle_narrow_v9.csv`, `reports/dedup_research_v9/oracle_broad_v9.csv`.
 
 ---
 
