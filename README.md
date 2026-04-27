@@ -1,18 +1,18 @@
 # Multi-View Oil Palm Bunch Counting
 
-Dedup multi-view untuk menghitung tandan sawit unik per pohon dari 4–8 sisi foto. **Tanpa training.** Hanya heuristik + routing algoritmik.
+Deduplikasi multi-view untuk menghitung tandan sawit yang unik per pohon dari 4–8 sisi foto. **Tanpa training.** Hanya heuristik dan routing algoritmik.
 
 ## Masalah
 
-Satu tandan muncul di beberapa sisi. Penjumlahan naif overcount ~78.8%. Target: ubah deteksi per-sisi menjadi **unique bunch count per kelas kematangan**.
+Satu tandan bisa muncul di beberapa sisi. Penjumlahan langsung melebihi jumlah sebenarnya sekitar 78,8%. Target: mengubah deteksi per sisi menjadi **jumlah tandan unik per kelas kematangan**.
 
 ---
 
 ## Cara Kerja Deduplikasi
 
-### Kenapa Overcount?
+### Kenapa Jumlahnya Berlebih?
 
-Tandan sawit di foto sisi_1 bisa kelihatan lagi di sisi_2 — apalagi kalau posisinya di tepi frame. Contoh sederhana:
+Tandan sawit di foto sisi_1 bisa terlihat lagi di sisi_2, apalagi jika posisinya di tepi frame. Contoh sederhana:
 
 ```
 Sisi_1 (kiri)    Sisi_2 (kanan)
@@ -23,37 +23,37 @@ Sisi_1 (kiri)    Sisi_2 (kanan)
                 ↑ tandan sama terhitung 2x
 ```
 
-Naif: jumlah semua bounding box dari semua sisi → overcount. Dedup: koreksi agar tiap tandan unik terhitung sekali.
+Pendekatan naif (jumlahkan semua bounding box dari semua sisi) menghasilkan hitungan berlebih. Deduplikasi mengoreksi agar tiap tandan unik hanya terhitung sekali.
 
 ### Konsep Dasar: Divisor
 
-Tiap deteksi punya probabilitas "ini duplikat dari sisi sebelah". Makin dekat ke tepi frame, makin tinggi. Solusi paling sederhana: bagi jumlah naif dengan suatu faktor.
+Setiap deteksi punya kemungkinan menjadi duplikat dari sisi sebelah. Makin dekat ke tepi frame, makin besar kemungkinannya. Solusi paling sederhana: bagi jumlah naif dengan suatu faktor.
 
-Faktor didapat dari data 228 pohon ber-GT:
+Faktor diperoleh dari data 228 pohon yang punya ground truth:
 
 ```
 factor[C] = total_naive[C] / total_gt[C]
 ```
 
-| Kelas | GT (unik) | Naive (sum) | factor | Arti |
+| Kelas | GT (unik) | Naive (jumlah) | factor | Keterangan |
 |---:|---:|---:|---:|---|
-| B1 | 291 | 578 | **1.986** | paling besar, merah, bawah — visible dari banyak sisi |
+| B1 | 291 | 578 | **1.986** | paling besar, merah, posisi bawah — terlihat dari banyak sisi |
 | B2 | 532 | 950 | **1.786** | transisi, masih besar |
 | B3 | 1144 | 2054 | **1.795** | hitam, masih besar |
-| B4 | 499 | 826 | **1.655** | paling kecil, atas, terhalang pelepah — sering kelewat |
-| **Total** | 2466 | 4408 | **1.788** | overall |
+| B4 | 499 | 826 | **1.655** | paling kecil, posisi atas, terhalang pelepah — sering terlewat |
+| **Total** | 2466 | 4408 | **1.788** | keseluruhan |
 
 ```
 count_unik(B1) = round(naive_B1 / 1.986)
 ```
 
-Ini adalah **v1** (`corrected`), Acc ±1 = 90.79%. Sederhana, langsung hajar overcount.
+Ini adalah **v1** (`corrected`), Acc ±1 = 90,79%. Sederhana, langsung memangkas hitungan berlebih.
 
 Sumber: `reports/json_05/count_mae_gt.csv` dari `scripts/count_gt_vs_naive.py`.
 
 ### Insight 1 — Visibility Weighting (v2)
 
-Bukan semua deteksi sama. Tandan di **tengah frame** pasti unik (cuma kelihatan dari 1 sisi). Tandan di **tepi** bisa kelihatan dari sisi sebelah → perlu diskonto.
+Tidak semua deteksi setara. Tandan di **tengah frame** hampir pasti unik (hanya terlihat dari 1 sisi). Tandan di **tepi** bisa terlihat dari sisi sebelah, jadi bobotnya perlu diturunkan.
 
 Bobot visibility dihitung dengan fungsi Gaussian berdasarkan jarak dari pusat gambar:
 
@@ -69,23 +69,23 @@ Tengah (x=0.5)          Tepi (x=0 atau 1)
   ─────┼───────────────────────┼──
        │                       │
     unik,               mungkin duplikat,
-    tidak        perlu diskonto
+    tidak                bobot diturunkan
     diduplikasi
 ```
 
-| Posisi x | weight | Arti |
+| Posisi x | weight | Keterangan |
 |---:|---:|---|
-| 0.50 (tengah) | 1.00 | Pasti unik |
-| 0.25 atau 0.75 | ~0.67 | 67% prob unik |
-| 0.00 atau 1.00 (tepi) | ~0.50 | 50% prob unik |
+| 0,50 (tengah) | 1,00 | Pasti unik |
+| 0,25 atau 0,75 | ~0,67 | 67% kemungkinan unik |
+| 0,00 atau 1,00 (tepi) | ~0,50 | 50% kemungkinan unik |
 
 Hitungan per kelas: `count = round(sum(weight(d) for d in detections_of_class))`
 
-Acc naik ke 92.11%.
+Akurasi naik ke 92,11%.
 
 ### Insight 2 — Density Scaling (v5)
 
-Pohon dengan **banyak tandan** → overlap rate lebih tinggi. Frame penuh → tiap tandan lebih mungkin kelihatan dari banyak sisi.
+Pohon dengan **banyak tandan** punya tingkat overlap yang lebih tinggi. Frame yang penuh membuat tiap tandan lebih mungkin terlihat dari banyak sisi.
 
 ```
 density_scale = clip(2.05 - 0.014 × total_detections, 1.45, 2.10) / 1.79
@@ -127,25 +127,25 @@ v6 membuat **decision tree** yang membaca fitur pohon, lalu merutekan ke metode 
          /         \                  /           \
        YES         NO               YES            NO
        /            \                /              \
-   [cek B3]  adaptive_corrected  → FALSE      [cek B2_ratio]
+   [cek B3]  v5_adaptive_corrected  → FALSE      [cek B2_ratio]
 ```
 
 Hasil routing:
-- **adaptive_corrected** → default, ~75% pohon
-- **best_visibility_grid** → pohon dengan B3 heavy (dup-rate tinggi)
+- **v5_adaptive_corrected** → default, ~75% pohon
+- **v5_best_visibility_grid** → pohon dengan B3 heavy (dup-rate tinggi)
 - **class_aware_vis** → pohon B2-heavy dengan B4 sedikit
 
 Acc lompat: 93.86% → **96.49%**.
 
 ### Insight 4 — Specialist Tools (v7–v8)
 
-Dua generasi ini bukan untuk dipakai global — performanya malah lebih rendah. Tapi mereka menciptakan alat khusus untuk regime tertentu:
+Dua generasi ini (v7–v8) bukan untuk dipakai global — performanya malah lebih rendah. Tapi mereka menciptakan alat khusus untuk regime tertentu:
 
 | Algoritma | Keahlian | Global Acc ±1 |
 |---|---|---|
-| `stacking_bracketed` | Koreksi stacking density vertikal + bracket constraint | 94.30% |
-| `b2_b4_boosted` | Divisor ekstra untuk B2/B4 yang rawan overcount | 92.54% |
-| `floor_anchor_50` | Estimasi konservatif untuk pohon kecil | 69.74% |
+| `v7_stacking_bracketed` | Koreksi stacking density vertikal + bracket constraint | 94.30% |
+| `v8_b2_b4_boosted` | Divisor ekstra untuk B2/B4 yang rawan overcount | 92.54% |
+| `v8_floor_anchor_50` | Estimasi konservatif untuk pohon kecil | 69.74% |
 
 ### Insight 5 — Narrow Overrides (v9) — 98.68%
 
@@ -156,10 +156,10 @@ Dari analisis error pada v6, ditemukan 4 regime sempit yang bisa diperbaiki deng
 ```
 v6 default (220/228 trees → 96.49%)
   │
-  ├─ B4 only + overlap tinggi     → stacking_bracketed     (2 trees)
-  ├─ Padat + B4 sedikit           → b2_b4_boosted          (3 trees)
-  ├─ Hanya B3+B4, ≤13 deteksi     → floor_anchor_50        (2 trees)
-  └─ Semua kelas padat, dup moderat→ b2_b4_boosted          (1 tree)
+  ├─ B4 only + overlap tinggi     → v7_stacking_bracketed     (2 trees)
+  ├─ Padat + B4 sedikit           → v8_b2_b4_boosted          (3 trees)
+  ├─ Hanya B3+B4, ≤13 deteksi     → v8_floor_anchor_50        (2 trees)
+  └─ Semua kelas padat, dup moderat→ v8_b2_b4_boosted          (1 tree)
 ```
 
 Hasil: hanya 3/228 pohon masih gagal. **Acc = 98.68%**.
