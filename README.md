@@ -402,7 +402,7 @@ Urut berdasarkan **macro class-MAE**. Nama metode link ke breakdown data mentah;
 | 1 | [`v9_selector`](reports/methods/v9_selector.md) | [py](algorithms/v9_selector.py) | **0.2533** | 29.39% | **0.8553** | **83.77%** |
 | 2 | [`v9_b2_median_v6`](reports/methods/v9_b2_median_v6.md) | [py](algorithms/b2_median_v6.py) | 0.2577 | 29.82% | 0.8640 | 82.02% |
 | 3 | [`v6_selector`](reports/methods/v6_selector.md) | [py](algorithms/v6_selector.py) | 0.2599 | 28.07% | 0.8816 | 82.46% |
-| 4 | [`v8_b2_b4_boosted`](reports/methods/v8_b2_b4_boosted.md) | [py](algorithms/b2_b4_boosted.py) | 0.2632 | **31.14%** | 0.9035 | 80.26% |
+| 4 | [`v8_b2_b4_boosted`](reports/methods/v8_b2_b4_boosted.md) | [py](algorithms/b2_b4_boosted.py) | 0.2632 | 31.14% | 0.9035 | 80.26% |
 | 5 | [`v7_stacking_bracketed`](reports/methods/v7_stacking_bracketed.md) | [py](algorithms/stacking_bracketed.py) | 0.2643 | 31.14% | 0.8904 | 79.82% |
 | 6 | [`v2_visibility`](reports/methods/v2_visibility.md) | — | 0.2664 | **31.58%** | 0.8728 | 82.02% |
 | 7 | [`v5_best_visibility`](reports/methods/v5_best_visibility.md) | [py](algorithms/best_visibility_grid.py) | 0.2664 | 31.58% | 0.8728 | 82.02% |
@@ -419,7 +419,7 @@ Sumber: kolom `err_B*` (sudah absolute) di [`accuracy_per_tree.csv`](reports/ben
 
 | Method | B1 ↓ | B2 ↓ | B3 ↓ | B4 ↓ |
 |---|---:|---:|---:|---:|
-| [`v9_selector`](reports/methods/v9_selector.md) | **0.105** | **0.219** | **0.386** | 0.303 |
+| [`v9_selector`](reports/methods/v9_selector.md) | 0.105 | **0.219** | **0.386** | 0.303 |
 | [`v9_b2_median_v6`](reports/methods/v9_b2_median_v6.md) | 0.105 | 0.224 | 0.395 | 0.307 |
 | [`v6_selector`](reports/methods/v6_selector.md) | 0.105 | 0.232 | 0.395 | 0.307 |
 | [`v8_b2_b4_boosted`](reports/methods/v8_b2_b4_boosted.md) | **0.079** | 0.268 | 0.425 | **0.281** |
