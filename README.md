@@ -29,11 +29,27 @@ Naif: jumlah semua bounding box dari semua sisi → overcount. Dedup: koreksi ag
 
 Tiap deteksi punya probabilitas "ini duplikat dari sisi sebelah". Makin dekat ke tepi frame, makin tinggi. Solusi paling sederhana: bagi jumlah naif dengan suatu faktor.
 
+Faktor didapat dari data 228 pohon ber-GT:
+
 ```
-count_unik(B1) = naive_B1 / 1.986
+factor[C] = total_naive[C] / total_gt[C]
+```
+
+| Kelas | GT (unik) | Naive (sum) | factor | Arti |
+|---:|---:|---:|---:|---|
+| B1 | 291 | 578 | **1.986** | paling besar, merah, bawah — visible dari banyak sisi |
+| B2 | 532 | 950 | **1.786** | transisi, masih besar |
+| B3 | 1144 | 2054 | **1.795** | hitam, masih besar |
+| B4 | 499 | 826 | **1.655** | paling kecil, atas, terhalang pelepah — sering kelewat |
+| **Total** | 2466 | 4408 | **1.788** | overall |
+
+```
+count_unik(B1) = round(naive_B1 / 1.986)
 ```
 
 Ini adalah **v1** (`corrected`), Acc ±1 = 90.79%. Sederhana, langsung hajar overcount.
+
+Sumber: `reports/json_05/count_mae_gt.csv` dari `scripts/count_gt_vs_naive.py`.
 
 ### Insight 1 — Visibility Weighting (v2)
 
