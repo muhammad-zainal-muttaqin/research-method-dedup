@@ -221,13 +221,15 @@ Sumber: `accuracy_summary.csv`.
 
 **Sumber folder:** `json_28 April 2026/`
 
+> Catatan: Sama seperti dataset 228 sebelumnya, dataset 478 ini **juga DAMIMAS-only**. LONSUM hanya ada di subset TXT (tanpa JSON). Kedua dataset tidak mengandung LONSUM.
+
 ---
 
 ## Catatan
 
-- Dataset 478 pohon ini **hanya DAMIMAS** (tidak ada LONSUM), berbeda dari dataset 228 sebelumnya yang memiliki DAMIMAS + LONSUM.
-- Akurasi Top-1 turun dari 98.68% (228 trees) menjadi 92.68% (478 trees) — wajar karena dataset lebih besar dan beragam.
+- Akurasi Top-1 turun dari 98.68% (228 trees) menjadi 92.68% (478 trees) — wajar karena dataset lebih besar dan lebih beragam (478 vs 228 pohon).
 - `v8_b2_b4_boosted` menunjukkan Macro MAE terendah (0.2762), mengindikasikan bahwa boosting per-kelas B2/B4 efektif secara rata-rata meskipun akurasi total ±1 sedikit lebih rendah.
+- Pola ranking berubah: di dataset 228, v9 methods dominan. Di dataset 478, `v8_b2_b4_boosted` memimpin Macro MAE, sementara `v9` methods unggul tipis di Total ±1.
 
 ---
 
