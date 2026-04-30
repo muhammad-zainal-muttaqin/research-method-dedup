@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "tree_id": "20260430-DAMIMAS-276",
+  "tree_name": "DAMIMAS_A21B_0519",
+  "split": "val",
+  "metadata": {
+    "date": "2026-04-30",
+    "varietas": "DAMIMAS",
+    "number": 276,
+    "generated_at": "2026-04-30T01:37:56.256Z"
+  },
+  "images": {
+    "sisi_1": {
+      "filename": "DAMIMAS_A21B_0519_1.jpg",
+      "label_file": "DAMIMAS_A21B_0519_1.txt",
+      "side_index": 0,
+      "side_label": "Sisi 1",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 0,
+      "annotations": []
+    },
+    "sisi_2": {
+      "filename": "DAMIMAS_A21B_0519_2.jpg",
+      "label_file": "DAMIMAS_A21B_0519_2.txt",
+      "side_index": 1,
+      "side_label": "Sisi 2",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 0,
+      "annotations": []
+    },
+    "sisi_3": {
+      "filename": "DAMIMAS_A21B_0519_3.jpg",
+      "label_file": "DAMIMAS_A21B_0519_3.txt",
+      "side_index": 2,
+      "side_label": "Sisi 3",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 0,
+      "annotations": []
+    },
+    "sisi_4": {
+      "filename": "DAMIMAS_A21B_0519_4.jpg",
+      "label_file": "DAMIMAS_A21B_0519_4.txt",
+      "side_index": 3,
+      "side_label": "Sisi 4",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 0,
+      "annotations": []
+    }
+  },
+  "bunches": [],
+  "_confirmedLinks": [],
+  "summary": {
+    "total_unique_bunches": 0,
+    "total_detections": 0,
+    "duplicates_linked": 0,
+    "by_class": {
+      "B1": 0,
+      "B2": 0,
+      "B3": 0,
+      "B4": 0,
+      "other": 0
+    },
+    "by_side": {
+      "sisi_1": 0,
+      "sisi_2": 0,
+      "sisi_3": 0,
+      "sisi_4": 0
+    }
+  }
+}

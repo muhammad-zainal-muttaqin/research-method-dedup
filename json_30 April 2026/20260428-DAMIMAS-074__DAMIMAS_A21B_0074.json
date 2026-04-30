@@ -1,0 +1,225 @@
+{
+  "version": 1,
+  "tree_id": "20260428-DAMIMAS-074",
+  "tree_name": "DAMIMAS_A21B_0074",
+  "split": "train",
+  "metadata": {
+    "date": "2026-04-28",
+    "varietas": "DAMIMAS",
+    "number": 74,
+    "generated_at": "2026-04-28T03:57:46.175Z"
+  },
+  "images": {
+    "sisi_1": {
+      "filename": "DAMIMAS_A21B_0074_1.jpg",
+      "label_file": "DAMIMAS_A21B_0074_1.txt",
+      "side_index": 0,
+      "side_label": "Sisi 1",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 2,
+      "annotations": [
+        {
+          "box_index": 0,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.437154,
+            0.654852,
+            0.118988,
+            0.090498
+          ],
+          "bbox_pixel": [
+            363,
+            780,
+            477,
+            896
+          ]
+        },
+        {
+          "box_index": 1,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.313558,
+            0.638826,
+            0.059494,
+            0.081071
+          ],
+          "bbox_pixel": [
+            272,
+            766,
+            330,
+            870
+          ]
+        }
+      ]
+    },
+    "sisi_2": {
+      "filename": "DAMIMAS_A21B_0074_2.jpg",
+      "label_file": "DAMIMAS_A21B_0074_2.txt",
+      "side_index": 1,
+      "side_label": "Sisi 2",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 0,
+      "annotations": []
+    },
+    "sisi_3": {
+      "filename": "DAMIMAS_A21B_0074_3.jpg",
+      "label_file": "DAMIMAS_A21B_0074_3.txt",
+      "side_index": 2,
+      "side_label": "Sisi 3",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 2,
+      "annotations": [
+        {
+          "box_index": 0,
+          "class_id": 3,
+          "class_name": "B4",
+          "bbox_yolo": [
+            0.416465,
+            0.243555,
+            0.102398,
+            0.075182
+          ],
+          "bbox_pixel": [
+            351,
+            264,
+            449,
+            360
+          ]
+        },
+        {
+          "box_index": 1,
+          "class_id": 3,
+          "class_name": "B4",
+          "bbox_yolo": [
+            0.355026,
+            0.155034,
+            0.130423,
+            0.077607
+          ],
+          "bbox_pixel": [
+            278,
+            149,
+            403,
+            248
+          ]
+        }
+      ]
+    },
+    "sisi_4": {
+      "filename": "DAMIMAS_A21B_0074_4.jpg",
+      "label_file": "DAMIMAS_A21B_0074_4.txt",
+      "side_index": 3,
+      "side_label": "Sisi 4",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 0,
+      "annotations": []
+    }
+  },
+  "bunches": [
+    {
+      "bunch_id": 1,
+      "class": "B3",
+      "class_mismatch": false,
+      "appearance_count": 1,
+      "appearances": [
+        {
+          "side": "sisi_1",
+          "side_index": 0,
+          "box_index": 0,
+          "class_name": "B3",
+          "bbox_pixel": [
+            363,
+            780,
+            477,
+            896
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 2,
+      "class": "B3",
+      "class_mismatch": false,
+      "appearance_count": 1,
+      "appearances": [
+        {
+          "side": "sisi_1",
+          "side_index": 0,
+          "box_index": 1,
+          "class_name": "B3",
+          "bbox_pixel": [
+            272,
+            766,
+            330,
+            870
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 3,
+      "class": "B4",
+      "class_mismatch": false,
+      "appearance_count": 1,
+      "appearances": [
+        {
+          "side": "sisi_3",
+          "side_index": 2,
+          "box_index": 0,
+          "class_name": "B4",
+          "bbox_pixel": [
+            351,
+            264,
+            449,
+            360
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 4,
+      "class": "B4",
+      "class_mismatch": false,
+      "appearance_count": 1,
+      "appearances": [
+        {
+          "side": "sisi_3",
+          "side_index": 2,
+          "box_index": 1,
+          "class_name": "B4",
+          "bbox_pixel": [
+            278,
+            149,
+            403,
+            248
+          ]
+        }
+      ]
+    }
+  ],
+  "_confirmedLinks": [],
+  "summary": {
+    "total_unique_bunches": 4,
+    "total_detections": 4,
+    "duplicates_linked": 0,
+    "by_class": {
+      "B1": 0,
+      "B2": 0,
+      "B3": 2,
+      "B4": 2,
+      "other": 0
+    },
+    "by_side": {
+      "sisi_1": 2,
+      "sisi_2": 0,
+      "sisi_3": 2,
+      "sisi_4": 0
+    }
+  }
+}
