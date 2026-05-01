@@ -400,7 +400,8 @@ Urut berdasarkan **macro class-MAE**. Nama metode link ke breakdown data mentah;
 | Rank | Method | Impl | Macro MAE ↓ | Exact % ↑ | Total MAE ↓ | Total ±1 % ↑ |
 |---:|---|---|---:|---:|---:|---:|
 | 1 | [`v9_selector`](reports/methods/v9_selector.md) | [py](algorithms/v9_selector.py) | **0.2533** | 29.39% | **0.8553** | **83.77%** |
-| 2 | [`v9_b2_median_v6`](reports/methods/v9_b2_median_v6.md) | [py](algorithms/b2_median_v6.py) | 0.2577 | 29.82% | 0.8640 | 82.02% |
+| 2 | [`v10_selector`](reports/methods/v10_selector.md) | [py](algorithms/v10_selector.py) | 0.2785 | 30.70% | 0.902 | 92.11% |
+| 3 | [`v9_b2_median_v6`](reports/methods/v9_b2_median_v6.md) | [py](algorithms/b2_median_v6.py) | 0.2577 | 29.82% | 0.8640 | 82.02% |
 | 3 | [`v6_selector`](reports/methods/v6_selector.md) | [py](algorithms/v6_selector.py) | 0.2599 | 28.07% | 0.8816 | 82.46% |
 | 4 | [`v8_b2_b4_boosted`](reports/methods/v8_b2_b4_boosted.md) | [py](algorithms/b2_b4_boosted.py) | 0.2632 | 31.14% | 0.9035 | 80.26% |
 | 5 | [`v7_stacking_bracketed`](reports/methods/v7_stacking_bracketed.md) | [py](algorithms/stacking_bracketed.py) | 0.2643 | 31.14% | 0.8904 | 79.82% |

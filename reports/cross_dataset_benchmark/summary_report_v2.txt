@@ -1,0 +1,72 @@
+CROSS-DATASET BENCHMARK: v9 vs v10 (PER-FILE)
+============================================================
+
+
+Dataset: json_22Apr
+----------------------------------------
+
+  V9:
+    Acc +-1: 97.37%
+    MAE: 0.2533
+    Mean Total Error: 1.013
+    Per-class MAE:
+      B1: 0.1053
+      B2: 0.2193
+      B3: 0.3860
+      B4: 0.3026
+
+  V10:
+    Acc +-1: 91.67%
+    MAE: 0.2829
+    Mean Total Error: 1.132
+    Per-class MAE:
+      B1: 0.1053
+      B2: 0.2325
+      B3: 0.4956
+      B4: 0.2982
+
+Dataset: json_28Apr
+----------------------------------------
+
+  V9:
+    Acc +-1: 92.66%
+    MAE: 0.2898
+    Mean Total Error: 1.159
+    Per-class MAE:
+      B1: 0.1342
+      B2: 0.2474
+      B3: 0.4633
+      B4: 0.3145
+
+  V10:
+    Acc +-1: 89.31%
+    MAE: 0.3014
+    Mean Total Error: 1.205
+    Per-class MAE:
+      B1: 0.1321
+      B2: 0.2453
+      B3: 0.5220
+      B4: 0.3061
+
+Dataset: json_30Apr
+----------------------------------------
+
+  V9:
+    Acc +-1: 89.24%
+    MAE: 0.3276
+    Mean Total Error: 1.310
+    Per-class MAE:
+      B1: 0.1421
+      B2: 0.2483
+      B3: 0.5931
+      B4: 0.3269
+
+  V10:
+    Acc +-1: 88.28%
+    MAE: 0.3300
+    Mean Total Error: 1.320
+    Per-class MAE:
+      B1: 0.1517
+      B2: 0.2469
+      B3: 0.6083
+      B4: 0.3131

@@ -8,7 +8,10 @@
 #
 # Ranking performa pada benchmark JSON 228 pohon (Acc ±1):
 #   Rank  File                      Gen  Acc      MAE     Gagal
-#   1     v9_selector.py            v9   98.68%   0.2533  3
+#   1     v9_selector.py            v9   97.37%   0.2533  6   (original 228; v10 92.11%)
+#   2     v10_selector.py           v10  92.11%   0.2785  18  <- B23-density on 228 (regressed)
+#   2*    v10_selector.py           v10  89.27%   0.3167  78  <- B23-density on 727 (MAE improved vs v9)
+
 #   2     b2_median_v6.py           v9   96.49%   0.2588  8
 #   3     v6_selector.py            v6   96.49%   0.2632  8
 #   4     median_strong5.py         v9   95.18%   0.2390  11
