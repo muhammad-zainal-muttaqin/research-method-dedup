@@ -4,11 +4,11 @@ Operational instructions for AI agents working in this repo. Mirror of `CLAUDE.m
 
 ## Project Context
 
-**Task:** Multi-view oil palm fruit bunch counting. Convert detections from 4–8 photo sides per tree into **unique bunch count per maturity class**. Naive sum overcounts ~78.8% (same bunch seen across sides). Read `RESEARCH.md` Section 0 (esp. 0.6–0.9) before deep work.
+**Task:** Multi-view oil palm fruit bunch counting. Convert detections from 4–8 photo sides per tree into **unique bunch count per maturity class**. Naive sum overcounts ~83.4% (same bunch seen across sides; factor 1.834 from 727-tree GT). Read `RESEARCH.md` Section 0 (esp. 0.6–0.9) before deep work.
 
 **Constraint:** **100% algorithmic / heuristic only.** No training, embeddings, backprop, or learned matchers. All methods must be deterministic and parameter-free (no gradient computation).
 
-**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. JSON GT canonical: `json_05 mei 2026/` = **882 unique trees** (dedup'd from `05 Mei 2026/` raw output, 1 file per `tree_name`, varietas correct). Legacy `json/` = **228 trees** (subset, retained for historical benchmark reproduction). 71 trees still missing JSON (45 8-sided DAMIMAS_A21B_0810–0854 + 19 LONSUM_A21A_0056–0074 + 7 DAMIMAS scattered) — TXT predictions exist in `dataset/labels/`, JSON GT pending re-generation via `tools_sawit/` app once annotator finishes. See `json_05 mei 2026/_MISSING.md`. Mostly 4 sides/tree, 45 have 8. Images 960×1280 JPEG. Classes ordinal B1→B4. **Core hard problem: B2↔B3 visually ambiguous** (irreducible per JSON-01 audit, label noise = 0%).
+**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. JSON GT canonical: `json_05 Mei 2026/` = **882 unique trees** (dedup'd from `05 Mei 2026/` raw output, 1 file per `tree_name`, varietas correct). Legacy `json/` = **228 trees** (subset, retained for historical benchmark reproduction). 71 trees still missing JSON (45 8-sided DAMIMAS_A21B_0810–0854 + 19 LONSUM_A21A_0056–0074 + 7 DAMIMAS scattered) — TXT predictions exist in `dataset/labels/`, JSON GT pending re-generation via `tools_sawit/` app once annotator finishes. See `json_05 Mei 2026/_MISSING.md`. Mostly 4 sides/tree, 45 have 8. Images 960×1280 JPEG. Classes ordinal B1→B4. **Core hard problem: B2↔B3 visually ambiguous** (irreducible per JSON-01 audit, label noise = 0%).
 
 ## Setup
 
@@ -43,6 +43,9 @@ python scripts/dedup_research_v9.py    # v9: narrow regime overrides on v6 (CURR
 python scripts/benchmark_multidim.py         # 4-dim evaluation: accuracy, speed, robustness, domain
 python scripts/generate_method_reports.py    # per-method breakdown reports → reports/methods/
 
+# Cross-dataset benchmark (228/478/727/882 trees — fresh re-run 2026-05-08)
+# Results in reports/benchmark_228/, benchmark_478/, benchmark_727/, benchmark_882/
+
 # Final inference + comparison (all 953 trees)
 python scripts/dedup_all_953.py             # all 16 methods on all 953 trees (newer)
 python scripts/dedup_all_trees_final.py     # all methods on 953 trees
@@ -51,25 +54,52 @@ python scripts/dedup_nonjson_compare.py     # non-JSON validation + report
 
 ## Current Best (as of 2026-05-08)
 
-Benchmark: 228 JSON trees, **Acc ±1 per class per tree** (primary), MAE + Mean Total Error (secondary).
+Fresh benchmark re-run (2026-05-08) on all 4 archive snapshots. **Primary benchmark = 882 trees** (`json_05 Mei 2026/`). 228-tree numbers are historical reference only.
 
-| Rank | Method | Acc ±1 | MAE | Notes |
-|---:|---|---:|---:|---|
-| 1 | `v9_selector` | **98.68%** | **0.2533** | Only 3/228 trees still fail |
-| 2 | `b2_median_v6` | 96.49% | 0.2588 | v9 variant |
-| 3 | `v6_selector` | 96.49% | 0.2632 | v9 default backbone (96.49%) |
-| 4 | `median_strong5` | 95.18% | 0.2390 | v9 variant |
-| 5 | `stacking_bracketed` | 94.30% | 0.2643 | v7 best |
-| 6 | `stacking_density` | 94.30% | 0.2708 | v7 |
-| 7 | `entropy_modulated` | 94.30% | 0.2763 | v8 — ties v7, adds nothing globally |
-| 8 | `adaptive_corrected` | 93.86% | 0.2774 | v5 — first >93% |
-| 9 | `b2_b4_boosted` | 92.54% | 0.2632 | v8 specialist |
-| 10 | `best_visibility_grid` | 92.54% | 0.2664 | v5 |
-| — | *(full table in `algorithms/__init__.py`)* | | | |
+### Acc ±1 on 228 trees (historical, v9 development set)
+
+| Rank | Method | Acc ±1 | Notes |
+|---:|---|---:|---|
+| 1 | `v9_selector` | **97.37%** | Narrow overrides on v6 — **overfits 228** |
+| 2 | `b2_median_v6` | 96.05% | v9 variant |
+| 3 | `v6_selector` | 96.05% | v9 backbone |
+| 4 | `stacking_bracketed` | 94.30% | v7 best |
+| 5 | `stacking_density` | 94.30% | v7 |
+| 6 | `entropy_modulated` | 94.30% | v8 — ties v7 |
+| 7 | `adaptive_corrected` | 93.86% | v5 |
+| 8 | `b2_b4_boosted` | 92.54% | v8 specialist |
+| 9 | `best_visibility_grid` | 92.54% | v5 |
+| 10 | `v2_visibility` | 92.54% | v2 |
+| 11 | `v1_corrected` | 90.79% | v1 baseline |
+
+### Cross-Dataset Regression (Acc ±1, fresh re-run 2026-05-08)
+
+Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_727/`, `reports/benchmark_882/`.
+
+| Method | 228 | 478 | 727 | **882** | Delta 228→882 |
+|---|---:|---:|---:|---:|---:|
+| `v9_selector` | 97.37% | 92.68% | 89.27% | 88.78% | −8.59 pp |
+| `v9_b2_median_v6` | 96.05% | 92.68% | 89.00% | 88.78% | −7.27 pp |
+| `v6_selector` | 96.05% | 91.84% | 88.86% | 88.55% | −7.50 pp |
+| `v8_entropy_modulated` | 94.30% | 91.63% | 88.86% | 88.78% | −5.52 pp |
+| `v7_stacking_bracketed` | 94.30% | 91.84% | 88.45% | 88.44% | −5.86 pp |
+| `v7_stacking_density` | 94.30% | 91.84% | 88.45% | 88.44% | −5.86 pp |
+| `v5_adaptive_corrected` | 93.86% | 89.96% | 86.11% | 86.28% | −7.58 pp |
+| `v8_b2_b4_boosted` | 92.54% | 91.00% | 87.62% | 88.21% | −4.33 pp |
+| `v2_visibility` | 92.54% | 90.38% | **89.41%** | **89.34%** | **−3.20 pp** |
+| `v5_best_visibility` | 92.54% | 90.38% | **89.41%** | **89.34%** | **−3.20 pp** |
+| `v1_corrected` | 90.79% | 89.12% | 87.90% | 88.21% | **−2.58 pp** |
+
+**Key regression findings:**
+- `v2_visibility` and `v5_best_visibility` most stable — best at 882 (89.34%), smallest delta
+- `v1_corrected` most stable overall (−2.58 pp) — simple generalizes best
+- `v9_selector` drops 8.59 pp — narrow overrides overfit 228-tree patterns
+- All methods land 86–89% at 882 trees (no catastrophic drop)
 
 **Recommendations:**
-- **JSON trees (228) with GT** → `v9_selector`
-- **Non-JSON trees (725) without GT** → prefer `best_visibility_grid`, `stacking_density`, `adaptive_corrected`, or `stacking_bracketed`. Don't assume v9_selector wins here — its benchmark is JSON-only. See `reports/nonjson_dedup_report.md`.
+- **Historical 228-tree set** → `v9_selector` (97.37%)
+- **Full 882-tree canonical benchmark** → `v2_visibility` or `v5_best_visibility` (89.34%)
+- **Missing JSON (71 trees)** → `v5_best_visibility` or `v7_stacking_bracketed`
 
 **v9 logic (regime overrides on top of v6_selector):**
 1. default → `v6_selector`
@@ -91,31 +121,38 @@ Benchmark: 228 JSON trees, **Acc ±1 per class per tree** (primary), MAE + Mean 
 | v6 | `v6_selector` | **96.49%** | **turning point** — no single global rule wins; route per regime |
 | v7 | `stacking_bracketed` | 94.30% | stacking/density family strong but loses to v6 |
 | v8 | `stacking_bracketed_v7` | 94.30% | entropy/per-side signals add nothing |
-| v9 | `v9_selector` | **98.68%** | narrow high-confidence overrides on v6 default |
+| v9 | `v9_selector` | **97.37%** (228) / 88.78% (882) | narrow overrides on v6 — best on 228, overfits at scale |
 
-**Key takeaway:** strict matching (Hungarian, graph, cluster) **fails** on noisy TXT labels (<20% accuracy). Adaptive statistical correction + regime-routing wins. B2↔B3 ambiguity is the irreducible ceiling, not label noise.
+**Key takeaway:** strict matching (Hungarian, graph, cluster) **fails** on noisy TXT labels (<20% accuracy). Adaptive statistical correction + regime-routing wins on 228-tree set. At scale (882 trees), simpler methods (`v2_visibility`, `v1_corrected`) generalize best. B2↔B3 ambiguity is the irreducible ceiling, not label noise.
 
-## Non-JSON Pipeline (725 trees, TXT-only)
+## Missing JSON Pipeline (71 trees, TXT-only)
 
-TXT labels have coordinate + classification noise (B2↔B3 swaps). Validation on 228 JSON trees (current benchmark):
+With 882 of 953 trees now having JSON GT, only **71 trees** still lack ground truth. TXT labels have coordinate + classification noise (B2↔B3 swaps).
 
-| Method | Acc ±1 | Verdict |
-|---|---:|---|
-| `v9_selector` | 98.68% | Best on JSON, unvalidated on non-JSON |
-| `adaptive_corrected` | 93.86% | Recommended for non-JSON |
-| `best_visibility_grid` | 92.54% | Recommended for non-JSON |
-| `stacking_bracketed` | 94.30% | Recommended for non-JSON |
+Best methods on 882-tree canonical benchmark (most stable = recommended for unvalidated trees):
 
-Verified dedup ratio ≈ 56% (from JSON-05: naive ÷ 1.788). On 725 non-JSON trees: `adaptive_corrected` → 57.4%, `best_visibility_grid` → 55.7% (both valid).
+| Method | Acc ±1 @882 | Delta 228→882 | Verdict |
+|---|---:|---:|---|
+| `v2_visibility` | **89.34%** | −3.20 pp | Most stable, recommended |
+| `v5_best_visibility` | **89.34%** | −3.20 pp | Most stable, recommended |
+| `v7_stacking_bracketed` | 88.44% | −5.86 pp | Good generalization |
+| `v9_selector` | 88.78% | −8.59 pp | Overfits 228, avoid for unvalidated |
+
+Verified dedup ratio ≈ 56% (from JSON-05: naive ÷ 1.788). See `reports/nonjson_dedup_report.md`.
 
 ## Repository Layout
 
 ```
-json_05 mei 2026/      882 JSON GT files (current canonical, 1 per tree_name)
+json_05 Mei 2026/      882 JSON GT files (current canonical, 1 per tree_name)
                        _MISSING.md lists 71 trees pending re-annotation
 json/                  228 JSON files (legacy subset, used by older scripts)
 05 Mei 2026/           Raw export from tools_sawit/ app (1433 files, 5 folders;
-                       see json_05 mei 2026/ for the dedup'd canonical version)
+                       see json_05 Mei 2026/ for the dedup'd canonical version)
+archive/               Snapshot archives (read-only, do not modify)
+  json_22 April 2026/  228-tree snapshot (= json/ root copy)
+  json_28 April 2026/  478-tree snapshot
+  json_30 April 2026/  727-tree snapshot (legacy benchmark)
+  05 Mei 2026 raw/     raw export before dedup
 tools_sawit/           Web app (vanilla JS) used to produce JSON GT.
                        Schema v2: filename = tree_name.json, varietas derived
                        per-tree from name prefix. See tools_sawit/README.md.
@@ -125,19 +162,23 @@ dataset/
   labels/{train,val,test}/
 algorithms/            standalone algo modules — each exports predict(detections, params) -> dict
   __init__.py          ranked performance table (read this for algo selection)
-  v9_selector.py       CURRENT BEST — imports v6_selector + 3 specialist algos
+  v9_selector.py       best on 228 — imports v6_selector + 3 specialist algos
   v6_selector.py       backbone + load_params() (reads reports/dedup_research_v5/...)
   *.py                 one algo = one file, all deterministic, no training
 scripts/               see "Running Scripts" — count_*, dedup_*, benchmark_*, generate_*
   dedup_all_953.py     run all 16 methods on all 953 trees
 reports/<script>/      every script writes its outputs here
+reports/benchmark_228/       Acc±1 on 228-tree archive (fresh re-run 2026-05-08)
+reports/benchmark_478/       Acc±1 on 478-tree archive
+reports/benchmark_727/       Acc±1 on 727-tree archive
+reports/benchmark_882/       Acc±1 on 882-tree canonical (PRIMARY BENCHMARK)
 reports/benchmark_multidim/  multi-dim benchmark (accuracy, speed, robustness, domain)
 reports/methods/             per-method breakdown reports with traceability
 contract-work/         validation contracts, v4 analysis, dry-run + algorithmic-advancement reports
 RESEARCH.md            primary research doc — read Section 0 first
-README.md              project overview + method evolution narrative
+README.md              project overview + method evolution narrative + cross-dataset table
+report_05Mei2026.md    882-tree benchmark results (per-method full breakdown)
 AGENTS.md              agent configuration
-tod.md                 working notes
 ```
 
 ## algorithms/ Package
