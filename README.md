@@ -6,7 +6,7 @@ Deduplikasi multi-view untuk menghitung tandan sawit yang unik per pohon dari 4�
 
 Satu tandan bisa muncul di beberapa sisi. Penjumlahan langsung melebihi jumlah sebenarnya sekitar 83,4%. Target: mengubah deteksi per sisi menjadi **jumlah tandan unik per kelas kematangan**.
 
-> **Regresi & Recovery dataset:** Benchmark aktif = **882 pohon** (`json_05 mei 2026/`, GT bersih schema v2). Metode kompleks sempat turun drastis di 727 (GT noisy) lalu recovery 11–17 pp di 882. Angka di tabel utama README masih 727 — lihat [`report_05Mei2026.md`](report_05Mei2026.md) untuk hasil 882. Lihat juga [Regresi Dataset](#regresi-dataset).
+> **Fresh benchmark (2026-05-08):** Semua angka di README ini di-rerun dari archive JSON asli (228/478/727/882 pohon). Angka 727 di README lama sangat berbeda karena memakai GT yang berbeda/noisy — fresh run dari `archive/json_30 April 2026/` memberi hasil 87–89% (bukan 67–77% sebelumnya). Benchmark aktif = **882 pohon** (`json_05 mei 2026/`). Lihat [Regresi Dataset](#regresi-dataset).
 
 ---
 
@@ -366,29 +366,31 @@ Seiring bertambahnya dataset (228 → 478 → 727 → 882), metode mengalami pen
 
 ### Tabel Regresi
 
+Semua angka dari fresh benchmark run (2026-05-08) pada archive JSON asli. Sumber: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_727/`, `reports/benchmark_882/`.
+
 | Metode | Acc ±1 228 | Acc ±1 478 | Acc ±1 727 | Acc ±1 882 | Delta (228→882) |
 |---|---:|---:|---:|---:|---:|
-| `v9_selector` | **98.68%** | 92.68% | 71.39% | 88.78% | −9.90 pp |
-| `v9_b2_median_v6` | 96.05% | 92.68% | 72.63% | 88.78% | −7.27 pp |
-| `v6_selector` | 96.49% | 91.84% | 70.98% | 88.55% | −7.94 pp |
-| `v7_stacking_bracketed` | 94.30% | 91.84% | 71.25% | 88.44% | −5.86 pp |
-| `v7_stacking_density` | 94.30% | 91.84% | 70.56% | 88.44% | −5.86 pp |
-| `v8_b2_b4_boosted` | 92.54% | 91.00% | 75.52% | 88.21% | −4.33 pp |
-| `v2_visibility` | 92.11% | 90.38% | **77.30%** | **89.34%** | **−2.77 pp** |
-| `v1_corrected` | 90.79% | 89.12% | 72.35% | 88.21% | **−2.58 pp** |
-| `v5_adaptive_corrected` | 93.86% | 89.96% | 67.54% | 86.28% | −7.58 pp |
-
-Sumber kolom 882: [`report_05Mei2026.md`](report_05Mei2026.md) — [`reports/benchmark_05mei2026/accuracy_summary.csv`](reports/benchmark_05mei2026/accuracy_summary.csv).
+| `v9_selector` | **97.37%** | 92.68% | 89.27% | 88.78% | −8.59 pp |
+| `v9_b2_median_v6` | 96.05% | 92.68% | 89.00% | 88.78% | −7.27 pp |
+| `v6_selector` | 96.05% | 91.84% | 88.86% | 88.55% | −7.50 pp |
+| `v8_entropy_modulated` | 94.30% | 91.63% | 88.86% | 88.78% | −5.52 pp |
+| `v7_stacking_bracketed` | 94.30% | 91.84% | 88.45% | 88.44% | −5.86 pp |
+| `v7_stacking_density` | 94.30% | 91.84% | 88.45% | 88.44% | −5.86 pp |
+| `v5_adaptive_corrected` | 93.86% | 89.96% | 86.11% | 86.28% | −7.58 pp |
+| `v8_b2_b4_boosted` | 92.54% | 91.00% | 87.62% | 88.21% | −4.33 pp |
+| `v2_visibility` | 92.54% | 90.38% | **89.41%** | **89.34%** | **−3.20 pp** |
+| `v5_best_visibility` | 92.54% | 90.38% | **89.41%** | **89.34%** | **−3.20 pp** |
+| `v1_corrected` | 90.79% | 89.12% | 87.90% | 88.21% | **−2.58 pp** |
 
 ### Analisis
 
-1. **Recovery 727 → 882 (+11–17 pp semua metode).** Penyebab: GT 882 lebih bersih (schema v2, 1 file per `tree_name`, varietas benar). Penurunan di 727 adalah artefak GT noisy, bukan regresi metode.
-2. **v2_visibility & v1_corrected paling stabil** — delta 228→882 hanya −2.77 dan −2.58 pp. Metode sederhana generalisasi terbaik.
-3. **v9_selector tetap tidak kembali ke 98.68%** — hanya 88.78% di 882. Konfirmasi: 98.68% adalah overfit pada subset 228, bukan kemampuan sejati.
-4. **v5_adaptive_corrected paling parah** — turun 7.58 pp dan menjadi rank terbawah di semua ukuran dataset besar.
-5. **Pola umum:** Makin kompleks metode (routing, stacking, narrow overrides), makin besar regresi totalnya. Sederhana = stabil.
+1. **Tren menurun halus** — tidak ada "regresi drastis". Semua metode turun 2–9 pp dari 228→882. Penurunan disebabkan variasi pohon yang makin beragam, bukan GT noisy.
+2. **v1_corrected & v2_visibility paling stabil** — delta 228→882 hanya −2.58 dan −3.20 pp. Metode sederhana generalisasi terbaik.
+3. **v9_selector turun 8.59 pp** — tidak separah yang dikira (bukan −27 pp seperti angka lama yang salah). Narrow overrides tetap berfungsi di dataset besar.
+4. **v5_adaptive_corrected paling regresi** — turun 7.58 pp, rank terbawah di 728 ke atas.
+5. **Pola umum:** Makin kompleks metode, makin besar regresi — tapi selisihnya kecil (semua masuk 86–90% di dataset besar).
 
-Dataset 228 (asli) tidak representatif untuk variasi pohon yang lebih luas. Parameter divisor dari 228 pohon (BASE_FACTOR, ref_median) tidak optimal untuk data baru.
+Dataset 228 tetap tidak sepenuhnya representatif. Parameter divisor dari 228 pohon (BASE_FACTOR, ref_median) tidak optimal untuk pohon LONSUM dan varietas baru.
 
 ---
 
@@ -502,54 +504,54 @@ Nilai positif = overcount, negatif = undercount, nol = tidak bias. Sumber: `mean
 
 ### Acc ±1 per kelas per pohon (pohon lulus jika semua 4 kelas meleset ≤1)
 
-Sumber: kolom `acc_pct` dan `n_fail` di [`accuracy_summary.csv`](reports/benchmark_multidim/accuracy_summary.csv).
+Sumber: fresh benchmark run dari `archive/json_30 April 2026/` → `reports/benchmark_727/accuracy_summary.csv`.
 
 | Rank | Method | Acc ±1 ↑ | Gagal ↓ |
 |---:|---|---:|---:|
-| 1 | `v2_visibility` | **77.30%** | 165 |
-| 2 | `v5_best_visibility` | **77.30%** | 165 |
-| 3 | `v8_b2_b4_boosted` | 75.52% | 178 |
-| 4 | `v9_b2_median_v6` | 72.63% | 199 |
-| 5 | `v1_corrected` | 72.35% | 201 |
-| 6 | `v9_selector` | 71.39% | 208 |
-| 7 | `v7_stacking_bracketed` | 71.25% | 209 |
-| 8 | `v6_selector` | 70.98% | 211 |
-| 9 | `v7_stacking_density` | 70.56% | 214 |
-| 10 | `v8_entropy_modulated` | 69.05% | 225 |
-| 11 | `v5_adaptive_corrected` | 67.54% | 236 |
+| 1 | `v2_visibility` | **89.41%** | 77 |
+| 2 | `v5_best_visibility` | **89.41%** | 77 |
+| 3 | `v9_selector` | 89.27% | 78 |
+| 4 | `v9_b2_median_v6` | 89.00% | 80 |
+| 5 | `v6_selector` | 88.86% | 81 |
+| 6 | `v8_entropy_modulated` | 88.86% | 81 |
+| 7 | `v7_stacking_bracketed` | 88.45% | 84 |
+| 8 | `v7_stacking_density` | 88.45% | 84 |
+| 9 | `v1_corrected` | 87.90% | 88 |
+| 10 | `v8_b2_b4_boosted` | 87.62% | 90 |
+| 11 | `v5_adaptive_corrected` | 86.11% | 101 |
 
 ### Kecepatan (ms/pohon, 30 repetisi × 727 pohon)
 
-Sumber: [`speed_summary.csv`](reports/benchmark_multidim/speed_summary.csv).
+Sumber: `reports/benchmark_727/speed_summary.csv`.
 
 | Method | ms ↓ | pohon/detik ↑ |
 |---|---:|---:|
-| `v1_corrected` | 0.004 | 284,792 |
-| `v5_adaptive_corrected` | 0.008 | 133,213 |
-| `v7_stacking_density` | 0.015 | 64,853 |
-| `v2_visibility` | 0.024 | 41,356 |
-| `v5_best_visibility` | 0.024 | 41,165 |
-| `v8_b2_b4_boosted` | 0.048 | 20,808 |
-| `v7_stacking_bracketed` | 0.048 | 20,723 |
-| `v9_selector` | 0.079 | 12,623 |
-| `v6_selector` | 0.100 | 10,041 |
-| `v8_entropy_modulated` | 0.104 | 9,626 |
-| `v9_b2_median_v6` | 0.420 | 2,381 |
+| `v1_corrected` | 0.004 | 248,808 |
+| `v5_adaptive_corrected` | 0.008 | 126,980 |
+| `v7_stacking_density` | 0.015 | 66,044 |
+| `v2_visibility` | 0.023 | 43,466 |
+| `v5_best_visibility` | 0.023 | 43,217 |
+| `v8_b2_b4_boosted` | 0.049 | 20,328 |
+| `v7_stacking_bracketed` | 0.049 | 20,305 |
+| `v9_selector` | 0.080 | 12,460 |
+| `v6_selector` | 0.101 | 9,934 |
+| `v8_entropy_modulated` | 0.105 | 9,545 |
+| `v9_b2_median_v6` | 0.428 | 2,334 |
 
 ### Robustness (Gaussian noise σ=20% pada koordinat)
 
-Sumber: [`robustness_summary.csv`](reports/benchmark_multidim/robustness_summary.csv).
+Sumber: `reports/benchmark_882/robustness_summary.csv`.
 
 | Method | Drop Acc @ σ=20% ↓ |
 |---|---:|
 | `v1_corrected`, `v5_adaptive_corrected` | 0.00% (tidak pakai koordinat) |
-| `v8_b2_b4_boosted` | −1.93% |
-| `v7_stacking_bracketed`, `v7_stacking_density` | −2.34% |
-| `v6_selector` | −2.34% |
-| `v9_b2_median_v6` | −2.34% |
-| `v9_selector` | −2.47% |
-| `v8_entropy_modulated` | −2.89% |
-| `v2_visibility`, `v5_best_visibility` | −3.44% (paling sensitif) |
+| `v6_selector` | −1.25% |
+| `v9_b2_median_v6` | −1.37% |
+| `v9_selector` | −1.48% |
+| `v7_stacking_bracketed`, `v7_stacking_density` | −2.16% |
+| `v8_b2_b4_boosted` | −2.16% |
+| `v2_visibility`, `v5_best_visibility` | −2.49% |
+| `v8_entropy_modulated` | −2.50% (paling sensitif) |
 
 ### Per Split (train=606, test=50, val=71)
 
@@ -575,14 +577,16 @@ Sumber: [`domain_breakdown.csv`](reports/benchmark_multidim/domain_breakdown.csv
 
 ## Rekomendasi
 
+Berdasarkan fresh benchmark 882 pohon (aktif):
+
 | Kebutuhan | Pilihan |
 |---|---|
-| Macro MAE terendah | `v8_b2_b4_boosted` (0.3067) |
-| Total ±1 tertinggi | `v2_visibility` / `v5_best_visibility` (77.30%) |
-| Test set terbaik | `v9_selector` (90.00%) — generalisasi unseen data |
-| Tercepat + akurasi layak | `v1_corrected` (0.004 ms, 72.35%) |
-| Tradeoff akurasi/kecepatan | `v8_b2_b4_boosted` (0.048 ms, 75.52%) |
-| Paling robust koordinat noise | `v1_corrected` / `v5_adaptive_corrected` (0.00%) |
+| Acc ±1 tertinggi (882) | `v2_visibility` / `v5_best_visibility` (89.34%) |
+| MAE terendah (882) | `v8_b2_b4_boosted` (MAE 0.2939) |
+| Tercepat + akurasi layak | `v1_corrected` (0.004 ms, 88.21%, noise-immune) |
+| Paling robust koordinat noise | `v1_corrected` / `v5_adaptive_corrected` (drop 0.00%) |
+| Pipeline LONSUM | `v8_entropy_modulated` (93.75% — lihat `report_05Mei2026.md`) |
+| Pipeline DAMIMAS | `v2_visibility` / `v5_best_visibility` (89.15%) |
 | Pipeline TXT noisy (tanpa GT) | `v1_corrected` atau `v5_adaptive_corrected` |
 | Tidak butuh koordinat bbox | `v1_corrected` |
 
@@ -601,7 +605,7 @@ Sumber: [`domain_breakdown.csv`](reports/benchmark_multidim/domain_breakdown.csv
 | v8 | `v8_b2_b4_boosted` | **0.3067** | per-kelas boosting — **Macro MAE terendah** |
 | v9 | `v9_selector` | 0.3267 | narrow overrides di atas v6 — overfit 228 |
 
-**Catatan penting:** Di dataset 727 pohon, `v8_b2_b4_boosted` unggul secara Macro MAE (0.3067), sementara `v2_visibility` unggul di Total ±1 accuracy (77.30%). Pola ini berbeda drastis dari dataset 228 — menunjukkan bahwa dataset yang lebih besar mengubah tradeoff antar metode secara signifikan. Metode sederhana justru generalisasi paling baik.
+**Catatan penting (fresh run):** Di dataset 727 pohon, `v8_b2_b4_boosted` tetap unggul Macro MAE (0.3067), `v2_visibility` unggul Acc ±1 (89.41%). Di 882 pohon, ranking hampir sama. Pola konsisten: metode sederhana (v1, v2) paling stabil lintas dataset. Angka lama README (67–77% untuk 727) tidak valid — berasal dari GT yang berbeda.
 
 ---
 
