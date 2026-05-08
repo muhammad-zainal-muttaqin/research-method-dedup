@@ -395,11 +395,16 @@ Dataset 228 (asli) ternyata tidak representatif untuk variasi pohon yang lebih l
 | Item | Jumlah |
 |---|---:|
 | Total pohon | 953 (DAMIMAS 854 + LONSUM 99) |
-| Dengan JSON GT | **727** (DAMIMAS) |
-| Hanya TXT prediksi | 725 |
-| Sisi per pohon | 4 (mayoritas), 8 (~45 terbaru) |
+| JSON GT kanonik (5 Mei 2026) | **882** (1 file per `tree_name`) |
+| JSON GT snapshot 30 Apr (benchmark aktif) | 727 |
+| Belum punya JSON GT | 71 (pending re-annotation) |
+| Sisi per pohon | 4 (mayoritas), 45 pohon 8-sisi |
 
-**Sumber JSON:** `json_30 April 2026/` (727 pohon). Dataset sebelumnya: 228 pohon (`json/`), lalu 478 pohon (`json_28 April 2026/`), kini 727.
+**Sumber JSON kanonik (terbaru):** `json_05 mei 2026/` — **882 pohon unik** (1 file per `tree_name`), hasil dedup dari raw export `05 Mei 2026/` (1433 file). 71 pohon masih pending re-anotasi (45 8-sisi DAMIMAS_A21B_0810–0854 + 19 LONSUM_A21A_0056–0074 + 7 DAMIMAS scattered) — lihat [`json_05 mei 2026/_MISSING.md`](json_05 mei 2026/_MISSING.md).
+
+**Snapshot lama (di `archive/`):** 228 pohon (`json/`, masih di root sebagai legacy), 478 pohon (`archive/json_28 April 2026/`), 727 pohon (`archive/json_30 April 2026/`).
+
+**Catatan benchmark:** Tabel akurasi di README ini dihitung pada **727 pohon** (snapshot `json_30 April 2026/`). Re-evaluasi terhadap 882 pohon kanonik **belum dijalankan**.
 
 **Kelas ordinal B1→B4** — B1 merah paling matang (bawah), B2 transisi, B3 hitam, B4 kecil berduri (atas). Ambiguitas utama: **B2↔B3** (irreducible, bukan label noise).
 
@@ -620,7 +625,8 @@ Target rasio empiris **0.5594** (unique/naive dari 228 JSON = 2466/4408, sementa
 ```bash
 pip install -r requirements.txt
 
-# Set JSON_DIR sebelum benchmark (default: json_30 April 2026/)
+# Set JSON_DIR sebelum benchmark (snapshot benchmark aktif: archive/json_30 April 2026/;
+# kanonik terbaru: json_05 mei 2026/ — re-eval 882 pohon belum dijalankan)
 python scripts/benchmark_multidim.py         # benchmark 4-dimensi 11 algoritma → reports/benchmark_multidim/
 python scripts/generate_method_reports.py    # regenerate reports/methods/<method>.md dari CSV di atas
 python scripts/count_all_trees.py            # GT counting 953 pohon
@@ -632,9 +638,12 @@ python scripts/dedup_nonjson_compare.py      # validasi non-JSON
 ## Struktur Repo
 
 ```
-json/                    228 file JSON (aset asli)
-json_28 April 2026/      478 file JSON
-json_30 April 2026/      727 file JSON (benchmark primer)
+json_05 mei 2026/        882 file JSON GT kanonik (current — 1 file per tree_name)
+                         _MISSING.md = daftar 71 pohon belum punya JSON
+json/                    228 file JSON (legacy subset, dipakai script lama)
+05 Mei 2026/             raw export tools_sawit (1433 file, 5 folder) — sumber dedup
+archive/                 snapshot lama: json_28 April 2026/, json_30 April 2026/, report_*.md
+tools_sawit/             web app annotator (vanilla JS, schema v2)
 dataset/                 image + label YOLO
 algorithms/              satu file per algoritma
 scripts/                 audit, counting, dedup research, report generator
@@ -644,7 +653,7 @@ reports/
   dedup_research_v9/     research script terbaru
   dedup_all_953/         semua metode pada 945 pohon
 RESEARCH.md              dokumen riset panjang (baca Section 0)
-AGENTS.md                instruksi operasional
+CLAUDE.md / AGENTS.md    instruksi operasional (mirror)
 ```
 
 ## Schema JSON

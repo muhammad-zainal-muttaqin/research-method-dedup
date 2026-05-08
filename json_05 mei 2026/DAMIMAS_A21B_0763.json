@@ -1,0 +1,188 @@
+{
+  "version": 1,
+  "tree_id": "20260430-DAMIMAS-221",
+  "tree_name": "DAMIMAS_A21B_0763",
+  "split": "train",
+  "metadata": {
+    "date": "2026-04-30",
+    "varietas": "DAMIMAS",
+    "number": 221,
+    "generated_at": "2026-04-30T06:05:04.226Z"
+  },
+  "images": {
+    "sisi_1": {
+      "filename": "DAMIMAS_A21B_0763_1.jpg",
+      "label_file": "DAMIMAS_A21B_0763_1.txt",
+      "side_index": 0,
+      "side_label": "Sisi 1",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 1,
+      "annotations": [
+        {
+          "box_index": 0,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.755915,
+            0.385431,
+            0.117049,
+            0.088306
+          ],
+          "bbox_pixel": [
+            669,
+            437,
+            782,
+            550
+          ]
+        }
+      ]
+    },
+    "sisi_2": {
+      "filename": "DAMIMAS_A21B_0763_2.jpg",
+      "label_file": "DAMIMAS_A21B_0763_2.txt",
+      "side_index": 1,
+      "side_label": "Sisi 2",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 0,
+      "annotations": []
+    },
+    "sisi_3": {
+      "filename": "DAMIMAS_A21B_0763_3.jpg",
+      "label_file": "DAMIMAS_A21B_0763_3.txt",
+      "side_index": 2,
+      "side_label": "Sisi 3",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 1,
+      "annotations": [
+        {
+          "box_index": 0,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.268309,
+            0.402397,
+            0.051487,
+            0.047936
+          ],
+          "bbox_pixel": [
+            233,
+            484,
+            282,
+            546
+          ]
+        }
+      ]
+    },
+    "sisi_4": {
+      "filename": "DAMIMAS_A21B_0763_4.jpg",
+      "label_file": "DAMIMAS_A21B_0763_4.txt",
+      "side_index": 3,
+      "side_label": "Sisi 4",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 1,
+      "annotations": [
+        {
+          "box_index": 0,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.571365,
+            0.342069,
+            0.193956,
+            0.141398
+          ],
+          "bbox_pixel": [
+            455,
+            347,
+            642,
+            528
+          ]
+        }
+      ]
+    }
+  },
+  "bunches": [
+    {
+      "bunch_id": 1,
+      "class": "B3",
+      "class_mismatch": false,
+      "appearance_count": 3,
+      "appearances": [
+        {
+          "side": "sisi_1",
+          "side_index": 0,
+          "box_index": 0,
+          "class_name": "B3",
+          "bbox_pixel": [
+            669,
+            437,
+            782,
+            550
+          ]
+        },
+        {
+          "side": "sisi_3",
+          "side_index": 2,
+          "box_index": 0,
+          "class_name": "B3",
+          "bbox_pixel": [
+            233,
+            484,
+            282,
+            546
+          ]
+        },
+        {
+          "side": "sisi_4",
+          "side_index": 3,
+          "box_index": 0,
+          "class_name": "B3",
+          "bbox_pixel": [
+            455,
+            347,
+            642,
+            528
+          ]
+        }
+      ]
+    }
+  ],
+  "_confirmedLinks": [
+    {
+      "linkId": "lnk-0",
+      "sideA": 2,
+      "bboxIdA": "b0",
+      "sideB": 3,
+      "bboxIdB": "b0"
+    },
+    {
+      "linkId": "lnk-1",
+      "sideA": 3,
+      "bboxIdA": "b0",
+      "sideB": 0,
+      "bboxIdB": "b0"
+    }
+  ],
+  "summary": {
+    "total_unique_bunches": 1,
+    "total_detections": 3,
+    "duplicates_linked": 2,
+    "by_class": {
+      "B1": 0,
+      "B2": 0,
+      "B3": 1,
+      "B4": 0,
+      "other": 0
+    },
+    "by_side": {
+      "sisi_1": 1,
+      "sisi_2": 0,
+      "sisi_3": 1,
+      "sisi_4": 1
+    }
+  }
+}

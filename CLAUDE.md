@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Constraint:** **100% algorithmic / heuristic only.** No training, embeddings, backprop, or learned matchers. All methods must be deterministic and parameter-free (no gradient computation).
 
-**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. 228 have JSON GT (multi-view bunch links); 725 only have YOLO TXT predictions. Mostly 4 sides/tree, 45 newest have 8. Images 960×1280 JPEG. Classes ordinal B1→B4 (B1 ripest/lowest, B4 spiny/topmost). **Core hard problem: B2↔B3 visually ambiguous** (irreducible per JSON-01 audit, label noise = 0%).
+**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. JSON GT canonical: `json_05 mei 2026/` = **882 unique trees** (dedup'd from `05 Mei 2026/` raw output, 1 file per `tree_name`, varietas correct). Legacy `json/` = **228 trees** (subset, retained for historical benchmark reproduction). 71 trees still missing JSON (45 8-sided DAMIMAS_A21B_0810–0854 + 19 LONSUM_A21A_0056–0074 + 7 DAMIMAS scattered) — TXT predictions exist in `dataset/labels/`, JSON GT pending re-generation via `tools_sawit/` app once annotator finishes. See `json_05 mei 2026/_MISSING.md`. Mostly 4 sides/tree, 45 have 8. Images 960×1280 JPEG. Classes ordinal B1→B4. **Core hard problem: B2↔B3 visually ambiguous** (irreducible per JSON-01 audit, label noise = 0%).
 
 ## Setup
 
@@ -49,7 +49,7 @@ python scripts/dedup_all_trees_final.py     # all methods on 953 trees
 python scripts/dedup_nonjson_compare.py     # non-JSON validation + report
 ```
 
-## Current Best (as of 2026-04-27)
+## Current Best (as of 2026-05-08)
 
 Benchmark: 228 JSON trees, **Acc ±1 per class per tree** (primary), MAE + Mean Total Error (secondary).
 
@@ -111,7 +111,14 @@ Verified dedup ratio ≈ 56% (from JSON-05: naive ÷ 1.788). On 725 non-JSON tre
 ## Repository Layout
 
 ```
-json/                  228 JSON files (multi-view bunch-linking GT)
+json_05 mei 2026/      882 JSON GT files (current canonical, 1 per tree_name)
+                       _MISSING.md lists 71 trees pending re-annotation
+json/                  228 JSON files (legacy subset, used by older scripts)
+05 Mei 2026/           Raw export from tools_sawit/ app (1433 files, 5 folders;
+                       see json_05 mei 2026/ for the dedup'd canonical version)
+tools_sawit/           Web app (vanilla JS) used to produce JSON GT.
+                       Schema v2: filename = tree_name.json, varietas derived
+                       per-tree from name prefix. See tools_sawit/README.md.
 dataset/
   data.yaml            YOLO config (path: /workspace/dataset)
   images/{train,val,test}/

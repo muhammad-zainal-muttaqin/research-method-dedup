@@ -1,0 +1,627 @@
+{
+  "version": 1,
+  "tree_id": "20260507-DAMIMAS-274",
+  "tree_name": "LONSUM_A21A_0007",
+  "split": "val",
+  "metadata": {
+    "date": "2026-05-07",
+    "varietas": "DAMIMAS",
+    "number": 274,
+    "generated_at": "2026-05-07T02:24:18.644Z"
+  },
+  "images": {
+    "sisi_1": {
+      "filename": "LONSUM_A21A_0007_1.jpg",
+      "label_file": "LONSUM_A21A_0007_1.txt",
+      "side_index": 0,
+      "side_label": "Sisi 1",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 4,
+      "annotations": [
+        {
+          "box_index": 0,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.695423,
+            0.513238,
+            0.107924,
+            0.10742
+          ],
+          "bbox_pixel": [
+            616,
+            588,
+            719,
+            726
+          ]
+        },
+        {
+          "box_index": 1,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.601872,
+            0.468985,
+            0.082204,
+            0.096072
+          ],
+          "bbox_pixel": [
+            538,
+            539,
+            617,
+            662
+          ]
+        },
+        {
+          "box_index": 2,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.440359,
+            0.50337,
+            0.14134,
+            0.106005
+          ],
+          "bbox_pixel": [
+            355,
+            576,
+            491,
+            712
+          ]
+        },
+        {
+          "box_index": 3,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.290237,
+            0.518382,
+            0.118056,
+            0.124387
+          ],
+          "bbox_pixel": [
+            222,
+            584,
+            335,
+            743
+          ]
+        }
+      ]
+    },
+    "sisi_2": {
+      "filename": "LONSUM_A21A_0007_2.jpg",
+      "label_file": "LONSUM_A21A_0007_2.txt",
+      "side_index": 1,
+      "side_label": "Sisi 2",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 4,
+      "annotations": [
+        {
+          "box_index": 0,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.27934,
+            0.481636,
+            0.076293,
+            0.091011
+          ],
+          "bbox_pixel": [
+            232,
+            558,
+            305,
+            675
+          ]
+        },
+        {
+          "box_index": 1,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.489145,
+            0.432526,
+            0.142673,
+            0.128857
+          ],
+          "bbox_pixel": [
+            401,
+            471,
+            538,
+            636
+          ]
+        },
+        {
+          "box_index": 2,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.650741,
+            0.439509,
+            0.121047,
+            0.11534
+          ],
+          "bbox_pixel": [
+            567,
+            489,
+            683,
+            636
+          ]
+        },
+        {
+          "box_index": 3,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.347372,
+            0.395806,
+            0.10663,
+            0.077945
+          ],
+          "bbox_pixel": [
+            282,
+            457,
+            385,
+            557
+          ]
+        }
+      ]
+    },
+    "sisi_3": {
+      "filename": "LONSUM_A21A_0007_3.jpg",
+      "label_file": "LONSUM_A21A_0007_3.txt",
+      "side_index": 2,
+      "side_label": "Sisi 3",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 4,
+      "annotations": [
+        {
+          "box_index": 0,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.734886,
+            0.512868,
+            0.093954,
+            0.096201
+          ],
+          "bbox_pixel": [
+            660,
+            595,
+            751,
+            718
+          ]
+        },
+        {
+          "box_index": 1,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.595588,
+            0.492341,
+            0.093137,
+            0.119485
+          ],
+          "bbox_pixel": [
+            527,
+            554,
+            616,
+            707
+          ]
+        },
+        {
+          "box_index": 2,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.447917,
+            0.533548,
+            0.144199,
+            0.094056
+          ],
+          "bbox_pixel": [
+            361,
+            623,
+            499,
+            743
+          ]
+        },
+        {
+          "box_index": 3,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.31781,
+            0.530484,
+            0.07598,
+            0.05913
+          ],
+          "bbox_pixel": [
+            269,
+            641,
+            342,
+            717
+          ]
+        }
+      ]
+    },
+    "sisi_4": {
+      "filename": "LONSUM_A21A_0007_4.jpg",
+      "label_file": "LONSUM_A21A_0007_4.txt",
+      "side_index": 3,
+      "side_label": "Sisi 4",
+      "width": 960,
+      "height": 1280,
+      "bbox_count": 3,
+      "annotations": [
+        {
+          "box_index": 0,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.632353,
+            0.555453,
+            0.227941,
+            0.16299
+          ],
+          "bbox_pixel": [
+            498,
+            607,
+            716,
+            815
+          ]
+        },
+        {
+          "box_index": 1,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.408191,
+            0.492362,
+            0.15886,
+            0.17454
+          ],
+          "bbox_pixel": [
+            316,
+            519,
+            468,
+            742
+          ]
+        },
+        {
+          "box_index": 2,
+          "class_id": 2,
+          "class_name": "B3",
+          "bbox_yolo": [
+            0.22653,
+            0.47157,
+            0.123477,
+            0.174423
+          ],
+          "bbox_pixel": [
+            158,
+            492,
+            277,
+            715
+          ]
+        }
+      ]
+    }
+  },
+  "bunches": [
+    {
+      "bunch_id": 1,
+      "class": "B3",
+      "class_mismatch": false,
+      "appearance_count": 3,
+      "appearances": [
+        {
+          "side": "sisi_1",
+          "side_index": 0,
+          "box_index": 0,
+          "class_name": "B3",
+          "bbox_pixel": [
+            616,
+            588,
+            719,
+            726
+          ]
+        },
+        {
+          "side": "sisi_3",
+          "side_index": 2,
+          "box_index": 3,
+          "class_name": "B3",
+          "bbox_pixel": [
+            269,
+            641,
+            342,
+            717
+          ]
+        },
+        {
+          "side": "sisi_4",
+          "side_index": 3,
+          "box_index": 1,
+          "class_name": "B3",
+          "bbox_pixel": [
+            316,
+            519,
+            468,
+            742
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 2,
+      "class": "B3",
+      "class_mismatch": false,
+      "appearance_count": 2,
+      "appearances": [
+        {
+          "side": "sisi_1",
+          "side_index": 0,
+          "box_index": 1,
+          "class_name": "B3",
+          "bbox_pixel": [
+            538,
+            539,
+            617,
+            662
+          ]
+        },
+        {
+          "side": "sisi_4",
+          "side_index": 3,
+          "box_index": 2,
+          "class_name": "B3",
+          "bbox_pixel": [
+            158,
+            492,
+            277,
+            715
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 3,
+      "class": "B3",
+      "class_mismatch": false,
+      "appearance_count": 2,
+      "appearances": [
+        {
+          "side": "sisi_1",
+          "side_index": 0,
+          "box_index": 2,
+          "class_name": "B3",
+          "bbox_pixel": [
+            355,
+            576,
+            491,
+            712
+          ]
+        },
+        {
+          "side": "sisi_2",
+          "side_index": 1,
+          "box_index": 2,
+          "class_name": "B3",
+          "bbox_pixel": [
+            567,
+            489,
+            683,
+            636
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 4,
+      "class": "B3",
+      "class_mismatch": false,
+      "appearance_count": 3,
+      "appearances": [
+        {
+          "side": "sisi_1",
+          "side_index": 0,
+          "box_index": 3,
+          "class_name": "B3",
+          "bbox_pixel": [
+            222,
+            584,
+            335,
+            743
+          ]
+        },
+        {
+          "side": "sisi_2",
+          "side_index": 1,
+          "box_index": 1,
+          "class_name": "B3",
+          "bbox_pixel": [
+            401,
+            471,
+            538,
+            636
+          ]
+        },
+        {
+          "side": "sisi_3",
+          "side_index": 2,
+          "box_index": 0,
+          "class_name": "B3",
+          "bbox_pixel": [
+            660,
+            595,
+            751,
+            718
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 5,
+      "class": "B3",
+      "class_mismatch": false,
+      "appearance_count": 2,
+      "appearances": [
+        {
+          "side": "sisi_2",
+          "side_index": 1,
+          "box_index": 0,
+          "class_name": "B3",
+          "bbox_pixel": [
+            232,
+            558,
+            305,
+            675
+          ]
+        },
+        {
+          "side": "sisi_3",
+          "side_index": 2,
+          "box_index": 1,
+          "class_name": "B3",
+          "bbox_pixel": [
+            527,
+            554,
+            616,
+            707
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 6,
+      "class": "B3",
+      "class_mismatch": false,
+      "appearance_count": 1,
+      "appearances": [
+        {
+          "side": "sisi_2",
+          "side_index": 1,
+          "box_index": 3,
+          "class_name": "B3",
+          "bbox_pixel": [
+            282,
+            457,
+            385,
+            557
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 7,
+      "class": "B3",
+      "class_mismatch": false,
+      "appearance_count": 2,
+      "appearances": [
+        {
+          "side": "sisi_3",
+          "side_index": 2,
+          "box_index": 2,
+          "class_name": "B3",
+          "bbox_pixel": [
+            361,
+            623,
+            499,
+            743
+          ]
+        },
+        {
+          "side": "sisi_4",
+          "side_index": 3,
+          "box_index": 0,
+          "class_name": "B3",
+          "bbox_pixel": [
+            498,
+            607,
+            716,
+            815
+          ]
+        }
+      ]
+    }
+  ],
+  "_confirmedLinks": [
+    {
+      "linkId": "lnk-0",
+      "sideA": 0,
+      "bboxIdA": "b2",
+      "sideB": 1,
+      "bboxIdB": "b2"
+    },
+    {
+      "linkId": "lnk-1",
+      "sideA": 0,
+      "bboxIdA": "b3",
+      "sideB": 1,
+      "bboxIdB": "b1"
+    },
+    {
+      "linkId": "lnk-2",
+      "sideA": 1,
+      "bboxIdA": "b1",
+      "sideB": 2,
+      "bboxIdB": "b0"
+    },
+    {
+      "linkId": "lnk-3",
+      "sideA": 1,
+      "bboxIdA": "b0",
+      "sideB": 2,
+      "bboxIdB": "b1"
+    },
+    {
+      "linkId": "lnk-4",
+      "sideA": 2,
+      "bboxIdA": "b2",
+      "sideB": 3,
+      "bboxIdB": "b0"
+    },
+    {
+      "linkId": "lnk-5",
+      "sideA": 2,
+      "bboxIdA": "b3",
+      "sideB": 3,
+      "bboxIdB": "b1"
+    },
+    {
+      "linkId": "lnk-6",
+      "sideA": 3,
+      "bboxIdA": "b2",
+      "sideB": 0,
+      "bboxIdB": "b1"
+    },
+    {
+      "linkId": "lnk-7",
+      "sideA": 3,
+      "bboxIdA": "b1",
+      "sideB": 0,
+      "bboxIdB": "b0"
+    }
+  ],
+  "summary": {
+    "total_unique_bunches": 7,
+    "total_detections": 15,
+    "duplicates_linked": 8,
+    "by_class": {
+      "B1": 0,
+      "B2": 0,
+      "B3": 7,
+      "B4": 0,
+      "other": 0
+    },
+    "by_side": {
+      "sisi_1": 4,
+      "sisi_2": 4,
+      "sisi_3": 4,
+      "sisi_4": 3
+    }
+  }
+}

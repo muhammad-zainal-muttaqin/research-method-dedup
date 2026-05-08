@@ -1,12 +1,14 @@
 # AGENTS.md
 
+Operational instructions for AI agents working in this repo. Mirror of `CLAUDE.md` — keep both in sync.
+
 ## Project Context
 
 **Task:** Multi-view oil palm fruit bunch counting. Convert detections from 4–8 photo sides per tree into **unique bunch count per maturity class**. Naive sum overcounts ~78.8% (same bunch seen across sides). Read `RESEARCH.md` Section 0 (esp. 0.6–0.9) before deep work.
 
 **Constraint:** **100% algorithmic / heuristic only.** No training, embeddings, backprop, or learned matchers. All methods must be deterministic and parameter-free (no gradient computation).
 
-**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. 228 have JSON GT (multi-view bunch links); 725 only have YOLO TXT predictions. Mostly 4 sides/tree, 45 newest have 8. Images 960×1280 JPEG. Classes ordinal B1→B4 (B1 ripest/lowest, B4 spiny/topmost). **Core hard problem: B2↔B3 visually ambiguous** (irreducible per JSON-01 audit, label noise = 0%).
+**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. JSON GT canonical: `json_05 mei 2026/` = **882 unique trees** (dedup'd from `05 Mei 2026/` raw output, 1 file per `tree_name`, varietas correct). Legacy `json/` = **228 trees** (subset, retained for historical benchmark reproduction). 71 trees still missing JSON (45 8-sided DAMIMAS_A21B_0810–0854 + 19 LONSUM_A21A_0056–0074 + 7 DAMIMAS scattered) — TXT predictions exist in `dataset/labels/`, JSON GT pending re-generation via `tools_sawit/` app once annotator finishes. See `json_05 mei 2026/_MISSING.md`. Mostly 4 sides/tree, 45 have 8. Images 960×1280 JPEG. Classes ordinal B1→B4. **Core hard problem: B2↔B3 visually ambiguous** (irreducible per JSON-01 audit, label noise = 0%).
 
 ## Setup
 
@@ -37,26 +39,37 @@ python scripts/dedup_research_v7.py    # v7: stacking + density family
 python scripts/dedup_research_v8.py    # v8: entropy + per-side distribution
 python scripts/dedup_research_v9.py    # v9: narrow regime overrides on v6 (CURRENT BEST 98.68%)
 
-# Final inference + comparison
-python scripts/dedup_all_trees_final.py    # all methods on 953 trees
-python scripts/dedup_nonjson_compare.py    # non-JSON validation + report
+# Multi-dimensional benchmark + method reports
+python scripts/benchmark_multidim.py         # 4-dim evaluation: accuracy, speed, robustness, domain
+python scripts/generate_method_reports.py    # per-method breakdown reports → reports/methods/
+
+# Final inference + comparison (all 953 trees)
+python scripts/dedup_all_953.py             # all 16 methods on all 953 trees (newer)
+python scripts/dedup_all_trees_final.py     # all methods on 953 trees
+python scripts/dedup_nonjson_compare.py     # non-JSON validation + report
 ```
 
-## Current Best (as of 2026-04-24)
+## Current Best (as of 2026-05-08)
 
 Benchmark: 228 JSON trees, **Acc ±1 per class per tree** (primary), MAE + Mean Total Error (secondary).
 
 | Rank | Method | Acc ±1 | MAE | Notes |
 |---:|---|---:|---:|---|
 | 1 | `v9_selector` | **98.68%** | **0.2533** | Only 3/228 trees still fail |
-| 2 | `v9_b2_median_v6` | 96.49% | 0.2588 | |
-| 3 | `v6_selector` | 96.49% | 0.2632 | v9 default backbone |
-| 4 | `v9_median_strong5` | 95.18% | 0.2390 | |
-| 5 | `stacking_bracketed_v7` | 94.30% | 0.2643 | |
+| 2 | `b2_median_v6` | 96.49% | 0.2588 | v9 variant |
+| 3 | `v6_selector` | 96.49% | 0.2632 | v9 default backbone (96.49%) |
+| 4 | `median_strong5` | 95.18% | 0.2390 | v9 variant |
+| 5 | `stacking_bracketed` | 94.30% | 0.2643 | v7 best |
+| 6 | `stacking_density` | 94.30% | 0.2708 | v7 |
+| 7 | `entropy_modulated` | 94.30% | 0.2763 | v8 — ties v7, adds nothing globally |
+| 8 | `adaptive_corrected` | 93.86% | 0.2774 | v5 — first >93% |
+| 9 | `b2_b4_boosted` | 92.54% | 0.2632 | v8 specialist |
+| 10 | `best_visibility_grid` | 92.54% | 0.2664 | v5 |
+| — | *(full table in `algorithms/__init__.py`)* | | | |
 
 **Recommendations:**
 - **JSON trees (228) with GT** → `v9_selector`
-- **Non-JSON trees (725) without GT** → prefer `hybrid_vis_corr`, `side_coverage`, `stacking_density_v7`, `best_visibility_grid`, or `visibility`. Don't assume v9_selector wins here — its benchmark is JSON-only.
+- **Non-JSON trees (725) without GT** → prefer `best_visibility_grid`, `stacking_density`, `adaptive_corrected`, or `stacking_bracketed`. Don't assume v9_selector wins here — its benchmark is JSON-only. See `reports/nonjson_dedup_report.md`.
 
 **v9 logic (regime overrides on top of v6_selector):**
 1. default → `v6_selector`
@@ -84,22 +97,28 @@ Benchmark: 228 JSON trees, **Acc ±1 per class per tree** (primary), MAE + Mean 
 
 ## Non-JSON Pipeline (725 trees, TXT-only)
 
-TXT labels have coordinate + classification noise (B2↔B3 swaps). Validation on 228 JSON trees (older method comparison):
+TXT labels have coordinate + classification noise (B2↔B3 swaps). Validation on 228 JSON trees (current benchmark):
 
 | Method | Acc ±1 | Verdict |
 |---|---:|---|
-| `visibility` | 92.11% | Recommended |
-| `corrected` | 90.79% | Recommended |
-| `hungarian_match` | 18.86% | Mild undercount |
-| `cascade_match` / `learned_graph` / `feature_cluster` | <5% | **Broken on TXT — do not use** |
-| `naive` | 2.63% | Baseline only |
+| `v9_selector` | 98.68% | Best on JSON, unvalidated on non-JSON |
+| `adaptive_corrected` | 93.86% | Recommended for non-JSON |
+| `best_visibility_grid` | 92.54% | Recommended for non-JSON |
+| `stacking_bracketed` | 94.30% | Recommended for non-JSON |
 
-Verified dedup ratio ≈ 56% (from JSON-05: naive ÷ 1.788). On 725 non-JSON trees: `corrected` → 57.4%, `visibility` → 55.7% (both valid). v7+ methods may also apply but unvalidated.
+Verified dedup ratio ≈ 56% (from JSON-05: naive ÷ 1.788). On 725 non-JSON trees: `adaptive_corrected` → 57.4%, `best_visibility_grid` → 55.7% (both valid).
 
 ## Repository Layout
 
 ```
-json/                  228 JSON files (multi-view bunch-linking GT)
+json_05 mei 2026/      882 JSON GT files (current canonical, 1 per tree_name)
+                       _MISSING.md lists 71 trees pending re-annotation
+json/                  228 JSON files (legacy subset, used by older scripts)
+05 Mei 2026/           Raw export from tools_sawit/ app (1433 files, 5 folders;
+                       see json_05 mei 2026/ for the dedup'd canonical version)
+tools_sawit/           Web app (vanilla JS) used to produce JSON GT.
+                       Schema v2: filename = tree_name.json, varietas derived
+                       per-tree from name prefix. See tools_sawit/README.md.
 dataset/
   data.yaml            YOLO config (path: /workspace/dataset)
   images/{train,val,test}/
@@ -109,9 +128,11 @@ algorithms/            standalone algo modules — each exports predict(detectio
   v9_selector.py       CURRENT BEST — imports v6_selector + 3 specialist algos
   v6_selector.py       backbone + load_params() (reads reports/dedup_research_v5/...)
   *.py                 one algo = one file, all deterministic, no training
-scripts/               see "Running Scripts" — count_*, dedup_research_v1..v9, dedup_*_final
-  dedup_all_953.py     run all methods on all 953 trees (newer than dedup_all_trees_final)
+scripts/               see "Running Scripts" — count_*, dedup_*, benchmark_*, generate_*
+  dedup_all_953.py     run all 16 methods on all 953 trees
 reports/<script>/      every script writes its outputs here
+reports/benchmark_multidim/  multi-dim benchmark (accuracy, speed, robustness, domain)
+reports/methods/             per-method breakdown reports with traceability
 contract-work/         validation contracts, v4 analysis, dry-run + algorithmic-advancement reports
 RESEARCH.md            primary research doc — read Section 0 first
 README.md              project overview + method evolution narrative

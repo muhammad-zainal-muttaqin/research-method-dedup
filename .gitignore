@@ -2,3 +2,23 @@ dataset/images/
 __pycache__/
 *.pyc
 .DS_Store
+__MACOSX/
+Thumbs.db
+desktop.ini
+
+# tools_sawit dev sandbox
+tools_sawit/_test_fixtures/
+tools_sawit/_test_output/
+tools_sawit/debug.log
+
+# large raw export folders (too many files for git)
+05 Mei 2026/
+archive/
+
+# scratch / temp scripts at repo root
+/_tmp_*.py
+/_chk*.py
+/_dedup_*.py
+/_merge*.py
+/_search_*.py
+/_verify_*.py

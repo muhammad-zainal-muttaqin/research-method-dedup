@@ -42,10 +42,14 @@ import pandas as pd
 
 warnings.filterwarnings("ignore")
 
+import os
+
 BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
-JSON_DIR = BASE / "json"
-OUT_DIR = BASE / "reports" / "benchmark_multidim"
+JSON_DIR = Path(os.environ.get("JSON_DIR", str(BASE / "json")))
+if not JSON_DIR.is_absolute():
+    JSON_DIR = BASE / JSON_DIR
+OUT_DIR = Path(os.environ.get("OUT_DIR", str(BASE / "reports" / "benchmark_multidim")))
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 NAMES = ["B1", "B2", "B3", "B4"]
