@@ -6,7 +6,7 @@ Deduplikasi multi-view untuk menghitung tandan sawit yang unik per pohon dari 4�
 
 Satu tandan bisa muncul di beberapa sisi. Penjumlahan langsung melebihi jumlah sebenarnya sekitar 83,4%. Target: mengubah deteksi per sisi menjadi **jumlah tandan unik per kelas kematangan**.
 
-> **Peringatan regresi dataset:** Angka benchmark di README ini berasal dari **727 pohon** JSON DAMIMAS. Hasil di dataset awal (228 pohon) tidak generalisasi — metode kompleks seperti v9_selector turun drastis dari 98,68% (228) menjadi 71,39% (727). Metode paling sederhana justru paling stabil. Lihat [Regresi Dataset](#regresi-dataset).
+> **Regresi & Recovery dataset:** Benchmark aktif = **882 pohon** (`json_05 mei 2026/`, GT bersih schema v2). Metode kompleks sempat turun drastis di 727 (GT noisy) lalu recovery 11–17 pp di 882. Angka di tabel utama README masih 727 — lihat [`report_05Mei2026.md`](report_05Mei2026.md) untuk hasil 882. Lihat juga [Regresi Dataset](#regresi-dataset).
 
 ---
 
@@ -362,31 +362,33 @@ Sumber: `reports/dedup_research_v9/oracle_narrow_v9.csv`, `reports/dedup_researc
 
 ## Regresi Dataset
 
-Seiring bertambahnya dataset (228 → 478 → 727), semua metode mengalami penurunan akurasi. Namun tingkat penurunannya **tidak seragam** — metode kompleks (v6/v9) turun paling drastis.
+Seiring bertambahnya dataset (228 → 478 → 727 → 882), metode mengalami penurunan lalu **recovery**. Penurunan di 727 disebabkan GT noisy (snapshot 30 Apr). Recovery di 882 karena GT bersih (schema v2, dedup via `tools_sawit/`).
 
 ### Tabel Regresi
 
-| Metode | Acc ±1 228 | Acc ±1 478 | Acc ±1 727 | Delta (228→727) |
-|---|---:|---:|---:|---:|
-| `v9_selector` | **98.68%** | 92.68% | 71.39% | **−27.29 pp** |
-| `v9_b2_median_v6` | 96.05% | 92.68% | 72.63% | −23.42 pp |
-| `v6_selector` | 96.05% | 91.84% | 70.98% | −25.07 pp |
-| `v7_stacking_bracketed` | 94.30% | 91.84% | 71.25% | −23.05 pp |
-| `v7_stacking_density` | 94.30% | 91.84% | 70.56% | −23.74 pp |
-| `v8_b2_b4_boosted` | 92.54% | 91.00% | 75.52% | −17.02 pp |
-| `v2_visibility` | 92.54% | 90.38% | **77.30%** | **−15.24 pp** |
-| `v1_corrected` | 90.79% | 89.12% | 72.35% | −18.44 pp |
-| `v5_adaptive_corrected` | 93.86% | 89.96% | 67.54% | −26.32 pp |
+| Metode | Acc ±1 228 | Acc ±1 478 | Acc ±1 727 | Acc ±1 882 | Delta (228→882) |
+|---|---:|---:|---:|---:|---:|
+| `v9_selector` | **98.68%** | 92.68% | 71.39% | 88.78% | −9.90 pp |
+| `v9_b2_median_v6` | 96.05% | 92.68% | 72.63% | 88.78% | −7.27 pp |
+| `v6_selector` | 96.49% | 91.84% | 70.98% | 88.55% | −7.94 pp |
+| `v7_stacking_bracketed` | 94.30% | 91.84% | 71.25% | 88.44% | −5.86 pp |
+| `v7_stacking_density` | 94.30% | 91.84% | 70.56% | 88.44% | −5.86 pp |
+| `v8_b2_b4_boosted` | 92.54% | 91.00% | 75.52% | 88.21% | −4.33 pp |
+| `v2_visibility` | 92.11% | 90.38% | **77.30%** | **89.34%** | **−2.77 pp** |
+| `v1_corrected` | 90.79% | 89.12% | 72.35% | 88.21% | **−2.58 pp** |
+| `v5_adaptive_corrected` | 93.86% | 89.96% | 67.54% | 86.28% | −7.58 pp |
+
+Sumber kolom 882: [`report_05Mei2026.md`](report_05Mei2026.md) — [`reports/benchmark_05mei2026/accuracy_summary.csv`](reports/benchmark_05mei2026/accuracy_summary.csv).
 
 ### Analisis
 
-1. **v2_visibility paling stabil** — hanya turun 15.24 pp dari 228→727. Metode paling sederhana generalisasi paling baik.
-2. **v8_b2_b4_boosted juga stabil** — turun 17.02 pp. Macro MAE terendah di semua ukuran dataset.
-3. **v9_selector paling overfit** — turun 27.29 pp. Narrow overrides yang dirancang untuk pola 228 pohon tidak cocok untuk data yang lebih beragam.
-4. **v5_adaptive_corrected paling parah** — turun 26.32 pp dan menjadi yang terburuk di 727 (67.54%).
-5. **Pola umum:** Makin kompleks metode (routing, stacking, narrow overrides), makin besar regresinya. Sederhana = stabil.
+1. **Recovery 727 → 882 (+11–17 pp semua metode).** Penyebab: GT 882 lebih bersih (schema v2, 1 file per `tree_name`, varietas benar). Penurunan di 727 adalah artefak GT noisy, bukan regresi metode.
+2. **v2_visibility & v1_corrected paling stabil** — delta 228→882 hanya −2.77 dan −2.58 pp. Metode sederhana generalisasi terbaik.
+3. **v9_selector tetap tidak kembali ke 98.68%** — hanya 88.78% di 882. Konfirmasi: 98.68% adalah overfit pada subset 228, bukan kemampuan sejati.
+4. **v5_adaptive_corrected paling parah** — turun 7.58 pp dan menjadi rank terbawah di semua ukuran dataset besar.
+5. **Pola umum:** Makin kompleks metode (routing, stacking, narrow overrides), makin besar regresi totalnya. Sederhana = stabil.
 
-Dataset 228 (asli) ternyata tidak representatif untuk variasi pohon yang lebih luas. Parameter divisor yang diturunkan dari 228 pohon (seperti BASE_FACTOR, ref_median) tidak optimal untuk data baru.
+Dataset 228 (asli) tidak representatif untuk variasi pohon yang lebih luas. Parameter divisor dari 228 pohon (BASE_FACTOR, ref_median) tidak optimal untuk data baru.
 
 ---
 
@@ -395,8 +397,8 @@ Dataset 228 (asli) ternyata tidak representatif untuk variasi pohon yang lebih l
 | Item | Jumlah |
 |---|---:|
 | Total pohon | 953 (DAMIMAS 854 + LONSUM 99) |
-| JSON GT kanonik (5 Mei 2026) | **882** (1 file per `tree_name`) |
-| JSON GT snapshot 30 Apr (benchmark aktif) | 727 |
+| JSON GT kanonik (5 Mei 2026) — **benchmark aktif** | **882** (1 file per `tree_name`) |
+| JSON GT snapshot 30 Apr (legacy) | 727 |
 | Belum punya JSON GT | 71 (pending re-annotation) |
 | Sisi per pohon | 4 (mayoritas), 45 pohon 8-sisi |
 
@@ -412,7 +414,7 @@ Dataset 228 (asli) ternyata tidak representatif untuk variasi pohon yang lebih l
 
 ## Metrik Primer
 
-Seluruh hasil di bawah dihitung pada **727 pohon** JSON DAMIMAS.
+Tabel utama di bawah dihitung pada **727 pohon** (snapshot lama). Hasil **882 pohon** (benchmark aktif) ada di [`report_05Mei2026.md`](report_05Mei2026.md).
 
 | Metrik | Arah | Definisi |
 |---|:---:|---|
@@ -625,8 +627,8 @@ Target rasio empiris **0.5594** (unique/naive dari 228 JSON = 2466/4408, sementa
 ```bash
 pip install -r requirements.txt
 
-# Set JSON_DIR sebelum benchmark (snapshot benchmark aktif: archive/json_30 April 2026/;
-# kanonik terbaru: json_05 mei 2026/ — re-eval 882 pohon belum dijalankan)
+# Benchmark aktif: json_05 mei 2026/ (882 pohon, GT bersih)
+# Snapshot lama ada di archive.zip
 python scripts/benchmark_multidim.py         # benchmark 4-dimensi 11 algoritma → reports/benchmark_multidim/
 python scripts/generate_method_reports.py    # regenerate reports/methods/<method>.md dari CSV di atas
 python scripts/count_all_trees.py            # GT counting 953 pohon
@@ -641,8 +643,8 @@ python scripts/dedup_nonjson_compare.py      # validasi non-JSON
 json_05 mei 2026/        882 file JSON GT kanonik (current — 1 file per tree_name)
                          _MISSING.md = daftar 71 pohon belum punya JSON
 json/                    228 file JSON (legacy subset, dipakai script lama)
-05 Mei 2026/             raw export tools_sawit (1433 file, 5 folder) — sumber dedup
-archive/                 snapshot lama: json_28 April 2026/, json_30 April 2026/, report_*.md
+05 Mei 2026/             raw export tools_sawit (1433 file, 5 folder) — tidak di-track git
+archive.zip              snapshot lama: json_28 April 2026/, json_30 April 2026/, report_*.md
 tools_sawit/             web app annotator (vanilla JS, schema v2)
 dataset/                 image + label YOLO
 algorithms/              satu file per algoritma
