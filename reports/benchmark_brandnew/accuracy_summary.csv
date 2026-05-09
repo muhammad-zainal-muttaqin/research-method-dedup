@@ -1,0 +1,12 @@
+method,acc_pct,MAE,mean_total_error,n_fail,n_trees
+v2_visibility,85.52,0.3993,1.5971,138,953
+v5_best_visibility,85.52,0.3993,1.5971,138,953
+v9_b2_median_v6,84.89,0.4268,1.7072,144,953
+v9_selector,84.89,0.4357,1.7429,144,953
+v8_entropy_modulated,84.78,0.4507,1.8027,145,953
+v6_selector,84.68,0.4365,1.7461,146,953
+v7_stacking_bracketed,84.58,0.4284,1.7135,147,953
+v7_stacking_density,84.58,0.4347,1.7387,147,953
+v8_b2_b4_boosted,84.37,0.4111,1.6443,149,953
+v1_corrected,84.37,0.4158,1.6632,149,953
+v5_adaptive_corrected,82.58,0.4599,1.8395,166,953
