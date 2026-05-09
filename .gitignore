@@ -1,4 +1,4 @@
-dataset/images/
+dataset/
 __pycache__/
 *.pyc
 .DS_Store
@@ -14,6 +14,15 @@ tools_sawit/debug.log
 # large raw export folders (too many files for git)
 05 Mei 2026/
 archive/
+
+# new YOLO dataset: track labels/json/yaml only, not images
+Brand-New-Dataset-YOLO/images/
+
+# intermediate backup folders (zipped to archive.zip)
+*.backup_*/
+
+# consolidated zip snapshot at repo root
+archive.zip
 
 # scratch / temp scripts at repo root
 /_tmp_*.py
