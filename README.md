@@ -35,6 +35,19 @@ sesuai eksperimen final tertanggal 10 Mei 2026 (iterasi 1–13). Detail di
 
 Sumber data: [`exp_10 May 2026/iter11_results.csv`](exp%2010%20May%202026/iter11_results.csv) dan [`reports/dedup_brand_new_953/accuracy_953.csv`](reports/dedup_brand_new_953/accuracy_953.csv).
 
+### Metrik laporan lengkap
+
+Setiap *run benchmark* wajib melaporkan enam metrik tambahan di luar `Acc ±1` dan `MAE` agregat:
+
+1. **MAE per kelas** (`MAE_B1` … `MAE_B4`) — rata-rata kesalahan absolut tiap kelas kematangan.
+2. **Macro class-MAE** — rata-rata tidak berbobot dari keempat MAE per kelas.
+3. **Akurasi *exact profile*** — persentase pohon dengan prediksi `[B1,B2,B3,B4]` tepat sama dengan *ground truth* (nol kesalahan di semua kelas sekaligus).
+4. **Total-count MAE** — MAE terhadap jumlah total tandan (`B1+B2+B3+B4`) per pohon.
+5. **Total ±1 accuracy** — persentase pohon yang total prediksinya berada dalam selisih ±1 dari total *ground truth*.
+6. **Per-class mean error (*bias*)** — rata-rata kesalahan bertanda per kelas, menunjukkan arah *overcount*/*undercount* sistematis.
+
+Semua metrik ini tersedia di berkas CSV di dalam folder `reports/` untuk setiap metode.
+
 ---
 
 ## Konteks masalah

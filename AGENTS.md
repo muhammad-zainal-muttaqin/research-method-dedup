@@ -209,7 +209,15 @@ Algo ranked by JSON-228 Acc±1 (see `algorithms/__init__.py` for full table). Fo
 
 ## Decision Metric
 
-- **Counting (primary):** % trees within ±1 error per class. Secondary: MAE, Mean Total Error.
+- **Counting (primary):** % trees within ±1 error per class.
+- **Mandatory metrics for every benchmark run and report:**
+  1. **Per-class MAE** (`MAE_B1`, `MAE_B2`, `MAE_B3`, `MAE_B4`) — mean absolute error for each maturity class.
+  2. **Macro class-MAE** — unweighted average of the four per-class MAEs.
+  3. **Exact-profile accuracy** — percentage of trees where the predicted vector `[B1,B2,B3,B4]` exactly matches the ground-truth vector (zero error in all classes simultaneously).
+  4. **Total-count MAE** — MAE of the sum `B1+B2+B3+B4` per tree.
+  5. **Total ±1 accuracy** — percentage of trees where the predicted total count is within ±1 of the ground-truth total.
+  6. **Per-class mean error (bias)** — signed mean error per class, indicating systematic over/under-count direction.
+- Secondary: Mean Total Error.
 - **YOLO model (legacy AR29 baseline):** mAP50-95 (not mAP@0.5). Bootstrap 95% CI required vs AR29; gap <0.005 = noise.
 
 ## What NOT to Do
