@@ -109,18 +109,51 @@ def main():
     acc_rows = []
     for mname in method_names:
         within1_list, mae_list, errsum_list = [], [], []
+        per_class_mae = {c: [] for c in NAMES}
+        per_class_err = {c: [] for c in NAMES}
+        exact_profile_list = []
+        total_count_err_list = []
+        total_count_within1_list = []
         for tree_id in per_tree_df["tree_id"]:
             gt = trees[tree_id]["gt"]
             pred = {c: int(per_tree_df.loc[per_tree_df["tree_id"] == tree_id, f"{mname}_{c}"].iloc[0]) for c in NAMES}
             within1_list.append(_within1(pred, gt))
             mae_list.append(_mae(pred, gt))
             errsum_list.append(sum(abs(pred.get(c, 0) - gt.get(c, 0)) for c in NAMES))
+
+            # Per-class metrics
+            for c in NAMES:
+                per_class_mae[c].append(abs(pred.get(c, 0) - gt.get(c, 0)))
+                per_class_err[c].append(pred.get(c, 0) - gt.get(c, 0))
+
+            # Exact-profile accuracy
+            exact_profile_list.append(all(pred.get(c, 0) == gt.get(c, 0) for c in NAMES))
+
+            # Total count metrics
+            total_pred = sum(pred.get(c, 0) for c in NAMES)
+            total_gt = sum(gt.get(c, 0) for c in NAMES)
+            total_count_err_list.append(abs(total_pred - total_gt))
+            total_count_within1_list.append(abs(total_pred - total_gt) <= 1)
+
         acc_rows.append({
             "method": mname,
             "acc_within1_pct": round(np.mean(within1_list) * 100, 2),
             "MAE": round(np.mean(mae_list), 4),
             "mean_total_err": round(np.mean(errsum_list), 4),
             "n_fail": int(sum(1 for x in within1_list if not x)),
+            # Mandatory metrics
+            "MAE_B1": round(np.mean(per_class_mae["B1"]), 4),
+            "MAE_B2": round(np.mean(per_class_mae["B2"]), 4),
+            "MAE_B3": round(np.mean(per_class_mae["B3"]), 4),
+            "MAE_B4": round(np.mean(per_class_mae["B4"]), 4),
+            "macro_class_MAE": round(np.mean([np.mean(per_class_mae[c]) for c in NAMES]), 4),
+            "exact_profile_acc": round(np.mean(exact_profile_list) * 100, 2),
+            "total_count_MAE": round(np.mean(total_count_err_list), 4),
+            "total_count_within1_pct": round(np.mean(total_count_within1_list) * 100, 2),
+            "mean_error_B1": round(np.mean(per_class_err["B1"]), 4),
+            "mean_error_B2": round(np.mean(per_class_err["B2"]), 4),
+            "mean_error_B3": round(np.mean(per_class_err["B3"]), 4),
+            "mean_error_B4": round(np.mean(per_class_err["B4"]), 4),
         })
 
     acc_df = pd.DataFrame(acc_rows).sort_values("acc_within1_pct", ascending=False)

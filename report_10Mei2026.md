@@ -10,10 +10,12 @@ Kode produksi tersedia di [`algorithms/selector_with_b2b3.py`](algorithms/select
 
 ## Hasil akhir
 
+### Metrik primer
+
 | Metrik | Nilai | Sumber |
 |---|---:|---|
-| `Acc ±1` (all 953) | **86,67%** | `iter11_results.csv` |
-| `MAE` | **0,3982** | `iter11_results.csv` |
+| `Acc ±1` (all 953) | **86,67%** | `reports/dedup_brand_new_953/accuracy_953.csv` |
+| `MAE` | **0,3982** | `reports/dedup_brand_new_953/accuracy_953.csv` |
 | Pohon gagal | **127** | dari 953 |
 | `Acc ±1` train | 87,34% | held-out |
 | `Acc ±1` val | 82,58% | held-out |
@@ -22,6 +24,33 @@ Kode produksi tersedia di [`algorithms/selector_with_b2b3.py`](algorithms/select
 
 Improvement vs juara sebelumnya `hybrid_vis_corr` (86,04% / MAE 0,4077):
 **+0,63 pp Acc±1**, **−2,32% MAE**.
+
+### Enam metrik mandatory lengkap
+
+Berdasarkan `reports/dedup_brand_new_953/accuracy_953.csv` (run terbaru, 2026-05-10):
+
+| Metrik | `selector_with_b2b3` | `geometric_mean_blend` | `hybrid_vis_corr` |
+|---|---:|---:|---:|
+| **MAE per kelas** | | | |
+| &nbsp;&nbsp;B1 | 0,1805 | 0,1752 | 0,2078 |
+| &nbsp;&nbsp;B2 | 0,3463 | 0,3379 | 0,3400 |
+| &nbsp;&nbsp;B3 | **0,7566** | 0,7671 | 0,7692 |
+| &nbsp;&nbsp;B4 | 0,3095 | 0,3043 | 0,3137 |
+| **Macro class-MAE** | 0,3982 | 0,3961 | 0,4077 |
+| **Exact-profile accuracy** | 26,34% | 26,86% | 25,29% |
+| **Total-count MAE** | 1,4145 | 1,4061 | 1,4145 |
+| **Total ±1 accuracy** | 74,08% | 74,50% | 73,98% |
+| **Per-class mean error (bias)** | | | |
+| &nbsp;&nbsp;B1 | +0,1448 | +0,1417 | +0,1910 |
+| &nbsp;&nbsp;B2 | +0,1763 | +0,1322 | +0,1343 |
+| &nbsp;&nbsp;B3 | +0,1689 | +0,1522 | +0,1605 |
+| &nbsp;&nbsp;B4 | −0,1039 | −0,1700 | −0,1794 |
+
+**Temuan dari metrik lengkap:**
+- **B3 adalah bottleneck** — MAE B3 (0,7566) mendominasi total error. Bahkan jika B3 sempurna, macro class-MAE masih ~0,21 (lihat iter13 analysis).
+- **Exact-profile accuracy rendah** (26,34%) karena kesalahan off-by-1 pada satu atau dua kelas sangat umum — hanya ~26% pohon yang prediksi semua 4 kelas-nya tepat sama dengan ground truth.
+- **Total ±1 accuracy lebih tinggi** (74,08%) — meskipun profil per kelas sering meleset sedikit, total keseluruhan tandan per pohon lebih sering tepat.
+- **Semua metode top memiliki bias positif pada B1–B3** (overcount sistematis) dan **bias negatif pada B4** (undercount). Ini menunjukkan bahwa deteksi naive cenderung mengklasifikasikan tandan ke B1/B2/B3 daripada B4.
 
 ---
 

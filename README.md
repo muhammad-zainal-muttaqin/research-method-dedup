@@ -14,15 +14,15 @@ sesuai eksperimen final tertanggal 10 Mei 2026 (iterasi 1–13). Detail di
 
 ### Tujuh metode terbaik pada 953 pohon
 
-| Peringkat | Metode | `Acc ±1` | `MAE` | Pohon gagal |
-|---:|---|---:|---:|---:|
-| 1 | `selector_with_b2b3` | **86,67%** | **0,3982** | 127 |
-| 2 | `selector_iter9_trifurc` | 86,67% | 0,3987 | 127 |
-| 3 | `geometric_mean_blend` | 86,15% | 0,3961 | 132 |
-| 4 | `floor_clamped_hybrid` | 86,04% | 0,4050 | 133 |
-| 5 | `hybrid_vis_corr` | 86,04% | 0,4077 | 133 |
-| 6 | `visibility` | 85,94% | 0,3960 | 134 |
-| 7 | `side_coverage` | 85,94% | 0,3930 | 134 |
+| Peringkat | Metode | `Acc ±1` | `MAE` | Macro class-MAE | Exact profile | Total ±1 | Pohon gagal |
+|---:|---|---:|---:|---:|---:|---:|---:|
+| 1 | `selector_with_b2b3` | **86,67%** | **0,3982** | 0,3982 | 26,34% | 74,08% | 127 |
+| 2 | `selector_iter9_trifurc` | 86,67% | 0,3987 | 0,3987 | 26,34% | 74,08% | 127 |
+| 3 | `geometric_mean_blend` | 86,15% | 0,3961 | 0,3961 | 26,86% | 74,50% | 132 |
+| 4 | `floor_clamped_hybrid` | 86,04% | 0,4050 | 0,4050 | 25,81% | 74,19% | 133 |
+| 5 | `hybrid_vis_corr` | 86,04% | 0,4077 | 0,4077 | 25,29% | 73,98% | 133 |
+| 6 | `visibility` | 85,94% | 0,3956 | 0,3956 | 25,29% | 73,56% | 134 |
+| 7 | `side_coverage` | 85,94% | 0,3930 | 0,3930 | 25,81% | 73,77% | 134 |
 
 ### Rekomendasi pemakaian
 
@@ -37,16 +37,16 @@ Sumber data: [`exp_10 May 2026/iter11_results.csv`](exp%2010%20May%202026/iter11
 
 ### Metrik laporan lengkap
 
-Setiap *run benchmark* wajib melaporkan enam metrik tambahan di luar `Acc ±1` dan `MAE` agregat:
+Setiap *run benchmark* wajib melaporkan enam metrik tambahan di luar `Acc ±1` dan `MAE` agregat. Hasil terbaru (10 Mei 2026, `reports/dedup_brand_new_953/accuracy_953.csv`) mencakup seluruh metrik berikut untuk 30 metode:
 
-1. **MAE per kelas** (`MAE_B1` … `MAE_B4`) — rata-rata kesalahan absolut tiap kelas kematangan.
-2. **Macro class-MAE** — rata-rata tidak berbobot dari keempat MAE per kelas.
-3. **Akurasi *exact profile*** — persentase pohon dengan prediksi `[B1,B2,B3,B4]` tepat sama dengan *ground truth* (nol kesalahan di semua kelas sekaligus).
-4. **Total-count MAE** — MAE terhadap jumlah total tandan (`B1+B2+B3+B4`) per pohon.
-5. **Total ±1 accuracy** — persentase pohon yang total prediksinya berada dalam selisih ±1 dari total *ground truth*.
-6. **Per-class mean error (*bias*)** — rata-rata kesalahan bertanda per kelas, menunjukkan arah *overcount*/*undercount* sistematis.
+1. **MAE per kelas** (`MAE_B1` … `MAE_B4`) — rata-rata kesalahan absolut tiap kelas kematangan. B3 adalah bottleneck utama (MAE ~0,75–0,93 untuk metode top).
+2. **Macro class-MAE** — rata-rata tidak berbobot dari keempat MAE per kelas. Untuk metode terbaik bernilai ~0,39–0,41.
+3. **Akurasi *exact profile*** — persentase pohon dengan prediksi `[B1,B2,B3,B4]` tepat sama dengan *ground truth*. Hanya ~22–27% pohon yang seluruh profilnya tepat, menunjukkan off-by-1 pada satu/two kelas sangat umum.
+4. **Total-count MAE** — MAE terhadap jumlah total tandan (`B1+B2+B3+B4`) per pohon. Lebih rendah dari `mean_total_err` karena kesalahan antar-kelas saling menutupi.
+5. **Total ±1 accuracy** — persentase pohon yang total prediksinya berada dalam selisih ±1 dari total *ground truth*. ~65–74% untuk metode top.
+6. **Per-class mean error (*bias*)** — rata-rata kesalahan bertanda per kelas. Semua metode top memiliki bias positif pada B1–B3 (overcount) dan negatif pada B4 (undercount), menunjukkan kecenderungan klasifikasi naive ke kelas tengah.
 
-Semua metrik ini tersedia di berkas CSV di dalam folder `reports/` untuk setiap metode.
+Lihat tabel lengkap di atas atau berkas CSV `reports/dedup_brand_new_953/accuracy_953.csv` untuk nilai numerik seluruh metode.
 
 ---
 
@@ -79,30 +79,30 @@ Sumber *ground truth*: web app [`tools_sawit/`](tools_sawit/) dengan skema v2 �
 
 Daftar lengkap 16 metode aktif diurutkan menurun berdasarkan `Acc ±1`. Hasil dihitung dengan `scripts/dedup_brand_new_953.py`.
 
-| Metode | `Acc ±1` | `MAE` | `mean_total_err` | Pohon gagal |
-|---|---:|---:|---:|---:|
-| `selector_with_b2b3` | **86,67%** | **0,3982** | 1,593 | 127 |
-| `selector_iter9_trifurc` | 86,67% | 0,3987 | 1,595 | 127 |
-| `geometric_mean_blend` | 86,15% | 0,3961 | 1,584 | 132 |
-| `hybrid_vis_corr` | 86,04% | 0,408 | 1,631 | 133 |
-| `visibility` | 85,94% | 0,396 | 1,582 | 134 |
-| `side_coverage` | 85,94% | 0,393 | 1,572 | 134 |
-| `density_scaled_vis` | 85,94% | 0,402 | 1,610 | 134 |
-| `v9_median_strong5` | 85,73% | 0,401 | 1,602 | 136 |
-| `v8_entropy_stacking` | 84,78% | 0,451 | 1,803 | 145 |
-| `v9_b2_median_v6` | 84,78% | 0,429 | 1,718 | 145 |
-| `v8_entropy_modulated` | 84,78% | 0,451 | 1,803 | 145 |
-| `v9_selector` | 84,68% | 0,441 | 1,764 | 146 |
-| `v7_stacking_bracketed` | 84,58% | 0,428 | 1,714 | 147 |
-| `v7_stacking_density` | 84,58% | 0,435 | 1,739 | 147 |
-| `corrected` | 84,37% | 0,416 | 1,663 | 149 |
-| `v8_b2_b4_boosted` | 84,37% | 0,411 | 1,644 | 149 |
-| `v6_selector` | 84,26% | 0,444 | 1,774 | 150 |
-| `adaptive_corrected` | 82,58% | 0,460 | 1,840 | 166 |
-| `best_visibility_grid` | 80,80% | 0,460 | 1,838 | 183 |
-| `class_aware_vis` | 70,93% | 0,546 | 2,183 | 277 |
-| `relaxed_match` | 5,98% | 1,811 | 7,246 | 896 |
-| `naive` | 3,99% | 2,280 | 9,122 | 915 |
+| Metode | `Acc ±1` | `MAE` | Macro class-MAE | Exact profile | Total ±1 | `mean_total_err` | Pohon gagal |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| `selector_with_b2b3` | **86,67%** | **0,3982** | 0,3982 | 26,34% | 74,08% | 1,593 | 127 |
+| `selector_iter9_trifurc` | 86,67% | 0,3987 | 0,3987 | 26,34% | 74,08% | 1,595 | 127 |
+| `geometric_mean_blend` | 86,15% | 0,3961 | 0,3961 | 26,86% | 74,50% | 1,584 | 132 |
+| `hybrid_vis_corr` | 86,04% | 0,4077 | 0,4077 | 25,29% | 73,98% | 1,631 | 133 |
+| `visibility` | 85,94% | 0,3956 | 0,3956 | 25,29% | 73,56% | 1,582 | 134 |
+| `side_coverage` | 85,94% | 0,3930 | 0,3930 | 25,81% | 73,77% | 1,572 | 134 |
+| `density_scaled_vis` | 85,94% | 0,4024 | 0,4024 | 25,39% | 73,56% | 1,610 | 134 |
+| `v9_median_strong5` | 85,73% | 0,4006 | 0,4006 | 27,39% | 72,51% | 1,602 | 136 |
+| `v8_entropy_modulated` | 84,78% | 0,4507 | 0,4507 | 23,92% | 66,32% | 1,803 | 145 |
+| `v9_b2_median_v6` | 84,78% | 0,4294 | 0,4294 | 23,08% | 69,78% | 1,718 | 145 |
+| `v8_entropy_stacking` | 84,78% | 0,4507 | 0,4507 | 23,92% | 66,32% | 1,803 | 145 |
+| `v9_selector` | 84,68% | 0,4410 | 0,4410 | 22,35% | 68,21% | 1,764 | 146 |
+| `v7_stacking_bracketed` | 84,58% | 0,4284 | 0,4284 | 25,39% | 68,52% | 1,714 | 147 |
+| `v7_stacking_density` | 84,58% | 0,4347 | 0,4347 | 23,92% | 67,89% | 1,739 | 147 |
+| `corrected` | 84,37% | 0,4158 | 0,4158 | 23,29% | 68,52% | 1,663 | 149 |
+| `v8_b2_b4_boosted` | 84,37% | 0,4111 | 0,4111 | 26,86% | 71,98% | 1,644 | 149 |
+| `v6_selector` | 84,26% | 0,4436 | 0,4436 | 21,93% | 67,89% | 1,774 | 150 |
+| `adaptive_corrected` | 82,58% | 0,4599 | 0,4599 | 21,51% | 65,58% | 1,840 | 166 |
+| `best_visibility_grid` | 80,80% | 0,4596 | 0,4596 | 19,73% | 65,90% | 1,838 | 183 |
+| `class_aware_vis` | 70,93% | 0,5456 | 0,5456 | 12,38% | 58,45% | 2,183 | 277 |
+| `relaxed_match` | 5,98% | 1,8114 | 1,8114 | 2,41% | 5,04% | 7,246 | 896 |
+| `naive` | 3,99% | 2,2804 | 2,2804 | 1,89% | 2,83% | 9,122 | 915 |
 
 Catatan: metode `naive`, `relaxed_match`, dan `v7_ordinal_b3` sengaja dipertahankan sebagai pembanding dan bukti bahwa pendekatan pencocokan langsung tidak dapat diandalkan di skala penuh.
 
