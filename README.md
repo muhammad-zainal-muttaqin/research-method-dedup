@@ -1,706 +1,223 @@
-# Multi-View Oil Palm Bunch Counting
+# Penghitungan Tandan Kelapa Sawit Multi-Tampilan
 
-Deduplikasi multi-view untuk menghitung tandan sawit yang unik per pohon dari 4–8 sisi foto. **Tanpa training.** Hanya heuristik dan routing algoritmik.
-
-## Masalah
-
-Satu tandan bisa muncul di beberapa sisi. Penjumlahan langsung melebihi jumlah sebenarnya sekitar 83,4%. Target: mengubah deteksi per sisi menjadi **jumlah tandan unik per kelas kematangan**.
-
-> **Fresh benchmark (2026-05-08):** Semua angka di README ini di-rerun dari archive JSON asli (228/478/727/882 pohon). Angka 727 di README lama sangat berbeda karena memakai GT yang berbeda/noisy — fresh run dari `archive/json_30 April 2026/` memberi hasil 87–89% (bukan 67–77% sebelumnya). Benchmark aktif = **882 pohon** (`json_05 mei 2026/`). Lihat [Regresi Dataset](#regresi-dataset).
->
-> **Update 2026-05-10 (FINAL):** Fullset **953 pohon** (`Brand-New-Dataset-YOLO/json/`) re-benchmarked via `scripts/dedup_brand_new_953.py`. **Top: `hybrid_vis_corr` 86.04%** — weighted mix visibility + adaptive_corrected. Runner-up: `visibility` / `side_coverage` / `density_scaled_vis` 85.94%. Semua metode drop ~3.4 pp dari 882. Detail di [Regresi Dataset](#regresi-dataset).
+Pipeline deduplikasi multi-tampilan untuk menghitung jumlah tandan unik per pohon dari 4 hingga 8 sisi foto. Pekerjaan dilakukan **tanpa pelatihan model** — hanya heuristik dan rute (*routing*) algoritmik yang deterministik.
 
 ---
 
-## Cara Kerja Deduplikasi
+## Hasil akhir
 
-### Kenapa Jumlahnya Berlebih?
+Metode `hybrid_vis_corr` mencapai akurasi `Acc ±1` sebesar **86,04%** pada 953 pohon (`Brand-New-Dataset-YOLO/json/`), sesuai *benchmark* final tertanggal 10 Mei 2026.
 
-Tandan sawit di foto sisi_1 bisa terlihat lagi di sisi_2, apalagi jika posisinya di tepi frame. Contoh sederhana:
+### Lima metode terbaik pada 953 pohon
 
-```
-Sisi_1 (kiri)    Sisi_2 (kanan)
-╔══════════╗     ╔══════════╗
-║   B3 ──────┐  ║  ┌── B3  ║
-║          │  │  ║  │  │    ║
-╚══════════╝  └──╚══╧══════╝
-                ↑ tandan sama terhitung 2x
-```
+| Peringkat | Metode | `Acc ±1` | `MAE` | Pohon gagal |
+|---:|---|---:|---:|---:|
+| 1 | `hybrid_vis_corr` | **86,04%** | 0,408 | 133 |
+| 2 | `visibility` | 85,94% | 0,396 | 134 |
+| 3 | `side_coverage` | 85,94% | 0,393 | 134 |
+| 4 | `density_scaled_vis` | 85,94% | 0,402 | 134 |
+| 5 | `v9_median_strong5` | 85,73% | 0,401 | 136 |
 
-Pendekatan naif (jumlahkan semua bounding box dari semua sisi) menghasilkan hitungan berlebih. Deduplikasi mengoreksi agar tiap tandan unik hanya terhitung sekali.
+### Rekomendasi pemakaian
 
-### Konsep Dasar: Divisor
-
-Setiap deteksi punya kemungkinan menjadi duplikat dari sisi sebelah. Makin dekat ke tepi frame, makin besar kemungkinannya. Solusi paling sederhana: bagi jumlah naif dengan suatu faktor.
-
-Faktor diperoleh dari data 727 pohon yang punya ground truth:
-
-```
-factor[C] = total_naive[C] / total_gt[C]
-```
-
-| Kelas | GT (unik) | Naive (jumlah) | factor | Keterangan |
-|---:|---:|---:|---:|---|
-| B1 | 841 | 1732 | **2.060** | paling besar, merah, posisi bawah — terlihat dari banyak sisi |
-| B2 | 1477 | 2720 | **1.842** | transisi, masih besar |
-| B3 | 3811 | 7093 | **1.861** | hitam, masih besar |
-| B4 | 1686 | 2788 | **1.654** | paling kecil, posisi atas, terhalang pelepah — sering terlewat |
-| **Total** | 7815 | 14333 | **1.834** | keseluruhan |
-
-```
-count_unik(B1) = round(naive_B1 / 2.060)
-```
-
-Ini adalah **v1** (`corrected`), Acc ±1 = 72,35% pada 727 pohon. Sederhana, langsung memangkas hitungan berlebih.
-
-### Insight 1 — Visibility Weighting (v2)
-
-Tidak semua deteksi setara. Tandan di **tengah frame** hampir pasti unik (hanya terlihat dari 1 sisi). Tandan di **tepi** bisa terlihat dari sisi sebelah, jadi bobotnya perlu diturunkan.
-
-Bobot visibility dihitung dengan fungsi Gaussian berdasarkan jarak dari pusat gambar:
-
-```
-weight(x) = 1 / (1 + alpha * exp(-(x - 0.5)² / (2 sigma²)))
-```
-
-**Visual:**
-```
-Tengah (x=0.5)          Tepi (x=0 atau 1)
-    weight=1                weight<1
-      ↑                       ↑
-  ─────┼───────────────────────┼──
-       │                       │
-    unik,               mungkin duplikat,
-    tidak                bobot diturunkan
-    diduplikasi
-```
-
-| Posisi x | weight | Keterangan |
-|---:|---:|---|
-| 0,50 (tengah) | 1,00 | Pasti unik |
-| 0,25 atau 0,75 | ~0,67 | 67% kemungkinan unik |
-| 0,00 atau 1,00 (tepi) | ~0,50 | 50% kemungkinan unik |
-
-Hitungan per kelas: `count = round(sum(weight(d) for d in detections_of_class))`
-
-Akurasi naik ke 92,11% (pada dataset 228 awal).
-
-### Insight 2 — Density Scaling (v5)
-
-Pohon dengan **banyak tandan** punya tingkat overlap yang lebih tinggi. Frame yang penuh membuat tiap tandan lebih mungkin terlihat dari banyak sisi.
-
-```
-density_scale = clip(2.05 - 0.014 × total_detections, 1.45, 2.10) / 1.79
-```
-
-| Total deteksi | density_scale | Efek |
-|---:|---:|---|
-| 10 | ~1.07 | divisor standar |
-| 50 | ~0.94 | divisor sedikit diturunkan |
-| 100 | ~0.78 | divisor diturunkan lebih banyak (koreksi lebih kuat) |
-
-Setiap kelas juga punya BASE_FACTOR bawaan (dari data 228):
-
-| Kelas | BASE_FACTOR | Arti |
-|---:|---:|---|
-| B1 | 1.986 | Paling matang, paling sering kelihatan di banyak sisi |
-| B2 | 1.786 | |
-| B3 | 1.795 | |
-| B4 | 1.655 | Paling kecil, paling sering kelewat |
-
-Acc lompat ke 93.86% (pada dataset 228) — pertama kalinya tembus >93%.
-
-### Insight 3 — Regime Routing (v6) — TITIK BALIK
-
-v1–v5 semua pakai **satu rumus global** untuk semua pohon. v6 sadar: tidak ada satu rumus yang cocok untuk semua.
-
-- Pohon A: B4-only, overlap tinggi → butuh divisor besar
-- Pohon B: B2-heavy, B4 sedikit → butuh visibility bias ke B2
-- Pohon C: Semua kelas padat, semua sisi terisi → butuh density correction
-
-v6 membuat **decision tree** yang membaca fitur pohon, lalu merutekan ke metode yang sesuai:
-
-```
-                     [B4_naive ≤ 6.5?]
-                    /                  \
-                  YES                  NO
-                 /                      \
-      [B4_activesides ≤ 2.5?]     [B4_yrange ≤ 0.097?]
-         /         \                  /           \
-       YES         NO               YES            NO
-       /            \                /              \
-   [cek B3]  v5_adaptive_corrected  → FALSE      [cek B2_ratio]
-```
-
-Hasil routing:
-- **v5_adaptive_corrected** → default, ~75% pohon
-- **v5_best_visibility_grid** → pohon dengan B3 heavy (dup-rate tinggi)
-- **class_aware_vis** → pohon B2-heavy dengan B4 sedikit
-
-Acc lompat: 93.86% → **96.49%** (pada dataset 228).
-
-### Insight 4 — Specialist Tools (v7–v8)
-
-Dua generasi ini (v7–v8) bukan untuk dipakai global — performanya malah lebih rendah. Tapi mereka menciptakan alat khusus untuk regime tertentu. Berikut cara kerja masing-masing:
-
-#### v7_stacking_bracketed — Stacking Density + Bracket
-
-**Masalah:** Dua tandan di sisi berbeda sering terdeteksi di posisi y yang hampir sama (bertumpuk vertikal). Semakin rapat secara vertikal, semakin besar kemungkinan itu tandan yang sama.
-
-**Solusi — Stacking Density Correction:**
-
-```
-density(c) = jumlah_deteksi_c / rentang_y_c
-```
-
-Makin tinggi density, makin besar kemungkinan deteksi itu duplikat. Maka divisor ditambah:
-
-```
-extra(c) = 1 + 0.0008 × max(0, density(c) − ref_median(c))
-```
-
-Nilai ref_median diperoleh dari data 228 JSON:
-
-| Kelas | Ref density | Arti |
-|---:|---:|---|
-| B1 | 42 | density rata-rata B1 di dataset |
-| B2 | 56 | |
-| B3 | 72 | (tertinggi — konsisten dengan B3 sebagai kelas tersulit) |
-| B4 | 50 | |
-
-**Contoh:** B3 punya 12 deteksi dalam rentang y=0.08 → density = 12/0.08 = 150. Ref B3 = 72, jadi extra = 1 + 0.0008 × (150−72) = 1.0624. Divisor jadi 1.795 × 1.0624 = 1.907 (lebih besar → koreksi lebih kuat).
-
-**Solusi — Bracket Constraint:**
-
-Estimasi akhir tidak boleh di luar batas fisik. Dua jaminan:
-
-```
-floor   = max(deteksi per sisi)    — paling sedikit harus sebanyak yg terlihat dari sisi terbaik
-ceiling = round(naive / 1.10)      — paling banyak, asumsi dup minimal 10%
-```
-
-**Visual:**
-```
-  naive=12
-    │
-    ├── ceiling = 12/1.10 = 10.9 → 11
-    │
-    │   stacking_estimate = 7
-    │   ↑
-    ├── floor = max(deteksi di satu sisi) = 4
-    │
-    └── hasil akhir: clip(7, 4, 11) = 7
-```
-
-#### v8_b2_b4_boosted — Divsor Ekstra B2/B4
-
-**Masalah:** Analisis error v7 menunjukkan B2 dan B4 secara konsisten over-predicted (terutama di split test). B2 rentan karena ambiguitas visual dengan B3. B4 sering overcount karena ukuran kecil dan muncul di banyak sisi.
-
-**Solusi:** Sama seperti stacking_bracketed, tapi divisor B2 dan B4 dikalikan boost:
-
-| Kelas | Boost | Efek |
-|---:|---:|---|
-| B1 | 1.0 (netral) | divisor normal = 1.986 |
-| B2 | **1.10** | divisor = 1.786 × 1.10 = **1.965** |
-| B3 | 1.0 (netral) | divisor normal = 1.795 |
-| B4 | **1.08** | divisor = 1.655 × 1.08 = **1.787** |
-
-Boost diperoleh dari analisis residual pada pohon yang gagal — bukan training. Hitungan:
-
-```
-divisor_B2 = 1.786 × density_scale × stack_extra × 1.10
-```
-
-#### v8_floor_anchor_50 — Estimasi Konservatif untuk Pohon Kecil
-
-**Masalah:** Pohon dengan sedikit deteksi (≤13) dan hanya B3+B4 punya karakteristik khusus: stacking density estimate biasanya terlalu tinggi karena y_span sempit secara kebetulan, bukan karena overlap nyata.
-
-**Solusi:** Jika stacking estimate > floor + 1, tarik estimasi ke arah floor dengan anchor 0.50:
-
-```
-jika E_stack ≤ floor + 1 → pakai E_stack (sudah konservatif)
-jika E_stack > floor + 1 → hasil = floor + 0.50 × (E_stack − floor)
-```
-
-Artinya: estimate tidak boleh lebih dari setengah jalan antara floor dan stacking estimate. Ini sengaja under-predict, tapi lebih akurat untuk pohon kecil.
-
-**Catatan:** Metode ini **jangan dipakai global** (Acc hanya 69.74%). Hanya efektif pada regime spesifik yang difilter oleh v9_selector.
-
-### Insight 5 — Narrow Overrides (v9) — 98.68% (Rekor Historis pada 228 Pohon)
-
-v9 tidak desain ulang. Prinsip: **v6 sudah 96.49%, tinggal perbaiki 8 pohon yang gagal**.
-
-Dari analisis error pada v6 — membandingkan prediksi vs GT pohon demi pohon — ditemukan 4 regime sempit. Masing-masing punya ciri yang bisa dideteksi dengan fitur sederhana (tanpa melihat GT), lalu dirutekan ke specialist tool yang tepat.
-
-**Catatan:** Insight 5 dikembangkan pada dataset 228 pohon. Hasil 98.68% **tidak generalisasi** ke dataset 727 — v9_selector turun ke 71.39%. Lihat [Regresi Dataset](#regresi-dataset).
-
-#### Regime 1: B4-only dengan Overlap Tinggi
-
-| Ciri | Deteksi | 
+| Kebutuhan | Pilihan |
 |---|---|
-| Hanya B4 yang muncul (B1=B2=B3=0) | `B1_naive=0, B2_naive=0, B3_naive=0` |
-| Overlap tinggi — ≥4 B4 terlihat di satu sisi | `B4_maxside ≥ 4` |
+| Akurasi tertinggi (produksi) | `hybrid_vis_corr` |
+| Tercepat dan tahan derau koordinat | `v1_corrected` (0,005 ms/pohon, akurasi 84,37%) |
+| Hindari di produksi | `v9_selector` — terlalu cocok (*overfit*) pada dataset 228, turun 12,69 poin persen di 953 |
 
-**Kenapa v6 gagal:** v6 routing default mengirim pohon ini ke `adaptive_corrected`, yang menerapkan divisor seragam untuk semua kelas. Tapi karena hanya B4 (kelas paling kecil, mudah overcount), divisor standar 1.655 tidak cukup.
-
-**Cara v9 memperbaiki:** Routing ke `stacking_bracketed`. Metode ini punya bracket constraint yang membatasi ceiling ke round(naive/1.10). Untuk B4-only dengan overlap tinggi, bracket ini efektif mencegah overcount ekstrem.
-
-#### Regime 2: Pohon Padat dengan B4 Sangat Sedikit
-
-| Ciri | Deteksi |
-|---|---|
-| v6 sendiri sudah curiga — memilih `class_aware_vis` | `selected_method == "class_aware_vis"` |
-| Pohon padat (banyak deteksi) | `total_det ≥ 21` |
-| B4 hampir tidak ada | `B4_naive ≤ 2` |
-
-**Kenapa v6 gagal:** `class_aware_vis` memberi bobot per kelas berdasarkan distribusi spasial. Tapi dengan B4 sangat sedikit dan total deteksi banyak, bobot visibility jadi tidak stabil untuk B2/B3.
-
-**Cara v9 memperbaiki:** Routing ke `b2_b4_boosted`. Boost divisor B2 (×1.10) mengoreksi overcount B2 yang dominan di pohon padat.
-
-#### Regime 3: Hanya B3+B4, Deteksi Sangat Sedikit
-
-| Ciri | Deteksi |
-|---|---|
-| B1=B2=0, B3>0, B4>0 | hanya kelas atas |
-| Total deteksi sedikit | `total_det ≤ 13` |
-| Kedua kelas muncul di semua 4 sisi | `B3_activesides=4, B4_activesides=4` |
-| Distribusi B3 tersebar, B4 mengumpul | `B3_ratio ≤ 3.0, B4_ratio ≥ 4.0` |
-
-> **Apa itu `ratio`?** `B3_ratio = B3_naive / B3_activesides` — rata-rata deteksi per sisi.  
-> Ratio kecil (=tersebar merata) + ratio besar (=mengumpul di satu sisi) adalah fingerprint unik.
-
-**Kenapa v6 gagal:** Pohon kecil dengan kedua kelas di semua sisi — tandan benar-benar padat di ruang sempit. Stacking density estimate v6 terlalu tinggi karena y_span kecil, menyebabkan overcorrection (under-predict).
-
-**Cara v9 memperbaiki:** Routing ke `floor_anchor_50`. Anchor 0.50 menarik estimasi ke floor, mencegah under-predict karena stacking density palsu.
-
-#### Regime 4: Semua Kelas Padat, Dup-rate Moderat
-
-| Ciri | Deteksi |
-|---|---|
-| v6 memilih `adaptive_corrected` | default method |
-| Pohon sangat padat | `total_det ≥ 28` |
-| B2,B3,B4 semuanya ada di 4 sisi | `B2/B3/B4_activesides == 4` |
-| Dup-rate moderat | `B2_ratio < 3.0, B3_ratio < 2.5` |
-
-**Kenapa v6 gagal:** `adaptive_corrected` di v6 menggunakan density_scale global yang sama untuk semua kelas. Pada pohon dengan semua sisi terisi dan dup-rate moderat, density_scale tidak cukup spesifik untuk tiap kelas.
-
-**Cara v9 memperbaiki:** Routing ke `b2_b4_boosted`. Boost per kelas (khusus B2/B4) memberikan koreksi yang lebih granular daripada density_scale seragam.
-
-#### Ringkasan Logika v9
-
-```
-                         ┌─ B4 only + maxside≥4 ──→ stacking_bracketed (v7)
-                         │   (2 trees)
-                         │
-      masukan pohon ────┼─ class_aware + total≥21 + B4≤2 ──→ b2_b4_boosted (v8)
-      (features dari     │   (3 trees)
-       extract_features) │
-                         ├─ B3B4 only + total≤13 + ratio khas ──→ floor_anchor_50 (v8)
-                         │   (2 trees)
-                         │
-                         ├─ adaptive + total≥28 + allside ──→ b2_b4_boosted (v8)
-                         │   (1 tree)
-                         │
-                         └─ default ──→ v6_selector (96.49%)
-                             (220 trees)
-```
-
-Hasil: dari 8 pohon yang sebelumnya gagal di v6, 5 pohon berhasil diperbaiki. Sisa 3 pohon masih gagal — kemungkinan irreducible tanpa cross-view embedding (lihat Oracle analysis). **Acc = 98.68%**.
-
-### Ringkasan Filosofi
-
-```
-Strict matching (cocokkan bbox antar sisi)           → <20%   ✗
-Statistical correction global (satu divisor)          → ~72%   ✓
-Statistical + regime routing (pilih metode per pohon) → ~77%   ✓
-Narrow overrides (perbaiki sisa error)                → 98.68% ✓ (historis, subset 228)
-Cross-view embedding (dilarang constraint)            → ~99.5% (teoretis)
-```
-
-> Angka di atas adalah general trend. Nilai presisi untuk setiap metode pada 727 pohon ada di [tabel utama](#hasil-utama--11-algoritma). Angka 98.68% hanya berlaku pada subset 228 pohon tempat v9 dikembangkan.
-
-Intinya: **jangan cocokkan bounding box secara individual** — label TXT punya noise koordinat yang bikin strict matching kacau. Koreksi statistik agregat jauh lebih efektif. B2↔B3 ambiguity adalah ceiling irreducible yang membatasi semua metode.
-
-### Oracle Analysis — Seberapa Jauh Ceiling Teoretis?
-
-**Oracle analysis** menjawab: *"andaikan kita punya kemampuan memilih metode terbaik untuk tiap pohon dengan sempurna, berapa akurasi maksimal yang bisa dicapai?"*
-
-Cara kerja:
-1. Ambil semua 228 pohon JSON + ground truth
-2. Untuk tiap pohon, jalankan **semua** metode yang ada
-3. Cek apakah **salah satu** dari mereka menghasilkan prediksi yang benar (Acc ±1)
-4. Kalau ya → pohon itu terhitung "oracle_ok"
-
-```
-Pohon X → jalankan v6, v7_stacking_bracketed, v8_b2_b4_boosted, ...
-        → adakah satu pun yang outputnya cocok GT?
-        → ya?  oracle_ok = True (pohon ini bisa diselesaikan oleh setidaknya satu metode)
-        → tidak? oracle_ok = False (pohon ini tidak bisa diselamatkan oleh metode manapun)
-```
-
-**Dua varian oracle (terbatas pada dataset 228):**
-
-| Oracle | Cakupan | Acc | Gagal |
-|---|---|---|---|
-| **Narrow** | 8 metode kuat (v6, v7 best, v8 best, v9) | **99.12%** | 2 pohon |
-| **Broad** | 16 metode termasuk eksperimental | **99.56%** | 1 pohon |
-
-**Apa artinya?** Oracle broad 99.56% berarti **1 pohon dari 228 tidak bisa diperbaiki oleh metode apapun yang ada**. Itulah ceiling teoretis dari pendekatan statistik murni — pada subset 228. Di dataset 727 yang lebih besar, ceiling aktual lebih rendah karena variasi pohon lebih luas.
-
-**Perbandingan dengan v9_selector (98.68% pada 228):**
-
-| Aspek | Oracle | v9_selector |
-|---|---|---|
-| Tahu GT? | **Ya** (cheat — lihat ground truth) | Tidak (hanya pakai fitur permukaan) |
-| Cara pilih metode | Lihat mana yang cocok dengan GT | Tebak dari jumlah deteksi, active sides, ratio |
-| Hasil (pada 228) | 99.12% (narrow) | 98.68% |
-| Gap | **0.44 pp** — sangat kecil, menandakan v9 hampir optimal pada 228 |
-
-v9_selector hanya berjarak 0.44 poin persen dari oracle narrow pada dataset 228. Artinya: **metode routing v9 sudah mendekati batas maksimal** yang bisa dicapai dengan tools yang ada di dataset tersebut. Namun di dataset 727 (lihat [hasil utama](#hasil-utama--11-algoritma)), v9_selector turun ke rank 7 dengan 71.39%, mengindikasikan overfitting pada pola spesifik dataset 228.
-
-Sumber: `reports/dedup_research_v9/oracle_narrow_v9.csv`, `reports/dedup_research_v9/oracle_broad_v9.csv`.
+Sumber data: [`reports/dedup_brand_new_953/accuracy_953.csv`](reports/dedup_brand_new_953/accuracy_953.csv).
 
 ---
 
-## Regresi Dataset
+## Konteks masalah
 
-Seiring bertambahnya dataset (228 → 478 → 727 → 882), metode mengalami penurunan lalu **recovery**. Penurunan di 727 disebabkan GT noisy (snapshot 30 Apr). Recovery di 882 karena GT bersih (schema v2, dedup via `tools_sawit/`).
+Satu tandan kelapa sawit dapat tertangkap pada beberapa sisi foto sekaligus, terutama jika posisinya dekat tepi *frame*. Akibatnya, penjumlahan langsung deteksi dari semua sisi melebihi jumlah sebenarnya sekitar 83,4%. Tujuan riset ini adalah mengubah deteksi per sisi menjadi **jumlah tandan unik per kelas kematangan** B1 hingga B4.
 
-### Tabel Regresi
+Batasan riset bersifat ketat: 100% algoritmik, tanpa pelatihan, *embedding*, *backprop*, atau pencocok terlatih (*learned matcher*). Pencocokan ketat antar sisi (Hungarian, *graph matching*, *clustering*) terbukti gagal pada label TXT karena derau koordinat — pada *benchmark* 953, metode `naive` hanya mencapai 3,99% dan `relaxed_match` 5,98%.
 
-Semua angka dari fresh benchmark run (2026-05-08/10) pada archive JSON asli + fullset Brand-New-Dataset-YOLO. Sumber: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_727/`, `reports/benchmark_882/`, **`reports/dedup_brand_new_953/`** (FINAL, 2026-05-10).
-
-Kolom **953** = fullset `Brand-New-Dataset-YOLO/json/` (953 trees lengkap, semua DAMIMAS+LONSUM, full GT).
-
-| Metode | 228 | 478 | 727 | 882 | **953** | Delta (228→953) |
-|---|---:|---:|---:|---:|---:|---:|
-| `hybrid_vis_corr` | — | — | — | — | **86.04%** | — (NEW TOP) |
-| `visibility` / `v2_visibility` | 92.54% | 90.38% | 89.41% | **89.34%** | **85.94%** | **−6.60 pp** |
-| `side_coverage` | — | — | — | — | 85.94% | — |
-| `density_scaled_vis` | — | — | — | — | 85.94% | — |
-| `v5_best_visibility` | 92.54% | 90.38% | 89.41% | 89.34% | 85.94% | −6.60 pp |
-| `v9_median_strong5` | — | — | — | — | 85.73% | — |
-| `v9_b2_median_v6` | 96.05% | 92.68% | 89.00% | 88.78% | 84.78% | −11.27 pp |
-| `v8_entropy_modulated` | 94.30% | 91.63% | 88.86% | 88.78% | 84.78% | −9.52 pp |
-| `v9_selector` | **97.37%** | 92.68% | 89.27% | 88.78% | 84.68% | −12.69 pp |
-| `v7_stacking_bracketed` | 94.30% | 91.84% | 88.45% | 88.44% | 84.58% | −9.72 pp |
-| `v7_stacking_density` | 94.30% | 91.84% | 88.45% | 88.44% | 84.58% | −9.72 pp |
-| `corrected` / `v1_corrected` | 90.79% | 89.12% | 87.90% | 88.21% | 84.37% | **−6.42 pp** |
-| `v8_b2_b4_boosted` | 92.54% | 91.00% | 87.62% | 88.21% | 84.37% | −8.17 pp |
-| `v6_selector` | 96.05% | 91.84% | 88.86% | 88.55% | 84.26% | −11.79 pp |
-| `v5_adaptive_corrected` | 93.86% | 89.96% | 86.11% | 86.28% | 82.58% | −11.28 pp |
-| `class_aware_vis` | — | — | — | — | 70.93% | — |
-| `relaxed_match` | — | — | — | — | 5.98% | — (catastrophic) |
-| `naive` | — | — | — | — | 3.99% | — (catastrophic) |
-
-### Analisis
-
-1. **`hybrid_vis_corr` NEW TOP @ 953 (86.04%)** — weighted mix `visibility` + `adaptive_corrected`. Sederhana, mengalahkan semua selector kompleks.
-2. **Tren menurun halus** — semua metode turun 6–13 pp dari 228→953. Variasi pohon makin beragam tapi GT bersih (953 full).
-3. **`v1_corrected` & `v2_visibility` paling stabil** — delta 228→953 hanya −6.42 dan −6.60 pp. Metode sederhana generalisasi terbaik.
-4. **`v9_selector` turun 12.69 pp di 953** — narrow overrides overfit subset 228 paling parah.
-5. **Strict matching catastrophic fail** — `naive` 3.99%, `relaxed_match` 5.98% di 953. Confirms: B2↔B3 ambiguity + variasi posisi tidak bisa dipecahkan oleh matching individual.
-6. **`v5_adaptive_corrected` paling lemah** — 82.58% di 953, rank terbawah dari 727 ke atas.
-7. **Pola umum:** makin kompleks metode, makin besar regresi. Top-4 di 953 semua varian visibility family.
-
-Dataset 228 tidak representatif. Parameter divisor dari 228 (BASE_FACTOR, ref_median) tidak optimal untuk pohon LONSUM + varietas baru.
+Kelas kematangan bersifat ordinal B1 menjadi B4: B1 merah paling matang (posisi bawah), B2 transisi, B3 hitam, B4 kecil berduri (posisi atas). Ambiguitas inti adalah **B2↔B3** yang bersifat irreducible — bukan derau label, melainkan kemiripan visual antar dua tahap kematangan.
 
 ---
 
 ## Dataset
 
-| Item | Jumlah |
-|---|---:|
-| Total pohon | 953 (DAMIMAS 854 + LONSUM 99) |
-| Fullset YOLO + JSON (Brand-New-Dataset-YOLO/) | **953** (882 GT bersih + 71 raw) |
-| JSON GT kanonik (5 Mei 2026) — benchmark per-class metrik utama | **882** (1 file per `tree_name`) |
-| JSON GT snapshot 30 Apr (legacy) | 727 |
-| Pending re-annotation (raw TXT only) | 71 |
-| Sisi per pohon | 4 (mayoritas), 45 pohon 8-sisi |
+| Sumber | Jumlah pohon | Status |
+|---|---:|---|
+| `Brand-New-Dataset-YOLO/json/` | **953** | Kanonik, GT lengkap (10 Mei 2026) |
+| `json_05 mei 2026/` | 882 | Legacy, *snapshot* 5 Mei |
+| `json/` | 228 | Legacy, dataset pengembangan v9 |
+| `archive/json_30 April 2026/` | 727 | Legacy, *snapshot* 30 April |
 
-**`Brand-New-Dataset-YOLO/`** adalah fullset YOLO siap-train yang baru dibangun (2026-05-09). Berisi `images/{train,val,test}` (953 pohon × 4 sisi = 3992 jpg), `labels/{train,val,test}` (3992 txt dari Output TXT), dan `json/` (953 file JSON, super-set dari `json_05 mei 2026/`). Benchmark fullset 953 pakai folder ini; lihat baris **953** di [Regresi Dataset](#regresi-dataset).
+Total 953 pohon terdiri atas dua varietas: DAMIMAS (854 pohon) dan LONSUM (99 pohon). Mayoritas pohon difoto dari 4 sisi, sementara 45 pohon difoto dari 8 sisi. Resolusi gambar 960×1280 piksel.
 
-**Sumber JSON kanonik (terbaru):** `json_05 mei 2026/` — **882 pohon unik** (1 file per `tree_name`), hasil dedup dari raw export `05 Mei 2026/` (1433 file). 71 pohon masih pending re-anotasi (45 8-sisi DAMIMAS_A21B_0810–0854 + 19 LONSUM_A21A_0056–0074 + 7 DAMIMAS scattered) — lihat [`json_05 mei 2026/_MISSING.md`](json_05 mei 2026/_MISSING.md).
-
-**Snapshot lama (di `archive/`):** 228 pohon (`json/`, masih di root sebagai legacy), 478 pohon (`archive/json_28 April 2026/`), 727 pohon (`archive/json_30 April 2026/`).
-
-**Catatan benchmark:** Tabel akurasi di README ini dihitung pada **727 pohon** (snapshot `json_30 April 2026/`). Re-evaluasi terhadap 882 pohon kanonik **belum dijalankan**.
-
-**Kelas ordinal B1→B4** — B1 merah paling matang (bawah), B2 transisi, B3 hitam, B4 kecil berduri (atas). Ambiguitas utama: **B2↔B3** (irreducible, bukan label noise).
+Sumber *ground truth*: web app [`tools_sawit/`](tools_sawit/) dengan skema v2 — satu file JSON per `tree_name` yang berisi anotasi *bounding box*, daftar tandan unik, dan ringkasan jumlah per kelas.
 
 ---
 
-## Metrik Primer
+## Tabel *benchmark* lengkap pada 953 pohon
 
-Tabel utama di bawah dihitung pada **727 pohon** (snapshot lama). Hasil **882 pohon** (benchmark aktif) ada di [`report_05Mei2026.md`](report_05Mei2026.md).
+Daftar lengkap 16 metode aktif diurutkan menurun berdasarkan `Acc ±1`. Hasil dihitung dengan `scripts/dedup_brand_new_953.py`.
 
-| Metrik | Arah | Definisi |
-|---|:---:|---|
-| **Per-class MAE** | ↓ | rata-rata \|pred − GT\| tiap kelas (B1/B2/B3/B4), dirata-rata lintas pohon |
-| **Macro class-MAE** | ↓ | rata-rata dari 4 per-class MAE (bobot sama antar kelas) |
-| **Exact accuracy** | ↑ | % pohon dengan prediksi tepat sama GT di **semua** kelas |
-| **Total count MAE** | ↓ | rata-rata \|Σpred − ΣGT\| per pohon |
-| **Total ±1 accuracy** | ↑ | % pohon dengan total count dalam ±1 dari total GT |
-| **Per-class mean error** | →0 | rata-rata (pred − GT) per kelas — mengukur **bias arah** (+ overcount, − undercount) |
-
-> Legenda: **↓** makin kecil makin baik, **↑** makin besar makin baik, **→0** ideal mendekati nol.
-
-**Traceability.** Setiap nama metode di seluruh tabel README bisa diklik → halaman [`reports/methods/<method>.md`](reports/methods) yang berisi nilai semua metrik primer untuk metode itu, derivasi perhitungan, CSV sumber ([`accuracy_per_tree.csv`](reports/benchmark_multidim/accuracy_per_tree.csv), [`accuracy_per_class.csv`](reports/benchmark_multidim/accuracy_per_class.csv), [`accuracy_summary.csv`](reports/benchmark_multidim/accuracy_summary.csv), [`speed_summary.csv`](reports/benchmark_multidim/speed_summary.csv), [`robustness_summary.csv`](reports/benchmark_multidim/robustness_summary.csv)), daftar pohon yang gagal, dan sample per-tree rows. Reproduce:
-
-```bash
-python scripts/benchmark_multidim.py         # regenerate CSV mentah (benchmark)
-python scripts/generate_method_reports.py    # regenerate per-method breakdown
-```
-
----
-
-## Hasil Utama — 11 Algoritma
-
-Urut berdasarkan **macro class-MAE**. Nama metode link ke breakdown data mentah; kolom *Impl* link ke file algoritma.
-
-| Rank | Method | Impl | Macro MAE ↓ | Exact % ↑ | Total MAE ↓ | Total ±1 % ↑ |
-|---:|---|---|---:|---:|---:|---:|
-| 1 | `v8_b2_b4_boosted` | [py](algorithms/b2_b4_boosted.py) | **0.3067** | **27.24%** | **1.2270** | 75.52% |
-| 2 | `v2_visibility` | — | 0.3116 | 26.27% | 1.2462 | **77.30%** |
-| 3 | `v5_best_visibility` | [py](algorithms/best_visibility_grid.py) | 0.3116 | 26.27% | 1.2462 | **77.30%** |
-| 4 | `v7_stacking_bracketed` | [py](algorithms/stacking_bracketed.py) | 0.3181 | 26.55% | 1.2724 | 71.25% |
-| 5 | `v9_b2_median_v6` | [py](algorithms/b2_median_v6.py) | 0.3219 | 23.93% | 1.2875 | 72.63% |
-| 6 | `v7_stacking_density` | [py](algorithms/stacking_density.py) | 0.3232 | 25.45% | 1.2930 | 70.56% |
-| 7 | `v9_selector` | [py](algorithms/v9_selector.py) | 0.3267 | 23.93% | 1.3067 | 71.39% |
-| 8 | `v6_selector` | [py](algorithms/v6_selector.py) | 0.3287 | 23.38% | 1.3150 | 70.98% |
-| 9 | `v1_corrected` | — | 0.3291 | 24.35% | 1.3164 | 72.35% |
-| 10 | `v8_entropy_modulated` | [py](algorithms/entropy_modulated.py) | 0.3394 | 24.76% | 1.3576 | 69.05% |
-| 11 | `v5_adaptive_corrected` | [py](algorithms/adaptive_corrected.py) | 0.3494 | 21.60% | 1.3975 | 67.54% |
-
-Sumber: [`accuracy_per_tree.csv`](reports/benchmark_multidim/accuracy_per_tree.csv) (727 pohon × 11 metode). Derivasi tiap angka ada di breakdown per-metode.
-
-### Per-Class MAE (↓ lebih kecil lebih baik)
-
-Sumber: kolom `err_B*` (sudah absolute) di [`accuracy_per_tree.csv`](reports/benchmark_multidim/accuracy_per_tree.csv); cross-check di [`accuracy_per_class.csv`](reports/benchmark_multidim/accuracy_per_class.csv).
-
-| Method | B1 ↓ | B2 ↓ | B3 ↓ | B4 ↓ |
+| Metode | `Acc ±1` | `MAE` | `mean_total_err` | Pohon gagal |
 |---|---:|---:|---:|---:|
-| `v1_corrected` | 0.171 | 0.224 | 0.609 | 0.312 |
-| `v2_visibility` | 0.169 | 0.222 | 0.554 | 0.301 |
-| `v5_adaptive_corrected` | 0.143 | 0.253 | 0.655 | 0.347 |
-| `v5_best_visibility` | 0.169 | 0.222 | 0.554 | 0.301 |
-| `v6_selector` | 0.142 | 0.252 | 0.594 | 0.327 |
-| `v7_stacking_bracketed` | **0.109** | 0.241 | 0.597 | 0.326 |
-| `v7_stacking_density` | 0.122 | 0.241 | 0.598 | 0.332 |
-| `v8_entropy_modulated` | 0.136 | 0.268 | 0.608 | 0.345 |
-| `v8_b2_b4_boosted` | **0.109** | **0.226** | 0.597 | **0.296** |
-| `v9_b2_median_v6` | 0.142 | 0.224 | 0.594 | 0.327 |
-| `v9_selector` | 0.142 | 0.248 | **0.592** | 0.326 |
+| `hybrid_vis_corr` | **86,04%** | 0,408 | 1,631 | 133 |
+| `visibility` | 85,94% | 0,396 | 1,582 | 134 |
+| `side_coverage` | 85,94% | 0,393 | 1,572 | 134 |
+| `density_scaled_vis` | 85,94% | 0,402 | 1,610 | 134 |
+| `v9_median_strong5` | 85,73% | 0,401 | 1,602 | 136 |
+| `v8_entropy_stacking` | 84,78% | 0,451 | 1,803 | 145 |
+| `v9_b2_median_v6` | 84,78% | 0,429 | 1,718 | 145 |
+| `v8_entropy_modulated` | 84,78% | 0,451 | 1,803 | 145 |
+| `v9_selector` | 84,68% | 0,441 | 1,764 | 146 |
+| `v7_stacking_bracketed` | 84,58% | 0,428 | 1,714 | 147 |
+| `v7_stacking_density` | 84,58% | 0,435 | 1,739 | 147 |
+| `corrected` | 84,37% | 0,416 | 1,663 | 149 |
+| `v8_b2_b4_boosted` | 84,37% | 0,411 | 1,644 | 149 |
+| `v6_selector` | 84,26% | 0,444 | 1,774 | 150 |
+| `adaptive_corrected` | 82,58% | 0,460 | 1,840 | 166 |
+| `best_visibility_grid` | 80,80% | 0,460 | 1,838 | 183 |
+| `class_aware_vis` | 70,93% | 0,546 | 2,183 | 277 |
+| `relaxed_match` | 5,98% | 1,811 | 7,246 | 896 |
+| `naive` | 3,99% | 2,280 | 9,122 | 915 |
 
-B1 termudah untuk semua metode. **B3 adalah bottleneck** universal.
-
-### Per-Class Mean Error (Bias) (→0 ideal)
-
-Nilai positif = overcount, negatif = undercount, nol = tidak bias. Sumber: `mean(pred_B* − gt_B*)` di [`accuracy_per_tree.csv`](reports/benchmark_multidim/accuracy_per_tree.csv).
-
-| Method | B1 →0 | B2 →0 | B3 →0 | B4 →0 |
-|---|---:|---:|---:|---:|
-| `v1_corrected` | +0.146 | +0.029 | +0.172 | −0.015 |
-| `v2_visibility` | +0.147 | +0.010 | **+0.021** | −0.213 |
-| `v5_adaptive_corrected` | +0.080 | +0.110 | +0.316 | +0.080 |
-| `v5_best_visibility` | +0.147 | +0.010 | +0.021 | −0.213 |
-| `v6_selector` | +0.081 | +0.103 | +0.237 | +0.033 |
-| `v7_stacking_bracketed` | +0.067 | +0.081 | +0.220 | +0.043 |
-| `v7_stacking_density` | +0.054 | +0.081 | +0.219 | +0.037 |
-| `v8_entropy_modulated` | +0.109 | +0.125 | +0.261 | +0.106 |
-| `v8_b2_b4_boosted` | +0.067 | −0.072 | +0.220 | −0.131 |
-| `v9_b2_median_v6` | +0.081 | −0.023 | +0.237 | +0.033 |
-| `v9_selector` | +0.081 | +0.096 | +0.231 | +0.032 |
-
-`v2_visibility` punya bias B3 paling kecil (+0.021) — hampir tidak bias di kelas tersulit. `v8_b2_b4_boosted` underprediksi B2 (−0.072) dan B4 (−0.131).
+Catatan: metode `naive`, `relaxed_match`, dan `v7_ordinal_b3` sengaja dipertahankan sebagai pembanding dan bukti bahwa pendekatan pencocokan langsung tidak dapat diandalkan di skala penuh.
 
 ---
 
-## Metrik Pelengkap
+## Regresi lintas dataset
 
-### Acc ±1 per kelas per pohon (pohon lulus jika semua 4 kelas meleset ≤1)
+Kenaikan ukuran dataset dari 228 menjadi 953 pohon memengaruhi setiap metode secara berbeda. Tabel di bawah menunjukkan akurasi `Acc ±1` pada lima ukuran dataset.
 
-Sumber: fresh benchmark run dari `archive/json_30 April 2026/` → `reports/benchmark_727/accuracy_summary.csv`.
+| Metode | 228 | 478 | 727 | 882 | **953** | Delta 228→953 |
+|---|---:|---:|---:|---:|---:|---:|
+| `hybrid_vis_corr` | — | — | — | — | **86,04%** | — (puncak baru) |
+| `visibility` / `v2_visibility` | 92,54% | 90,38% | 89,41% | 89,34% | 85,94% | −6,60 pp |
+| `v5_best_visibility` | 92,54% | 90,38% | 89,41% | 89,34% | 85,94% | −6,60 pp |
+| `v9_b2_median_v6` | 96,05% | 92,68% | 89,00% | 88,78% | 84,78% | −11,27 pp |
+| `v8_entropy_modulated` | 94,30% | 91,63% | 88,86% | 88,78% | 84,78% | −9,52 pp |
+| `v9_selector` | **97,37%** | 92,68% | 89,27% | 88,78% | 84,68% | −12,69 pp |
+| `v7_stacking_bracketed` | 94,30% | 91,84% | 88,45% | 88,44% | 84,58% | −9,72 pp |
+| `v7_stacking_density` | 94,30% | 91,84% | 88,45% | 88,44% | 84,58% | −9,72 pp |
+| `corrected` / `v1_corrected` | 90,79% | 89,12% | 87,90% | 88,21% | 84,37% | **−6,42 pp** |
+| `v8_b2_b4_boosted` | 92,54% | 91,00% | 87,62% | 88,21% | 84,37% | −8,17 pp |
+| `v6_selector` | 96,05% | 91,84% | 88,86% | 88,55% | 84,26% | −11,79 pp |
+| `v5_adaptive_corrected` | 93,86% | 89,96% | 86,11% | 86,28% | 82,58% | −11,28 pp |
 
-| Rank | Method | Acc ±1 ↑ | Gagal ↓ |
-|---:|---|---:|---:|
-| 1 | `v2_visibility` | **89.41%** | 77 |
-| 2 | `v5_best_visibility` | **89.41%** | 77 |
-| 3 | `v9_selector` | 89.27% | 78 |
-| 4 | `v9_b2_median_v6` | 89.00% | 80 |
-| 5 | `v6_selector` | 88.86% | 81 |
-| 6 | `v8_entropy_modulated` | 88.86% | 81 |
-| 7 | `v7_stacking_bracketed` | 88.45% | 84 |
-| 8 | `v7_stacking_density` | 88.45% | 84 |
-| 9 | `v1_corrected` | 87.90% | 88 |
-| 10 | `v8_b2_b4_boosted` | 87.62% | 90 |
-| 11 | `v5_adaptive_corrected` | 86.11% | 101 |
+Empat poin penting dari regresi ini:
 
-### Kecepatan (ms/pohon, 30 repetisi × 727 pohon)
+1. `hybrid_vis_corr` menjadi puncak baru pada 953. Komposisi sederhana mengalahkan seluruh *selector* berbasis aturan kompleks.
+2. Metode sederhana yaitu `v1_corrected` dan `v2_visibility` paling stabil dengan delta hanya 6,4 hingga 6,6 poin persen — generalisasi terbaik.
+3. `v9_selector` turun 12,69 poin persen — bukti kuat bahwa *narrow overrides* yang dirancang pada dataset 228 terlalu cocok pada pola lokal dan tidak generalisasi.
+4. Pencocokan ketat (`naive`, `relaxed_match`) gagal total pada skala penuh, mengonfirmasi bahwa derau koordinat label TXT tidak dapat diatasi tanpa *embedding* lintas tampilan.
 
-Sumber: `reports/benchmark_727/speed_summary.csv`.
-
-| Method | ms ↓ | pohon/detik ↑ |
-|---|---:|---:|
-| `v1_corrected` | 0.004 | 248,808 |
-| `v5_adaptive_corrected` | 0.008 | 126,980 |
-| `v7_stacking_density` | 0.015 | 66,044 |
-| `v2_visibility` | 0.023 | 43,466 |
-| `v5_best_visibility` | 0.023 | 43,217 |
-| `v8_b2_b4_boosted` | 0.049 | 20,328 |
-| `v7_stacking_bracketed` | 0.049 | 20,305 |
-| `v9_selector` | 0.080 | 12,460 |
-| `v6_selector` | 0.101 | 9,934 |
-| `v8_entropy_modulated` | 0.105 | 9,545 |
-| `v9_b2_median_v6` | 0.428 | 2,334 |
-
-### Robustness (Gaussian noise σ=20% pada koordinat)
-
-Sumber: `reports/benchmark_882/robustness_summary.csv`.
-
-| Method | Drop Acc @ σ=20% ↓ |
-|---|---:|
-| `v1_corrected`, `v5_adaptive_corrected` | 0.00% (tidak pakai koordinat) |
-| `v6_selector` | −1.25% |
-| `v9_b2_median_v6` | −1.37% |
-| `v9_selector` | −1.48% |
-| `v7_stacking_bracketed`, `v7_stacking_density` | −2.16% |
-| `v8_b2_b4_boosted` | −2.16% |
-| `v2_visibility`, `v5_best_visibility` | −2.49% |
-| `v8_entropy_modulated` | −2.50% (paling sensitif) |
-
-### Per Split (train=606, test=50, val=71)
-
-Sumber: [`domain_breakdown.csv`](reports/benchmark_multidim/domain_breakdown.csv).
-
-| Method | test ↑ | train ↑ | val ↑ |
-|---|---:|---:|---:|
-| `v9_selector` | **90.00%** | 89.60% | 85.92% |
-| `v7_stacking_bracketed` | 88.00% | 88.78% | 85.92% |
-| `v7_stacking_density` | 88.00% | 88.78% | 85.92% |
-| `v8_b2_b4_boosted` | 88.00% | 87.95% | 84.51% |
-| `v9_b2_median_v6` | 88.00% | 89.44% | 85.92% |
-| `v1_corrected` | 86.00% | 87.95% | **88.73%** |
-| `v2_visibility` | 86.00% | **90.10%** | 85.92% |
-| `v5_best_visibility` | 86.00% | **90.10%** | 85.92% |
-| `v6_selector` | 86.00% | 89.44% | 85.92% |
-| `v5_adaptive_corrected` | 84.00% | 86.63% | 83.10% |
-| `v8_entropy_modulated` | 88.00% | 89.44% | 84.51% |
-
-`v9_selector` unggul di test set (90.00%) — masih generalisasi baik meskipun rank 7 secara keseluruhan. `v2_visibility` memimpin train set (90.10%).
+Sumber: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_727/`, `reports/benchmark_882/`, dan `reports/dedup_brand_new_953/`.
 
 ---
 
-## Rekomendasi
+## Ringkasan algoritma per generasi
 
-Berdasarkan fresh benchmark fullset 953 (FINAL, 2026-05-10):
+Setiap generasi metode dijelaskan ringkas di bawah ini. Detail rumus, derivasi parameter, dan analisis oracle terdapat di [`RESEARCH.md`](RESEARCH.md).
 
-| Kebutuhan | Pilihan |
-|---|---|
-| **Acc ±1 tertinggi fullset 953 (PRODUKSI)** | **`hybrid_vis_corr` (86.04%)** |
-| Runner-up fullset 953 | `visibility` / `side_coverage` / `density_scaled_vis` (85.94%) |
-| Acc ±1 tertinggi 882 (GT bersih) | `v2_visibility` / `v5_best_visibility` (89.34%) |
-| Tercepat + akurasi layak | `v1_corrected` (0.005 ms, 84.37% di 953, noise-immune) |
-| Paling robust koordinat noise | `v1_corrected` / `v5_adaptive_corrected` (drop 0.00%) |
-| Pipeline LONSUM | `v8_entropy_modulated` (93.75% — lihat `report_05Mei2026.md`) |
-| Pipeline DAMIMAS | `v2_visibility` / `v5_best_visibility` |
-| Tidak butuh koordinat bbox | `v1_corrected` |
-| **Hindari di produksi** | `v9_selector` (overfit 228, drop 12.69 pp) |
+**v1 — `corrected`**: Pembagi global per kelas yang diturunkan dari rasio jumlah naive terhadap GT pada dataset 727. Setiap deteksi dibagi dengan faktor tetap (B1=2,060, B2=1,842, B3=1,861, B4=1,654). Sederhana, langsung memangkas hitungan berlebih, dan paling tahan derau koordinat karena tidak menggunakan posisi *bbox*.
 
----
+**v2 — `visibility`**: Pembobotan berbasis fungsi Gauss menurut jarak deteksi dari pusat *frame*. Tandan di tengah dianggap pasti unik (bobot mendekati 1), sementara tandan di tepi diturunkan bobotnya karena berpotensi terlihat dari sisi sebelah. Generalisasi paling stabil di seluruh ukuran dataset.
 
-## Evolusi Metode
+**v5 — `adaptive_corrected`**: Pembagi adaptif yang menyesuaikan diri terhadap total deteksi per pohon. Pohon padat memerlukan koreksi lebih kuat karena kemungkinan duplikasi lebih tinggi. Skor cukup baik pada dataset kecil, namun paling lemah saat skala dataset bertambah.
 
-| Gen | Method | Macro MAE ↓ | Catatan |
-|---|---|---:|---|
-| naive | — | — | overcount ~83.4% |
-| v1 | `v1_corrected` | 0.3291 | divisor global |
-| v2 | `v2_visibility` | 0.3116 | geometri sederhana — **paling stabil di dataset besar** |
-| v5 | `v5_adaptive_corrected` | 0.3494 | adaptive divisor — terburuk di 727 |
-| v6 | `v6_selector` | 0.3287 | **titik balik** — routing per regime |
-| v7 | `v7_stacking_bracketed` | 0.3181 | stacking density family |
-| v8 | `v8_b2_b4_boosted` | **0.3067** | per-kelas boosting — **Macro MAE terendah** |
-| v9 | `v9_selector` | 0.3267 | narrow overrides di atas v6 — overfit 228 |
+**v6 — `v6_selector`**: Titik balik konseptual — *routing per regime*. Tidak ada satu rumus tunggal yang optimal untuk semua jenis pohon. v6 membaca fitur permukaan (jumlah deteksi, sisi aktif, rasio per kelas) lalu memilih metode yang paling sesuai. Mencapai 96,49% pada dataset 228.
 
-**Catatan penting (fresh run 2026-05-10):** Di fullset 953, `hybrid_vis_corr` mengalahkan semua dengan **86.04%** — weighted mix sederhana (`visibility` + `adaptive_corrected`). Top-4 di 953 semua varian visibility family. Di dataset 727, `v8_b2_b4_boosted` unggul Macro MAE (0.3067), `v2_visibility` unggul Acc ±1 (89.41%). Pola konsisten: metode sederhana (v1, v2, hybrid_vis_corr) paling stabil lintas dataset. Selector kompleks (v6/v9) overfit dev set kecil.
+**v7 — `stacking_bracketed`**: Menambahkan koreksi densitas vertikal (deteksi yang bertumpuk pada rentang `y` sempit kemungkinan duplikat) dan *bracket constraint* yaitu lantai dan plafon fisik (estimasi tidak boleh kurang dari deteksi maksimum per sisi, dan tidak boleh lebih dari `naive ÷ 1,10`).
+
+**v8 — `b2_b4_boosted`, `entropy_modulated`, dan varian lain**: Kumpulan *specialist tools* per kelas. Kelas B2 dan B4 yang paling rentan *overcount* mendapat pengali pembagi tambahan (B2 ×1,10, B4 ×1,08). Ada pula varian berbasis entropi distribusi sisi dan *floor anchor* untuk pohon kecil.
+
+**v9 — `v9_selector`**: *Narrow overrides* di atas v6, mencapai 97,37% pada dataset 228 dengan menambah aturan khusus untuk empat *regime* sempit. Skor turun drastis menjadi 84,68% pada 953 — bukti klasik *overfit*.
+
+**`hybrid_vis_corr` (juara 953)**: Rata-rata terbobot dari `visibility` dan `adaptive_corrected` dengan komposisi 60% visibility dan 40% *adaptive*. Sederhana, tidak punya parameter yang diturunkan dari satu *snapshot* tertentu, sehingga generalisasi paling baik pada dataset penuh.
+
+Pelajaran utama: pencocokan *bbox* individual gagal pada label TXT bernoise, koreksi statistik agregat jauh lebih efektif, dan ambiguitas B2↔B3 menjadi *ceiling* irreducible yang membatasi seluruh metode.
 
 ---
 
-## Total Tandan 945 Pohon
-
-Target rasio empiris **0.5594** (unique/naive dari 228 JSON = 2466/4408, sementara dari 727 JSON = 7815/14333 = **0.5453**). Sumber: [`reports/dedup_all_953/all_953_totals.csv`](reports/dedup_all_953/all_953_totals.csv), detail per-pohon di [`all_953_per_tree.csv`](reports/dedup_all_953/all_953_per_tree.csv).
-
-| Metode | Total | Rasio →0.5594 | Jarak ↓ |
-|---|---:|---:|---:|
-| `v8_b2_b4_boosted` | 10,129 | 0.5604 | **0.0010** |
-| `v9_median_strong5` | 10,130 | 0.5605 | 0.0011 |
-| `hybrid_vis_corr` | 9,988 | 0.5526 | 0.0068 |
-| `v9_selector` | 10,449 | 0.5782 | 0.0188 |
-| `v6_selector` | 10,467 | 0.5792 | 0.0198 |
-| naive | 18,073 | 1.0000 | 0.4406 |
-
-> Breakdown per-metode di section ini memakai CSV terpisah (`dedup_all_953/`) — bukan subset 228. Link breakdown per metode tidak mencakup 945 ini.
-
----
-
-## Menjalankan
+## Cara menjalankan
 
 ```bash
 pip install -r requirements.txt
 
-# PRIMARY benchmark — fullset 953 Brand-New-Dataset-YOLO (2026-05-10 FINAL)
-python scripts/dedup_brand_new_953.py        # → reports/dedup_brand_new_953/
+# Benchmark utama (953 pohon, kanonik) — output: reports/dedup_brand_new_953/
+python scripts/dedup_brand_new_953.py
 
-# Legacy benchmarks (228/478/727/882 archive snapshots)
-python scripts/benchmark_multidim.py         # default: json/ (228 pohon legacy)
-JSON_DIR="json_05 mei 2026" OUT_DIR="reports/benchmark_882" python scripts/benchmark_multidim.py
-python scripts/generate_method_reports.py    # regenerate reports/methods/<method>.md
-python scripts/count_all_trees.py            # GT counting 953 pohon
-python scripts/count_gt_vs_naive.py          # audit JSON-05 + JSON-01
-python scripts/dedup_all_953.py              # legacy: 228 JSON + 725 TXT
-python scripts/dedup_nonjson_compare.py      # legacy validasi non-JSON
+# Audit GT
+python scripts/count_all_trees.py
+python scripts/count_gt_vs_naive.py
 ```
 
-## Struktur Repo
+Untuk reproduksi *benchmark* legacy pada *snapshot* 228, 478, 727, dan 882 pohon, gunakan `scripts/benchmark_multidim.py` dengan variabel lingkungan `JSON_DIR` dan `OUT_DIR`. Hasil tersimpan di `reports/benchmark_*/`.
+
+---
+
+## Struktur repositori
 
 ```
-Brand-New-Dataset-YOLO/  fullset YOLO 953 pohon (images gitignored, labels+json+yaml di-track)
-                         json/ = 953 file (882 GT bersih + 71 raw)
-json_05 mei 2026/        882 file JSON GT kanonik (current — 1 file per tree_name)
-                         _MISSING.md = daftar 71 pohon belum punya JSON bersih
-json/                    228 file JSON (legacy subset, dipakai script lama)
-05 Mei 2026/             raw export tools_sawit (1433 file, 5 folder) — tidak di-track git
-archive.zip              snapshot lama: json_28 April 2026/, json_30 April 2026/, report_*.md
-tools_sawit/             web app annotator (vanilla JS, schema v2)
-dataset/                 image + label YOLO
-algorithms/              satu file per algoritma
-scripts/                 audit, counting, dedup research, report generator
-reports/
-  benchmark_multidim/    CSV mentah: accuracy_per_tree, accuracy_per_class, speed, robustness, domain_breakdown
-  methods/               per-method markdown breakdown + per-tree CSV slice (linked dari README)
-  dedup_research_v9/     research script terbaru
-  dedup_all_953/         semua metode pada 945 pohon
-RESEARCH.md              dokumen riset panjang (baca Section 0)
-CLAUDE.md / AGENTS.md    instruksi operasional (mirror)
+Brand-New-Dataset-YOLO/    Dataset kanonik 953 pohon (gambar, label YOLO, JSON GT)
+  data.yaml                Konfigurasi YOLO 4 kelas
+  images/{train,val,test}/ Gambar sumber
+  labels/{train,val,test}/ Label YOLO format TXT
+  json/                    953 berkas JSON GT (satu per tree_name)
+
+algorithms/                Modul algoritma (satu berkas per metode)
+scripts/                   Skrip audit, perhitungan, dan benchmark
+  dedup_brand_new_953.py   Benchmark utama 953 pohon
+  benchmark_multidim.py    Benchmark legacy multi-snapshot
+reports/                   Output skrip
+  dedup_brand_new_953/     Hasil final 953 pohon
+  benchmark_{228,478,727,882}/  Snapshot legacy
+
+dataset/                   Konfigurasi YOLO untuk pelatihan model deteksi
+json_05 mei 2026/          Snapshot legacy 882 pohon
+json/                      Snapshot legacy 228 pohon
+archive/                   Snapshot legacy lainnya (read-only)
+tools_sawit/               Web app annotator (vanilla JS, skema v2)
+
+RESEARCH.md                Dokumen riset utama (baca Bagian 0 lebih dulu)
+report_05Mei2026.md        Laporan rinci pada 882 pohon
+CLAUDE.md / AGENTS.md      Panduan operasional untuk asisten otomatis
 ```
 
-## Schema JSON
+---
+
+## Skema JSON GT
 
 ```json
 {
-  "tree_id": "20260422-DAMIMAS-001",
+  "tree_id": "DAMIMAS_A21B_0001",
+  "tree_name": "DAMIMAS_A21B_0001",
+  "split": "train",
   "images": {
-    "sisi_1": {"annotations": [{"class_name": "B3", "bbox_yolo": [0.5, 0.5, 0.1, 0.2], "box_index": 0}]}
+    "sisi_1": {
+      "annotations": [
+        {"class_name": "B3", "bbox_yolo": [0.66, 0.41, 0.06, 0.04], "box_index": 0}
+      ]
+    }
   },
   "bunches": [{"bunch_id": 1, "class": "B3", "appearance_count": 2}],
   "summary": {"by_class": {"B1": 1, "B2": 2, "B3": 5, "B4": 0}}
 }
 ```
 
-`summary.by_class` = GT unique count per kelas.
+Nilai `summary.by_class` menjadi *ground truth* jumlah unik per kelas yang menjadi acuan evaluasi.
 
-## Batasan Riset
+---
 
-100% algoritmik. Tidak boleh: Siamese / CNN embedding, MLP pada fitur bbox, learned threshold via backprop, strict matching (Hungarian / graph / cluster) pada TXT (broken oleh coordinate noise).
+## Batasan riset
 
-Laporan multi-dimensi lengkap: [`reports/benchmark_multidim/REPORT.md`](reports/benchmark_multidim/REPORT.md).
+Pekerjaan ini bersifat 100% algoritmik dan tidak boleh memakai: jaringan Siamese, *CNN embedding*, MLP atas fitur *bbox*, *learned threshold* via *backprop*, ataupun pencocokan ketat (Hungarian, *graph*, *clustering*) langsung pada label TXT karena rentan terhadap derau koordinat.
+
+---
+
+## Dokumen pelengkap
+
+- [`RESEARCH.md`](RESEARCH.md) — dokumen riset utama, mulai dari Bagian 0.
+- [`report_05Mei2026.md`](report_05Mei2026.md) — laporan rinci hasil pada 882 pohon.
+- [`reports/benchmark_multidim/REPORT.md`](reports/benchmark_multidim/REPORT.md) — laporan multi-dimensi (akurasi, kecepatan, *robustness*, *domain*).
+- [`CLAUDE.md`](CLAUDE.md) dan [`AGENTS.md`](AGENTS.md) — panduan operasional untuk asisten otomatis.
