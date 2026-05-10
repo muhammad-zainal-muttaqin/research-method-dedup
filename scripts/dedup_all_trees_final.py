@@ -1,3 +1,5 @@
+# LEGACY (frozen 2026-05-10): writes old method names. Superseded by dedup_brand_new_953.py.
+# Production now uses M01-M29 naming (see NAMING.md). Re-run only for historical reproduction.
 """
 Final dedup comparison:
 - 228 JSON trees: use JSON annotations + GT for accuracy eval (same as v1/v2/v3)

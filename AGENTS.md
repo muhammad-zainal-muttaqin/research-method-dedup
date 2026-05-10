@@ -60,17 +60,17 @@ Fresh benchmark re-run (2026-05-08) on all 4 archive snapshots. **Primary benchm
 
 | Rank | Method | Acc ±1 | Notes |
 |---:|---|---:|---|
-| 1 | `v9_selector` | **97.37%** | Narrow overrides on v6 — **overfits 228** |
-| 2 | `b2_median_v6` | 96.05% | v9 variant |
-| 3 | `v6_selector` | 96.05% | v9 backbone |
-| 4 | `stacking_bracketed` | 94.30% | v7 best |
-| 5 | `stacking_density` | 94.30% | v7 |
-| 6 | `entropy_modulated` | 94.30% | v8 — ties v7 |
-| 7 | `adaptive_corrected` | 93.86% | v5 |
-| 8 | `b2_b4_boosted` | 92.54% | v8 specialist |
-| 9 | `best_visibility_grid` | 92.54% | v5 |
-| 10 | `v2_visibility` | 92.54% | v2 |
-| 11 | `v1_corrected` | 90.79% | v1 baseline |
+| 1 | `M12_selector_overrides` | **97.37%** | Narrow overrides on v6 — **overfits 228** |
+| 2 | `M11_median_b2` | 96.05% | v9 variant |
+| 3 | `M17_selector_regime` | 96.05% | v9 backbone |
+| 4 | `M13_stack_bracket` | 94.30% | v7 best |
+| 5 | `M14_stack_density` | 94.30% | v7 |
+| 6 | `M10_entropy_divide` | 94.30% | v8 — ties v7 |
+| 7 | `M19_divide_adaptive` | 93.86% | v5 |
+| 8 | `M16_boost_b2b4` | 92.54% | v8 specialist |
+| 9 | `M20_weight_visibility_grid` | 92.54% | v5 |
+| 10 | `M06_weight_visibility` | 92.54% | v2 |
+| 11 | `M15_divide_global` | 90.79% | v1 baseline |
 
 ### Cross-Dataset Regression (Acc ±1, fresh re-run 2026-05-08)
 
@@ -78,35 +78,35 @@ Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_
 
 | Method | 228 | 478 | 727 | **882** | Delta 228→882 |
 |---|---:|---:|---:|---:|---:|
-| `v9_selector` | 97.37% | 92.68% | 89.27% | 88.78% | −8.59 pp |
-| `v9_b2_median_v6` | 96.05% | 92.68% | 89.00% | 88.78% | −7.27 pp |
-| `v6_selector` | 96.05% | 91.84% | 88.86% | 88.55% | −7.50 pp |
-| `v8_entropy_modulated` | 94.30% | 91.63% | 88.86% | 88.78% | −5.52 pp |
-| `v7_stacking_bracketed` | 94.30% | 91.84% | 88.45% | 88.44% | −5.86 pp |
-| `v7_stacking_density` | 94.30% | 91.84% | 88.45% | 88.44% | −5.86 pp |
-| `v5_adaptive_corrected` | 93.86% | 89.96% | 86.11% | 86.28% | −7.58 pp |
-| `v8_b2_b4_boosted` | 92.54% | 91.00% | 87.62% | 88.21% | −4.33 pp |
-| `v2_visibility` | 92.54% | 90.38% | **89.41%** | **89.34%** | **−3.20 pp** |
-| `v5_best_visibility` | 92.54% | 90.38% | **89.41%** | **89.34%** | **−3.20 pp** |
-| `v1_corrected` | 90.79% | 89.12% | 87.90% | 88.21% | **−2.58 pp** |
+| `M12_selector_overrides` | 97.37% | 92.68% | 89.27% | 88.78% | −8.59 pp |
+| `M11_median_b2` | 96.05% | 92.68% | 89.00% | 88.78% | −7.27 pp |
+| `M17_selector_regime` | 96.05% | 91.84% | 88.86% | 88.55% | −7.50 pp |
+| `M10_entropy_divide` | 94.30% | 91.63% | 88.86% | 88.78% | −5.52 pp |
+| `M13_stack_bracket` | 94.30% | 91.84% | 88.45% | 88.44% | −5.86 pp |
+| `M14_stack_density` | 94.30% | 91.84% | 88.45% | 88.44% | −5.86 pp |
+| `M19_divide_adaptive` | 93.86% | 89.96% | 86.11% | 86.28% | −7.58 pp |
+| `M16_boost_b2b4` | 92.54% | 91.00% | 87.62% | 88.21% | −4.33 pp |
+| `M06_weight_visibility` | 92.54% | 90.38% | **89.41%** | **89.34%** | **−3.20 pp** |
+| `M20_weight_visibility_grid` | 92.54% | 90.38% | **89.41%** | **89.34%** | **−3.20 pp** |
+| `M15_divide_global` | 90.79% | 89.12% | 87.90% | 88.21% | **−2.58 pp** |
 
 **Key regression findings:**
-- `v2_visibility` and `v5_best_visibility` most stable — best at 882 (89.34%), smallest delta
-- `v1_corrected` most stable overall (−2.58 pp) — simple generalizes best
-- `v9_selector` drops 8.59 pp — narrow overrides overfit 228-tree patterns
+- `M06_weight_visibility` and `M20_weight_visibility_grid` most stable — best at 882 (89.34%), smallest delta
+- `M15_divide_global` most stable overall (−2.58 pp) — simple generalizes best
+- `M12_selector_overrides` drops 8.59 pp — narrow overrides overfit 228-tree patterns
 - All methods land 86–89% at 882 trees (no catastrophic drop)
 
 **Recommendations:**
-- **Historical 228-tree set** → `v9_selector` (97.37%)
-- **Full 882-tree canonical benchmark** → `v2_visibility` or `v5_best_visibility` (89.34%)
-- **Missing JSON (71 trees)** → `v5_best_visibility` or `v7_stacking_bracketed`
+- **Historical 228-tree set** → `M12_selector_overrides` (97.37%)
+- **Full 882-tree canonical benchmark** → `M06_weight_visibility` or `M20_weight_visibility_grid` (89.34%)
+- **Missing JSON (71 trees)** → `M20_weight_visibility_grid` or `M13_stack_bracket`
 
-**v9 logic (regime overrides on top of v6_selector):**
-1. default → `v6_selector`
-2. `b4_only_overlap` → `v7_stacking_bracketed`
-3. `classaware_compact_lowb4` → `v8_b2_b4_boosted`
-4. `b3b4_only_lowtotal` → `v8_floor_anchor_50`
-5. `dense_allside_moderatedup` → `v8_b2_b4_boosted`
+**v9 logic (regime overrides on top of M17_selector_regime):**
+1. default → `M17_selector_regime`
+2. `b4_only_overlap` → `M13_stack_bracket`
+3. `classaware_compact_lowb4` → `M16_boost_b2b4`
+4. `b3b4_only_lowtotal` → `M22_anchor_floor50`
+5. `dense_allside_moderatedup` → `M16_boost_b2b4`
 
 ## Method Evolution (Why v9 Wins)
 
@@ -117,13 +117,13 @@ Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_
 | v2 | `visibility` | 92.11% | bbox geometry / position matters |
 | v3 | `per_class_ridge` | 90.79% | learned-from-link thresholds didn't break ceiling |
 | v4 | `visibility` | 92.11% | adding HSV + Hungarian didn't beat v2 |
-| v5 | `adaptive_corrected` | 93.86% | adaptive divisor + class-aware family — first stable >93% |
-| v6 | `v6_selector` | **96.49%** | **turning point** — no single global rule wins; route per regime |
-| v7 | `stacking_bracketed` | 94.30% | stacking/density family strong but loses to v6 |
-| v8 | `stacking_bracketed_v7` | 94.30% | entropy/per-side signals add nothing |
-| v9 | `v9_selector` | **97.37%** (228) / 88.78% (882) | narrow overrides on v6 — best on 228, overfits at scale |
+| v5 | `M19_divide_adaptive` | 93.86% | adaptive divisor + class-aware family — first stable >93% |
+| v6 | `M17_selector_regime` | **96.49%** | **turning point** — no single global rule wins; route per regime |
+| v7 | `M13_stack_bracket` | 94.30% | stacking/density family strong but loses to v6 |
+| v8 | `M13_stack_bracket` | 94.30% | entropy/per-side signals add nothing |
+| v9 | `M12_selector_overrides` | **97.37%** (228) / 88.78% (882) | narrow overrides on v6 — best on 228, overfits at scale |
 
-**Key takeaway:** strict matching (Hungarian, graph, cluster) **fails** on noisy TXT labels (<20% accuracy). Adaptive statistical correction + regime-routing wins on 228-tree set. At scale (882 trees), simpler methods (`v2_visibility`, `v1_corrected`) generalize best. B2↔B3 ambiguity is the irreducible ceiling, not label noise.
+**Key takeaway:** strict matching (Hungarian, graph, cluster) **fails** on noisy TXT labels (<20% accuracy). Adaptive statistical correction + regime-routing wins on 228-tree set. At scale (882 trees), simpler methods (`M06_weight_visibility`, `M15_divide_global`) generalize best. B2↔B3 ambiguity is the irreducible ceiling, not label noise.
 
 ## Missing JSON Pipeline (71 trees, TXT-only)
 
@@ -133,10 +133,10 @@ Best methods on 882-tree canonical benchmark (most stable = recommended for unva
 
 | Method | Acc ±1 @882 | Delta 228→882 | Verdict |
 |---|---:|---:|---|
-| `v2_visibility` | **89.34%** | −3.20 pp | Most stable, recommended |
-| `v5_best_visibility` | **89.34%** | −3.20 pp | Most stable, recommended |
-| `v7_stacking_bracketed` | 88.44% | −5.86 pp | Good generalization |
-| `v9_selector` | 88.78% | −8.59 pp | Overfits 228, avoid for unvalidated |
+| `M06_weight_visibility` | **89.34%** | −3.20 pp | Most stable, recommended |
+| `M20_weight_visibility_grid` | **89.34%** | −3.20 pp | Most stable, recommended |
+| `M13_stack_bracket` | 88.44% | −5.86 pp | Good generalization |
+| `M12_selector_overrides` | 88.78% | −8.59 pp | Overfits 228, avoid for unvalidated |
 
 Verified dedup ratio ≈ 56% (from JSON-05: naive ÷ 1.788). See `reports/nonjson_dedup_report.md`.
 
@@ -162,8 +162,8 @@ dataset/
   labels/{train,val,test}/
 algorithms/            standalone algo modules — each exports predict(detections, params) -> dict
   __init__.py          ranked performance table (read this for algo selection)
-  v9_selector.py       best on 228 — imports v6_selector + 3 specialist algos
-  v6_selector.py       backbone + load_params() (reads reports/dedup_research_v5/...)
+  M12_selector_overrides.py       best on 228 — imports M17_selector_regime + 3 specialist algos
+  M17_selector_regime.py       backbone + load_params() (reads reports/dedup_research_v5/...)
   *.py                 one algo = one file, all deterministic, no training
 scripts/               see "Running Scripts" — count_*, dedup_*, benchmark_*, generate_*
   dedup_all_953.py     run all 16 methods on all 953 trees
@@ -186,12 +186,12 @@ AGENTS.md              agent configuration
 Each `algorithms/*.py` exports `predict(detections: list[dict], params: dict) -> dict[str, int]`.
 
 - `detections`: list of `{"class": "B1"–"B4", "x_norm": float, "y_norm": float, "side_index": int}`
-- `params`: from `v6_selector.load_params()` (reads CSV from reports/)
+- `params`: from `M17_selector_regime.load_params()` (reads CSV from reports/)
 - Returns: `{"B1": int, "B2": int, "B3": int, "B4": int}`
 
-`v6_selector.load_params()` must be called once and the result passed to all algo `predict()` calls. `v9_selector` internally calls `v6_selector` — don't double-call v6 separately.
+`M17_selector_regime.load_params()` must be called once and the result passed to all algo `predict()` calls. `M12_selector_overrides` internally calls `M17_selector_regime` — don't double-call v6 separately.
 
-Algo ranked by JSON-228 Acc±1 (see `algorithms/__init__.py` for full table). For new code importing these, use `from algorithms.v9_selector import predict` or whichever rank is needed.
+Algo ranked by JSON-228 Acc±1 (see `algorithms/__init__.py` for full table). For new code importing these, use `from algorithms.M12_selector_overrides import predict` or whichever rank is needed.
 
 ## JSON Schema (per tree)
 

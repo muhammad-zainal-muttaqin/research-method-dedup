@@ -1,3 +1,5 @@
+# LEGACY (frozen 2026-05-10): writes old method names.
+# Production now uses M01-M29 naming (see NAMING.md). Re-run only for historical reproduction.
 """
 Focused V5 search: find best ensemble & hybrid to break 95%.
 Skips slow grid searches; uses best-known params from previous V5 run.

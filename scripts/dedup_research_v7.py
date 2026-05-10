@@ -1,3 +1,5 @@
+# LEGACY (frozen 2026-05-10): writes old method names (stacking_bracketed, stacking_density, etc).
+# Production now uses M01-M29 naming (see NAMING.md). Re-run only for historical reproduction.
 """
 Dedup Research v7 - Generalization-First Improvement
 Target: Break 93.86% OR reduce MAE, with strict generalization protocol.

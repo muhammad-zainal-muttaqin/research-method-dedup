@@ -1,3 +1,5 @@
+# LEGACY (frozen 2026-05-10): writes old method names (entropy_modulated, b2_b4_boosted, etc).
+# Production now uses M01-M29 naming (see NAMING.md). Re-run only for historical reproduction.
 """
 Dedup Research v8 - Closing the 13-tree gap
 Target: 95% Acc±1 (need 2 more correct from 13 remaining failures)

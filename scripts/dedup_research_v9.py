@@ -1,3 +1,5 @@
+# LEGACY (frozen 2026-05-10): writes old method names (v9_selector, b2_median_v6, etc).
+# Production now uses M01-M29 naming (see NAMING.md). Re-run only for historical reproduction.
 """
 Dedup Research v9 - Regime-Aware Selector
 

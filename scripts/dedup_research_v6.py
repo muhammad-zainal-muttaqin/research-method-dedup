@@ -1,3 +1,5 @@
+# LEGACY (frozen 2026-05-10): writes old method names (adaptive_corrected, best_visibility_grid, etc).
+# Production now uses M01-M29 naming (see NAMING.md). Re-run only for historical reproduction.
 """
 Dedup Research v6 - Disagreement-Gated Selector
 
@@ -39,8 +41,8 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 def load_v5_reference_params() -> Dict[str, float]:
     comp = pd.read_csv(V5_OUT_DIR / "method_comparison_v5.csv").set_index("method")
     return {
-        "vis_alpha": float(comp.loc["best_visibility_grid", "alpha"]),
-        "vis_sigma": float(comp.loc["best_visibility_grid", "sigma"]),
+        "vis_alpha": float(comp.loc["M20_weight_visibility_grid", "alpha"]),
+        "vis_sigma": float(comp.loc["M20_weight_visibility_grid", "sigma"]),
         "class_alpha_B1B4": float(comp.loc["best_class_aware_grid", "alpha_B1B4"]),
         "class_alpha_B2B3": float(comp.loc["best_class_aware_grid", "alpha_B2B3"]),
         "class_sigma_B1B4": float(comp.loc["best_class_aware_grid", "sigma_B1B4"]),

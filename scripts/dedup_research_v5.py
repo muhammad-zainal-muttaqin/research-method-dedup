@@ -1,3 +1,5 @@
+# LEGACY (frozen 2026-05-10): writes old method names (adaptive_corrected, best_visibility_grid, etc).
+# Production now uses M01-M29 naming (see NAMING.md). Re-run only for historical reproduction.
 """
 Dedup Research v5 - Pure Algorithmic Ensemble
 Target: >=95% +/-1 accuracy on 228 JSON trees (4-class strict: B1/B2/B3/B4).
