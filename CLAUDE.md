@@ -75,9 +75,9 @@ python scripts/dedup_nonjson_compare.py     # non-JSON validation (legacy, no mi
 | 3 | `geometric_mean_blend` | 86.15% | 0.3961 | 132 |
 | 4 | `hybrid_vis_corr` | 86.04% | 0.408 | 133 |
 | 5 | `visibility` | 85.94% | 0.396 | 134 |
-| 3 | `side_coverage` | 85.94% | 0.393 | 134 |
-| 4 | `density_scaled_vis` | 85.94% | 0.402 | 134 |
-| 5 | `v9_median_strong5` | 85.73% | 0.401 | 136 |
+| 6 | `side_coverage` | 85.94% | 0.393 | 134 |
+| 7 | `density_scaled_vis` | 85.94% | 0.402 | 134 |
+| 8 | `v9_median_strong5` | 85.73% | 0.401 | 136 |
 | 6 | `v8_entropy_modulated` | 84.78% | 0.451 | 145 |
 | 7 | `v9_b2_median_v6` | 84.78% | 0.429 | 145 |
 | 8 | `v9_selector` | 84.68% | 0.441 | 146 |
@@ -137,7 +137,7 @@ Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_
 | `selector_with_b2b3` | — | — | — | — | **86.67%** | — (new top, 2026-05-10) |
 
 **Key regression findings (UPDATED 2026-05-10 with 953-tree results):**
-- `hybrid_vis_corr` **NEW TOP** at 953 (86.04%) — weighted mix of visibility + adaptive_corrected
+- `selector_with_b2b3` **NEW TOP** at 953 (86.67%, MAE 0.3982) — selector trifurc + B2↔B3 split correction, validated held-out
 - `v2_visibility` most stable from 228 (−6.60 pp) — simple generalizes best
 - `v1_corrected` second-most stable (−6.42 pp)
 - `v9_selector` drops **12.69 pp** at 953 — narrow overrides catastrophically overfit 228 dev set
