@@ -306,6 +306,44 @@ def v9_median_strong5(dets):
     return _v9.median_strong5_factory(_V6_PARAMS)(dets)
 
 
+# ─── iter11 methods (exp_10 May 2026) ────────────────────────
+
+def _selector_iter9_trifurc(dets):
+    import sys
+    p = str(BASE)
+    if p not in sys.path:
+        sys.path.insert(0, p)
+    import algorithms.selector_iter9_trifurc as _mod
+    return _mod.predict(dets)
+
+
+def _geometric_mean_blend(dets):
+    import sys
+    p = str(BASE)
+    if p not in sys.path:
+        sys.path.insert(0, p)
+    import algorithms.geometric_mean_blend as _mod
+    return _mod.predict(dets)
+
+
+def _floor_clamped_hybrid(dets):
+    import sys
+    p = str(BASE)
+    if p not in sys.path:
+        sys.path.insert(0, p)
+    import algorithms.floor_clamped_hybrid as _mod
+    return _mod.predict(dets)
+
+
+def _selector_with_b2b3(dets):
+    import sys
+    p = str(BASE)
+    if p not in sys.path:
+        sys.path.insert(0, p)
+    import algorithms.selector_with_b2b3 as _mod
+    return _mod.predict(dets)
+
+
 # ─── method registry ─────────────────────────────────────────
 
 METHOD_GROUPS = {
@@ -338,6 +376,11 @@ METHOD_GROUPS = {
     "v9_selector": v9_selector,
     "v9_b2_median_v6": v9_b2_median_v6,
     "v9_median_strong5": v9_median_strong5,
+    # iter11 (2026-05-10)
+    "selector_with_b2b3": _selector_with_b2b3,
+    "selector_iter9_trifurc": _selector_iter9_trifurc,
+    "geometric_mean_blend": _geometric_mean_blend,
+    "floor_clamped_hybrid": _floor_clamped_hybrid,
 }
 
 _V6_PARAMS: dict = {}

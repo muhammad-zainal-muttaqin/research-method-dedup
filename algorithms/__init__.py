@@ -30,5 +30,7 @@
 #   1     selector_with_b2b3.py     86.67%   0.3982  127
 #   2     selector_iter9_trifurc    86.67%   0.3987  127
 #   3     geometric_mean_blend      86.15%   0.3961  132
-#   4     hybrid_vis_corr.py        86.04%   0.4077  133
-#   5     visibility.py             85.94%   0.3960  134
+#   4     floor_clamped_hybrid      86.04%   0.4050  133
+#   5     hybrid_vis_corr.py        86.04%   0.4077  133
+#   6     visibility.py             85.94%   0.3960  134
+#   7     side_coverage.py          85.94%   0.3930  134
