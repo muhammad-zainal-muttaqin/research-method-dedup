@@ -8,7 +8,7 @@ Satu tandan bisa muncul di beberapa sisi. Penjumlahan langsung melebihi jumlah s
 
 > **Fresh benchmark (2026-05-08):** Semua angka di README ini di-rerun dari archive JSON asli (228/478/727/882 pohon). Angka 727 di README lama sangat berbeda karena memakai GT yang berbeda/noisy — fresh run dari `archive/json_30 April 2026/` memberi hasil 87–89% (bukan 67–77% sebelumnya). Benchmark aktif = **882 pohon** (`json_05 mei 2026/`). Lihat [Regresi Dataset](#regresi-dataset).
 >
-> **Update 2026-05-09:** Fullset **953 pohon** (`Brand-New-Dataset-YOLO/json/`) sudah dibenchmark — 953 = 882 GT bersih + 71 raw TXT-only. Top method: `v2_visibility` / `v5_best_visibility` 85.52%. Semua metode drop ~3.8 pp dari 882 karena 71 raw masih bawa noise koordinat/klas. Detail di [Regresi Dataset](#regresi-dataset).
+> **Update 2026-05-10 (FINAL):** Fullset **953 pohon** (`Brand-New-Dataset-YOLO/json/`) re-benchmarked via `scripts/dedup_brand_new_953.py`. **Top: `hybrid_vis_corr` 86.04%** — weighted mix visibility + adaptive_corrected. Runner-up: `visibility` / `side_coverage` / `density_scaled_vis` 85.94%. Semua metode drop ~3.4 pp dari 882. Detail di [Regresi Dataset](#regresi-dataset).
 
 ---
 
@@ -368,34 +368,42 @@ Seiring bertambahnya dataset (228 → 478 → 727 → 882), metode mengalami pen
 
 ### Tabel Regresi
 
-Semua angka dari fresh benchmark run (2026-05-08/09) pada archive JSON asli + fullset Brand-New-Dataset-YOLO. Sumber: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_727/`, `reports/benchmark_882/`, `reports/benchmark_brandnew/`.
+Semua angka dari fresh benchmark run (2026-05-08/10) pada archive JSON asli + fullset Brand-New-Dataset-YOLO. Sumber: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_727/`, `reports/benchmark_882/`, **`reports/dedup_brand_new_953/`** (FINAL, 2026-05-10).
 
-Kolom **953** = fullset `Brand-New-Dataset-YOLO/json/` (882 GT bersih + 71 raw TXT-only, semua tree DAMIMAS+LONSUM).
+Kolom **953** = fullset `Brand-New-Dataset-YOLO/json/` (953 trees lengkap, semua DAMIMAS+LONSUM, full GT).
 
 | Metode | 228 | 478 | 727 | 882 | **953** | Delta (228→953) |
 |---|---:|---:|---:|---:|---:|---:|
-| `v9_selector` | **97.37%** | 92.68% | 89.27% | 88.78% | 84.89% | −12.48 pp |
-| `v9_b2_median_v6` | 96.05% | 92.68% | 89.00% | 88.78% | 84.89% | −11.16 pp |
-| `v6_selector` | 96.05% | 91.84% | 88.86% | 88.55% | 84.68% | −11.37 pp |
+| `hybrid_vis_corr` | — | — | — | — | **86.04%** | — (NEW TOP) |
+| `visibility` / `v2_visibility` | 92.54% | 90.38% | 89.41% | **89.34%** | **85.94%** | **−6.60 pp** |
+| `side_coverage` | — | — | — | — | 85.94% | — |
+| `density_scaled_vis` | — | — | — | — | 85.94% | — |
+| `v5_best_visibility` | 92.54% | 90.38% | 89.41% | 89.34% | 85.94% | −6.60 pp |
+| `v9_median_strong5` | — | — | — | — | 85.73% | — |
+| `v9_b2_median_v6` | 96.05% | 92.68% | 89.00% | 88.78% | 84.78% | −11.27 pp |
 | `v8_entropy_modulated` | 94.30% | 91.63% | 88.86% | 88.78% | 84.78% | −9.52 pp |
+| `v9_selector` | **97.37%** | 92.68% | 89.27% | 88.78% | 84.68% | −12.69 pp |
 | `v7_stacking_bracketed` | 94.30% | 91.84% | 88.45% | 88.44% | 84.58% | −9.72 pp |
 | `v7_stacking_density` | 94.30% | 91.84% | 88.45% | 88.44% | 84.58% | −9.72 pp |
-| `v5_adaptive_corrected` | 93.86% | 89.96% | 86.11% | 86.28% | 82.58% | −11.28 pp |
+| `corrected` / `v1_corrected` | 90.79% | 89.12% | 87.90% | 88.21% | 84.37% | **−6.42 pp** |
 | `v8_b2_b4_boosted` | 92.54% | 91.00% | 87.62% | 88.21% | 84.37% | −8.17 pp |
-| `v2_visibility` | 92.54% | 90.38% | **89.41%** | **89.34%** | **85.52%** | **−7.02 pp** |
-| `v5_best_visibility` | 92.54% | 90.38% | **89.41%** | **89.34%** | **85.52%** | **−7.02 pp** |
-| `v1_corrected` | 90.79% | 89.12% | 87.90% | 88.21% | 84.37% | **−6.42 pp** |
+| `v6_selector` | 96.05% | 91.84% | 88.86% | 88.55% | 84.26% | −11.79 pp |
+| `v5_adaptive_corrected` | 93.86% | 89.96% | 86.11% | 86.28% | 82.58% | −11.28 pp |
+| `class_aware_vis` | — | — | — | — | 70.93% | — |
+| `relaxed_match` | — | — | — | — | 5.98% | — (catastrophic) |
+| `naive` | — | — | — | — | 3.99% | — (catastrophic) |
 
 ### Analisis
 
-1. **Tren menurun halus** — tidak ada "regresi drastis". Semua metode turun 6–13 pp dari 228→953. Penurunan disebabkan variasi pohon yang makin beragam + 71 pohon raw TXT-only (noise klas/koordinat).
-2. **v1_corrected & v2_visibility paling stabil** — delta 228→953 hanya −6.42 dan −7.02 pp. Metode sederhana generalisasi terbaik.
-3. **v9_selector turun 12.48 pp di 953** — narrow overrides paling overfit subset 228; di fullset jadi sama dengan v9_b2_median_v6.
-4. **v5_adaptive_corrected paling lemah di scale** — 82.58% di 953, rank terbawah konsisten dari 727 ke atas.
-5. **Drop 882→953 ~3.8 pp** — 71 raw TXT-only nambah noise; semua metode terkena hampir merata.
-6. **Pola umum:** Makin kompleks metode, makin besar regresi — selisih masih kecil (semua masuk 82–86% di fullset 953).
+1. **`hybrid_vis_corr` NEW TOP @ 953 (86.04%)** — weighted mix `visibility` + `adaptive_corrected`. Sederhana, mengalahkan semua selector kompleks.
+2. **Tren menurun halus** — semua metode turun 6–13 pp dari 228→953. Variasi pohon makin beragam tapi GT bersih (953 full).
+3. **`v1_corrected` & `v2_visibility` paling stabil** — delta 228→953 hanya −6.42 dan −6.60 pp. Metode sederhana generalisasi terbaik.
+4. **`v9_selector` turun 12.69 pp di 953** — narrow overrides overfit subset 228 paling parah.
+5. **Strict matching catastrophic fail** — `naive` 3.99%, `relaxed_match` 5.98% di 953. Confirms: B2↔B3 ambiguity + variasi posisi tidak bisa dipecahkan oleh matching individual.
+6. **`v5_adaptive_corrected` paling lemah** — 82.58% di 953, rank terbawah dari 727 ke atas.
+7. **Pola umum:** makin kompleks metode, makin besar regresi. Top-4 di 953 semua varian visibility family.
 
-Dataset 228 tetap tidak sepenuhnya representatif. Parameter divisor dari 228 pohon (BASE_FACTOR, ref_median) tidak optimal untuk pohon LONSUM dan varietas baru.
+Dataset 228 tidak representatif. Parameter divisor dari 228 (BASE_FACTOR, ref_median) tidak optimal untuk pohon LONSUM + varietas baru.
 
 ---
 
@@ -585,19 +593,19 @@ Sumber: [`domain_breakdown.csv`](reports/benchmark_multidim/domain_breakdown.csv
 
 ## Rekomendasi
 
-Berdasarkan fresh benchmark 882 pohon + fullset 953:
+Berdasarkan fresh benchmark fullset 953 (FINAL, 2026-05-10):
 
 | Kebutuhan | Pilihan |
 |---|---|
-| Acc ±1 tertinggi fullset 953 | `v2_visibility` / `v5_best_visibility` (85.52%) |
+| **Acc ±1 tertinggi fullset 953 (PRODUKSI)** | **`hybrid_vis_corr` (86.04%)** |
+| Runner-up fullset 953 | `visibility` / `side_coverage` / `density_scaled_vis` (85.94%) |
 | Acc ±1 tertinggi 882 (GT bersih) | `v2_visibility` / `v5_best_visibility` (89.34%) |
-| MAE terendah (882) | `v8_b2_b4_boosted` (MAE 0.2939) |
 | Tercepat + akurasi layak | `v1_corrected` (0.005 ms, 84.37% di 953, noise-immune) |
 | Paling robust koordinat noise | `v1_corrected` / `v5_adaptive_corrected` (drop 0.00%) |
 | Pipeline LONSUM | `v8_entropy_modulated` (93.75% — lihat `report_05Mei2026.md`) |
-| Pipeline DAMIMAS | `v2_visibility` / `v5_best_visibility` (89.15% @882) |
-| Pipeline TXT noisy (71 raw) | `v1_corrected` atau `v5_best_visibility` |
+| Pipeline DAMIMAS | `v2_visibility` / `v5_best_visibility` |
 | Tidak butuh koordinat bbox | `v1_corrected` |
+| **Hindari di produksi** | `v9_selector` (overfit 228, drop 12.69 pp) |
 
 ---
 
@@ -614,7 +622,7 @@ Berdasarkan fresh benchmark 882 pohon + fullset 953:
 | v8 | `v8_b2_b4_boosted` | **0.3067** | per-kelas boosting — **Macro MAE terendah** |
 | v9 | `v9_selector` | 0.3267 | narrow overrides di atas v6 — overfit 228 |
 
-**Catatan penting (fresh run):** Di dataset 727 pohon, `v8_b2_b4_boosted` tetap unggul Macro MAE (0.3067), `v2_visibility` unggul Acc ±1 (89.41%). Di 882 pohon, ranking hampir sama. Pola konsisten: metode sederhana (v1, v2) paling stabil lintas dataset. Angka lama README (67–77% untuk 727) tidak valid — berasal dari GT yang berbeda.
+**Catatan penting (fresh run 2026-05-10):** Di fullset 953, `hybrid_vis_corr` mengalahkan semua dengan **86.04%** — weighted mix sederhana (`visibility` + `adaptive_corrected`). Top-4 di 953 semua varian visibility family. Di dataset 727, `v8_b2_b4_boosted` unggul Macro MAE (0.3067), `v2_visibility` unggul Acc ±1 (89.41%). Pola konsisten: metode sederhana (v1, v2, hybrid_vis_corr) paling stabil lintas dataset. Selector kompleks (v6/v9) overfit dev set kecil.
 
 ---
 
@@ -640,17 +648,17 @@ Target rasio empiris **0.5594** (unique/naive dari 228 JSON = 2466/4408, sementa
 ```bash
 pip install -r requirements.txt
 
-# Benchmark aktif: json_05 mei 2026/ (882 pohon, GT bersih)
-# Fullset: Brand-New-Dataset-YOLO/json/ (953 pohon)
-# Snapshot lama ada di archive.zip
+# PRIMARY benchmark — fullset 953 Brand-New-Dataset-YOLO (2026-05-10 FINAL)
+python scripts/dedup_brand_new_953.py        # → reports/dedup_brand_new_953/
+
+# Legacy benchmarks (228/478/727/882 archive snapshots)
 python scripts/benchmark_multidim.py         # default: json/ (228 pohon legacy)
 JSON_DIR="json_05 mei 2026" OUT_DIR="reports/benchmark_882" python scripts/benchmark_multidim.py
-JSON_DIR="Brand-New-Dataset-YOLO/json" OUT_DIR="reports/benchmark_brandnew" python scripts/benchmark_multidim.py  # fullset 953
-python scripts/generate_method_reports.py    # regenerate reports/methods/<method>.md dari CSV di atas
+python scripts/generate_method_reports.py    # regenerate reports/methods/<method>.md
 python scripts/count_all_trees.py            # GT counting 953 pohon
 python scripts/count_gt_vs_naive.py          # audit JSON-05 + JSON-01
-python scripts/dedup_all_953.py              # semua metode pada 945 pohon
-python scripts/dedup_nonjson_compare.py      # validasi non-JSON
+python scripts/dedup_all_953.py              # legacy: 228 JSON + 725 TXT
+python scripts/dedup_nonjson_compare.py      # legacy validasi non-JSON
 ```
 
 ## Struktur Repo

@@ -8,7 +8,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Constraint:** **100% algorithmic / heuristic only.** No training, embeddings, backprop, or learned matchers. All methods must be deterministic and parameter-free (no gradient computation).
 
-**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. JSON GT canonical: `json_05 Mei 2026/` = **882 unique trees** (dedup'd from `05 Mei 2026/` raw output, 1 file per `tree_name`, varietas correct). Legacy `json/` = **228 trees** (subset, retained for historical benchmark reproduction). 71 trees still missing JSON (45 8-sided DAMIMAS_A21B_0810–0854 + 19 LONSUM_A21A_0056–0074 + 7 DAMIMAS scattered) — TXT predictions exist in `dataset/labels/`, JSON GT pending re-generation via `tools_sawit/` app once annotator finishes. See `json_05 Mei 2026/_MISSING.md`. Mostly 4 sides/tree, 45 have 8. Images 960×1280 JPEG. Classes ordinal B1→B4. **Core hard problem: B2↔B3 visually ambiguous** (irreducible per JSON-01 audit, label noise = 0%).
+**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. **Canonical JSON GT: `Brand-New-Dataset-YOLO/json/` = 953 trees (COMPLETE, no missing — created 2026-05-09).** This supersedes all earlier snapshots:
+- `Brand-New-Dataset-YOLO/` (953, full) — current canonical, contains `images/`, `labels/`, `json/`, `data.yaml`
+- `json_05 Mei 2026/` (882, legacy) — kept for historical reference only
+- `json/` (228, legacy) — kept for v9 dev-set reproduction
+- `archive/` (228/478/727 snapshots) — read-only history
+
+Mostly 4 sides/tree, 45 have 8. Images 960×1280 JPEG. Classes ordinal B1→B4. **Core hard problem: B2↔B3 visually ambiguous** (irreducible per JSON-01 audit, label noise = 0%).
 
 ## Setup
 
@@ -43,18 +49,55 @@ python scripts/dedup_research_v9.py    # v9: narrow regime overrides on v6 (CURR
 python scripts/benchmark_multidim.py         # 4-dim evaluation: accuracy, speed, robustness, domain
 python scripts/generate_method_reports.py    # per-method breakdown reports → reports/methods/
 
-# Cross-dataset benchmark (228/478/727/882 trees — fresh re-run 2026-05-08)
+# PRIMARY benchmark — full 953-tree Brand-New-Dataset-YOLO (canonical, 2026-05-10)
+python scripts/dedup_brand_new_953.py       # → reports/dedup_brand_new_953/
+
+# Legacy cross-dataset benchmarks (228/478/727/882, fresh re-run 2026-05-08)
+# Kept for historical reference — Brand-New-Dataset-YOLO supersedes these
 # Results in reports/benchmark_228/, benchmark_478/, benchmark_727/, benchmark_882/
 
-# Final inference + comparison (all 953 trees)
-python scripts/dedup_all_953.py             # all 16 methods on all 953 trees (newer)
-python scripts/dedup_all_trees_final.py     # all methods on 953 trees
-python scripts/dedup_nonjson_compare.py     # non-JSON validation + report
+# Legacy inference scripts (228 JSON + 725 TXT, no longer canonical)
+python scripts/dedup_all_953.py             # all 16 methods on all 953 trees (legacy mix)
+python scripts/dedup_all_trees_final.py     # all methods on 953 trees (legacy)
+python scripts/dedup_nonjson_compare.py     # non-JSON validation (legacy, no missing JSON anymore)
 ```
 
-## Current Best (as of 2026-05-08)
+## Current Best (as of 2026-05-10)
 
-Fresh benchmark re-run (2026-05-08) on all 4 archive snapshots. **Primary benchmark = 882 trees** (`json_05 Mei 2026/`). 228-tree numbers are historical reference only.
+**PRIMARY BENCHMARK: 953-tree Brand-New-Dataset-YOLO** (canonical, full GT). Earlier 228/478/727/882 numbers are historical only.
+
+### Acc ±1 on 953 Brand-New-Dataset-YOLO trees (PRIMARY)
+
+| Rank | Method | Acc ±1 | MAE | n_fail |
+|---:|---|---:|---:|---:|
+| 1 | `hybrid_vis_corr` | **86.04%** | 0.408 | 133 |
+| 2 | `visibility` | 85.94% | 0.396 | 134 |
+| 3 | `side_coverage` | 85.94% | 0.393 | 134 |
+| 4 | `density_scaled_vis` | 85.94% | 0.402 | 134 |
+| 5 | `v9_median_strong5` | 85.73% | 0.401 | 136 |
+| 6 | `v8_entropy_modulated` | 84.78% | 0.451 | 145 |
+| 7 | `v9_b2_median_v6` | 84.78% | 0.429 | 145 |
+| 8 | `v9_selector` | 84.68% | 0.441 | 146 |
+| 9 | `v7_stacking_bracketed` | 84.58% | 0.428 | 147 |
+| 10 | `v6_selector` | 84.26% | 0.444 | 150 |
+| 11 | `corrected` | 84.37% | 0.416 | 149 |
+| 12 | `adaptive_corrected` | 82.58% | 0.460 | 166 |
+| 13 | `best_visibility_grid` | 80.80% | 0.460 | 183 |
+| 14 | `class_aware_vis` | 70.93% | 0.546 | 277 |
+| 15 | `relaxed_match` | 5.98% | 1.811 | 896 |
+| 16 | `naive` | 3.99% | 2.280 | 915 |
+
+Source: `reports/dedup_brand_new_953/accuracy_953.csv`.
+
+**Surprising findings:**
+- **`hybrid_vis_corr` (#1)** — simple weighted avg of visibility + adaptive_corrected wins at scale
+- **v9_selector regresses to 84.68%** — confirms severe overfit on 228 dev set (97.37%)
+- **Simple visibility family dominates** (top 4 all visibility variants)
+- **Strict matching (`relaxed_match`, `naive`) catastrophically fails** at scale
+
+### Historical 228-tree dev set (for reference only)
+
+Fresh benchmark re-run (2026-05-08) on all 4 archive snapshots. Earlier "primary benchmark = 882 trees" superseded.
 
 ### Acc ±1 on 228 trees (historical, v9 development set)
 
@@ -72,34 +115,34 @@ Fresh benchmark re-run (2026-05-08) on all 4 archive snapshots. **Primary benchm
 | 10 | `v2_visibility` | 92.54% | v2 |
 | 11 | `v1_corrected` | 90.79% | v1 baseline |
 
-### Cross-Dataset Regression (Acc ±1, fresh re-run 2026-05-08)
+### Cross-Dataset Regression (Acc ±1, fresh re-run 2026-05-10)
 
-Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_727/`, `reports/benchmark_882/`.
+Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_727/`, `reports/benchmark_882/`, `reports/dedup_brand_new_953/`.
 
-| Method | 228 | 478 | 727 | **882** | Delta 228→882 |
-|---|---:|---:|---:|---:|---:|
-| `v9_selector` | 97.37% | 92.68% | 89.27% | 88.78% | −8.59 pp |
-| `v9_b2_median_v6` | 96.05% | 92.68% | 89.00% | 88.78% | −7.27 pp |
-| `v6_selector` | 96.05% | 91.84% | 88.86% | 88.55% | −7.50 pp |
-| `v8_entropy_modulated` | 94.30% | 91.63% | 88.86% | 88.78% | −5.52 pp |
-| `v7_stacking_bracketed` | 94.30% | 91.84% | 88.45% | 88.44% | −5.86 pp |
-| `v7_stacking_density` | 94.30% | 91.84% | 88.45% | 88.44% | −5.86 pp |
-| `v5_adaptive_corrected` | 93.86% | 89.96% | 86.11% | 86.28% | −7.58 pp |
-| `v8_b2_b4_boosted` | 92.54% | 91.00% | 87.62% | 88.21% | −4.33 pp |
-| `v2_visibility` | 92.54% | 90.38% | **89.41%** | **89.34%** | **−3.20 pp** |
-| `v5_best_visibility` | 92.54% | 90.38% | **89.41%** | **89.34%** | **−3.20 pp** |
-| `v1_corrected` | 90.79% | 89.12% | 87.90% | 88.21% | **−2.58 pp** |
+| Method | 228 | 478 | 727 | 882 | **953** | Delta 228→953 |
+|---|---:|---:|---:|---:|---:|---:|
+| `v9_selector` | 97.37% | 92.68% | 89.27% | 88.78% | 84.68% | −12.69 pp |
+| `v9_b2_median_v6` | 96.05% | 92.68% | 89.00% | 88.78% | 84.78% | −11.27 pp |
+| `v6_selector` | 96.05% | 91.84% | 88.86% | 88.55% | 84.26% | −11.79 pp |
+| `v8_entropy_modulated` | 94.30% | 91.63% | 88.86% | 88.78% | 84.78% | −9.52 pp |
+| `v7_stacking_bracketed` | 94.30% | 91.84% | 88.45% | 88.44% | 84.58% | −9.72 pp |
+| `v5_adaptive_corrected` | 93.86% | 89.96% | 86.11% | 86.28% | 82.58% | −11.28 pp |
+| `v2_visibility` | 92.54% | 90.38% | 89.41% | 89.34% | **85.94%** | **−6.60 pp** |
+| `v1_corrected` | 90.79% | 89.12% | 87.90% | 88.21% | 84.37% | **−6.42 pp** |
+| `hybrid_vis_corr` | — | — | — | — | **86.04%** | — (new top) |
 
-**Key regression findings:**
-- `v2_visibility` and `v5_best_visibility` most stable — best at 882 (89.34%), smallest delta
-- `v1_corrected` most stable overall (−2.58 pp) — simple generalizes best
-- `v9_selector` drops 8.59 pp — narrow overrides overfit 228-tree patterns
-- All methods land 86–89% at 882 trees (no catastrophic drop)
+**Key regression findings (UPDATED 2026-05-10 with 953-tree results):**
+- `hybrid_vis_corr` **NEW TOP** at 953 (86.04%) — weighted mix of visibility + adaptive_corrected
+- `v2_visibility` most stable from 228 (−6.60 pp) — simple generalizes best
+- `v1_corrected` second-most stable (−6.42 pp)
+- `v9_selector` drops **12.69 pp** at 953 — narrow overrides catastrophically overfit 228 dev set
+- All complex methods (v6/v7/v8/v9 selectors) regress 9–13 pp from 228 → 953
+- All methods land 82–86% at 953 trees (no catastrophic drop, but ceiling lower than expected)
 
-**Recommendations:**
-- **Historical 228-tree set** → `v9_selector` (97.37%)
-- **Full 882-tree canonical benchmark** → `v2_visibility` or `v5_best_visibility` (89.34%)
-- **Missing JSON (71 trees)** → `v5_best_visibility` or `v7_stacking_bracketed`
+**Recommendations (UPDATED 2026-05-10):**
+- **Production / full 953-tree dataset** → `hybrid_vis_corr` (86.04%) — top of canonical benchmark
+- **Historical 228-tree set** → `v9_selector` (97.37%) — overfits, dev-set only
+- **No missing JSON anymore** — Brand-New-Dataset-YOLO is complete
 
 **v9 logic (regime overrides on top of v6_selector):**
 1. default → `v6_selector`
@@ -121,33 +164,28 @@ Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_
 | v6 | `v6_selector` | **96.49%** | **turning point** — no single global rule wins; route per regime |
 | v7 | `stacking_bracketed` | 94.30% | stacking/density family strong but loses to v6 |
 | v8 | `stacking_bracketed_v7` | 94.30% | entropy/per-side signals add nothing |
-| v9 | `v9_selector` | **97.37%** (228) / 88.78% (882) | narrow overrides on v6 — best on 228, overfits at scale |
+| v9 | `v9_selector` | **97.37%** (228) / 84.68% (953) | narrow overrides on v6 — best on 228, severely overfits at scale |
+| **— production (2026-05-10)** | `hybrid_vis_corr` | **86.04%** (953) | weighted vis + adaptive_corrected — wins on full canonical |
 
-**Key takeaway:** strict matching (Hungarian, graph, cluster) **fails** on noisy TXT labels (<20% accuracy). Adaptive statistical correction + regime-routing wins on 228-tree set. At scale (882 trees), simpler methods (`v2_visibility`, `v1_corrected`) generalize best. B2↔B3 ambiguity is the irreducible ceiling, not label noise.
+**Key takeaway:** strict matching (Hungarian, graph, cluster) **fails** on noisy TXT labels (<20% accuracy). Adaptive statistical correction + regime-routing wins on small dev sets but **overfits**. At full 953-tree scale, simpler methods (`hybrid_vis_corr`, `visibility`) generalize best. B2↔B3 ambiguity is the irreducible ceiling, not label noise.
 
-## Missing JSON Pipeline (71 trees, TXT-only)
+## Dataset Status (2026-05-10)
 
-With 882 of 953 trees now having JSON GT, only **71 trees** still lack ground truth. TXT labels have coordinate + classification noise (B2↔B3 swaps).
+`Brand-New-Dataset-YOLO/` is the **complete, canonical 953-tree dataset**. All previously-missing 71 trees now have JSON GT. The "Missing JSON Pipeline" workflow is retired — use Brand-New-Dataset-YOLO for everything.
 
-Best methods on 882-tree canonical benchmark (most stable = recommended for unvalidated trees):
-
-| Method | Acc ±1 @882 | Delta 228→882 | Verdict |
-|---|---:|---:|---|
-| `v2_visibility` | **89.34%** | −3.20 pp | Most stable, recommended |
-| `v5_best_visibility` | **89.34%** | −3.20 pp | Most stable, recommended |
-| `v7_stacking_bracketed` | 88.44% | −5.86 pp | Good generalization |
-| `v9_selector` | 88.78% | −8.59 pp | Overfits 228, avoid for unvalidated |
-
-Verified dedup ratio ≈ 56% (from JSON-05: naive ÷ 1.788). See `reports/nonjson_dedup_report.md`.
+Verified dedup ratio ≈ 0.55 (best methods reduce naive 18,544 detections to ~10,055 unique bunches across 953 trees). See `reports/dedup_brand_new_953/totals.csv`.
 
 ## Repository Layout
 
 ```
-json_05 Mei 2026/      882 JSON GT files (current canonical, 1 per tree_name)
-                       _MISSING.md lists 71 trees pending re-annotation
+Brand-New-Dataset-YOLO/  953 trees COMPLETE (canonical, created 2026-05-09)
+  data.yaml              YOLO config (4 classes B1–B4)
+  images/{train,val,test}/  source images
+  labels/{train,val,test}/  YOLO TXT labels
+  json/                     953 JSON GT files (1 per tree_name) — PRIMARY GT
+json_05 Mei 2026/      882 JSON GT files (legacy, superseded by Brand-New-Dataset-YOLO)
 json/                  228 JSON files (legacy subset, used by older scripts)
-05 Mei 2026/           Raw export from tools_sawit/ app (1433 files, 5 folders;
-                       see json_05 Mei 2026/ for the dedup'd canonical version)
+05 Mei 2026/           Raw export from tools_sawit/ app
 archive/               Snapshot archives (read-only, do not modify)
   json_22 April 2026/  228-tree snapshot (= json/ root copy)
   json_28 April 2026/  478-tree snapshot
@@ -166,12 +204,15 @@ algorithms/            standalone algo modules — each exports predict(detectio
   v6_selector.py       backbone + load_params() (reads reports/dedup_research_v5/...)
   *.py                 one algo = one file, all deterministic, no training
 scripts/               see "Running Scripts" — count_*, dedup_*, benchmark_*, generate_*
-  dedup_all_953.py     run all 16 methods on all 953 trees
+  dedup_brand_new_953.py  PRIMARY benchmark — runs all 16 methods on Brand-New-Dataset-YOLO
+  dedup_all_953.py        legacy: 228 JSON + 725 TXT (no longer needed, kept for repro)
+  build_brand_new_dataset.py  builds Brand-New-Dataset-YOLO/ from 05 Mei 2026/ source
 reports/<script>/      every script writes its outputs here
-reports/benchmark_228/       Acc±1 on 228-tree archive (fresh re-run 2026-05-08)
-reports/benchmark_478/       Acc±1 on 478-tree archive
-reports/benchmark_727/       Acc±1 on 727-tree archive
-reports/benchmark_882/       Acc±1 on 882-tree canonical (PRIMARY BENCHMARK)
+reports/dedup_brand_new_953/ Acc±1 on full 953 canonical (PRIMARY BENCHMARK)
+reports/benchmark_228/       Acc±1 on 228-tree archive (legacy, dev set)
+reports/benchmark_478/       Acc±1 on 478-tree archive (legacy)
+reports/benchmark_727/       Acc±1 on 727-tree archive (legacy)
+reports/benchmark_882/       Acc±1 on 882-tree (legacy, superseded by 953)
 reports/benchmark_multidim/  multi-dim benchmark (accuracy, speed, robustness, domain)
 reports/methods/             per-method breakdown reports with traceability
 contract-work/         validation contracts, v4 analysis, dry-run + algorithmic-advancement reports
