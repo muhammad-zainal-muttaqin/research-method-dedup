@@ -102,6 +102,9 @@ Kenaikan ukuran dataset dari 228 menjadi 953 pohon memengaruhi setiap metode sec
 | Metode | 228 | 478 | 727 | 882 | **953** | Delta 228→953 |
 |---|---:|---:|---:|---:|---:|---:|
 | `selector_with_b2b3` | — | — | — | — | **86,67%** | — (puncak baru, 10 Mei 2026) |
+| `selector_iter9_trifurc` | — | — | — | — | 86,67% | — (iter11, belum dievaluasi pada snapshot lama) |
+| `geometric_mean_blend` | — | — | — | — | 86,15% | — (iter11, belum dievaluasi pada snapshot lama) |
+| `floor_clamped_hybrid` | — | — | — | — | 86,04% | — (iter11, belum dievaluasi pada snapshot lama) |
 | `hybrid_vis_corr` | — | — | — | — | 86,04% | — (juara sebelumnya) |
 | `visibility` / `v2_visibility` | 92,54% | 90,38% | 89,41% | 89,34% | 85,94% | −6,60 pp |
 | `v5_best_visibility` | 92,54% | 90,38% | 89,41% | 89,34% | 85,94% | −6,60 pp |

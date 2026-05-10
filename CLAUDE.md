@@ -133,8 +133,11 @@ Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_
 | `v5_adaptive_corrected` | 93.86% | 89.96% | 86.11% | 86.28% | 82.58% | −11.28 pp |
 | `v2_visibility` | 92.54% | 90.38% | 89.41% | 89.34% | **85.94%** | **−6.60 pp** |
 | `v1_corrected` | 90.79% | 89.12% | 87.90% | 88.21% | 84.37% | **−6.42 pp** |
-| `hybrid_vis_corr` | — | — | — | — | 86.04% | — (prev champ) |
 | `selector_with_b2b3` | — | — | — | — | **86.67%** | — (new top, 2026-05-10) |
+| `selector_iter9_trifurc` | — | — | — | — | 86.67% | — (iter11, not evaluated on legacy snapshots) |
+| `geometric_mean_blend` | — | — | — | — | 86.15% | — (iter11, not evaluated on legacy snapshots) |
+| `floor_clamped_hybrid` | — | — | — | — | 86.04% | — (iter11, not evaluated on legacy snapshots) |
+| `hybrid_vis_corr` | — | — | — | — | 86.04% | — (prev champ) |
 
 **Key regression findings (UPDATED 2026-05-10 with 953-tree results):**
 - `selector_with_b2b3` **NEW TOP** at 953 (86.67%, MAE 0.3982) — selector trifurc + B2↔B3 split correction, validated held-out
