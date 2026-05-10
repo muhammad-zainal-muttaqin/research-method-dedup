@@ -83,14 +83,14 @@ from pathlib import Path
 import numpy as np
 
 # Import dari modul algoritma lain di folder yang sama
-from algorithms.v6_selector import load_params, predict as _v6_predict
-from algorithms.v6_selector import (
+from algorithms.M17_selector_regime import load_params, predict as _v6_predict
+from algorithms.M17_selector_regime import (
     _adaptive_corrected, _visibility, _class_aware_vis,
     _extract_features, _unstable_gate, _pick_method,
 )
-from algorithms.stacking_bracketed import predict as _stacking_bracketed
-from algorithms.b2_b4_boosted import predict as _b2_b4_boosted
-from algorithms.floor_anchor_50 import predict as _floor_anchor_50
+from algorithms.M13_stack_bracket import predict as _stacking_bracketed
+from algorithms.M16_boost_b2b4 import predict as _b2_b4_boosted
+from algorithms.M22_anchor_floor50 import predict as _floor_anchor_50
 
 NAMES = ["B1", "B2", "B3", "B4"]
 

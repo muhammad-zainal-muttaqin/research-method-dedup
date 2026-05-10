@@ -145,29 +145,29 @@ def visibility_v2(dets: List[Dict], alpha: float = 0.9, sigma: float = 0.45) -> 
 # ---------------------------------------------------------------------------
 
 def build_methods(params: dict) -> Dict[str, Callable[[List[Dict]], Dict[str, int]]]:
-    from algorithms.adaptive_corrected import predict as ac_predict
-    from algorithms.best_visibility_grid import predict as bvg_predict
-    from algorithms.v6_selector import predict as v6_predict
-    from algorithms.stacking_bracketed import predict as sb_predict
-    from algorithms.stacking_density import predict as sd_predict
-    from algorithms.entropy_modulated import predict as em_predict
-    from algorithms.b2_b4_boosted import predict as b2b4_predict
-    from algorithms.v9_selector import predict as v9_predict
-    from algorithms.b2_median_v6 import predict as b2med_predict
-    from algorithms.median_strong5 import predict as ms5_predict
+    from algorithms.M19_divide_adaptive import predict as ac_predict
+    from algorithms.M20_weight_visibility_grid import predict as bvg_predict
+    from algorithms.M17_selector_regime import predict as v6_predict
+    from algorithms.M13_stack_bracket import predict as sb_predict
+    from algorithms.M14_stack_density import predict as sd_predict
+    from algorithms.M10_entropy_divide import predict as em_predict
+    from algorithms.M16_boost_b2b4 import predict as b2b4_predict
+    from algorithms.M12_selector_overrides import predict as v9_predict
+    from algorithms.M11_median_b2 import predict as b2med_predict
+    from algorithms.M09_median_strong5 import predict as ms5_predict
 
     return {
-        "v1_corrected":           lambda d: corrected_v1(d),
-        "v2_visibility":          lambda d: visibility_v2(d),
-        "v5_adaptive_corrected":  lambda d: ac_predict(d),
-        "v5_best_visibility":     lambda d: bvg_predict(d),
-        "v6_selector":            lambda d: v6_predict(d, params),
-        "v7_stacking_bracketed":  lambda d: sb_predict(d),
-        "v7_stacking_density":    lambda d: sd_predict(d),
-        "v8_entropy_modulated":   lambda d: em_predict(d),
-        "v8_b2_b4_boosted":       lambda d: b2b4_predict(d),
-        "v9_b2_median_v6":        lambda d: b2med_predict(d, params),
-        "v9_selector":            lambda d: v9_predict(d, params),
+        "M15_divide_global":            lambda d: corrected_v1(d),
+        "M06_weight_visibility":        lambda d: visibility_v2(d),
+        "M19_divide_adaptive":          lambda d: ac_predict(d),
+        "M20_weight_visibility_grid":   lambda d: bvg_predict(d),
+        "M17_selector_regime":          lambda d: v6_predict(d, params),
+        "M13_stack_bracket":            lambda d: sb_predict(d),
+        "M14_stack_density":            lambda d: sd_predict(d),
+        "M10_entropy_divide":           lambda d: em_predict(d),
+        "M16_boost_b2b4":               lambda d: b2b4_predict(d),
+        "M11_median_b2":                lambda d: b2med_predict(d, params),
+        "M12_selector_overrides":       lambda d: v9_predict(d, params),
     }
 
 
@@ -639,7 +639,7 @@ def main() -> None:
     print()
 
     print("Memuat parameter v6/v9...")
-    from algorithms.v6_selector import load_params
+    from algorithms.M17_selector_regime import load_params
     params = load_params()
     print("  OK")
     print()

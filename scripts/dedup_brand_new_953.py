@@ -164,7 +164,7 @@ def main():
     for mname in method_names:
         totals = {c: int(per_tree_df[f"{mname}_{c}"].sum()) for c in NAMES}
         grand = sum(totals.values())
-        naive_grand = int(per_tree_df[[f"naive_{c}" for c in NAMES]].sum().sum())
+        naive_grand = int(per_tree_df[[f"M29_baseline_naive_sum_{c}" for c in NAMES]].sum().sum())
         agg_rows.append({
             "method": mname,
             **{c: totals[c] for c in NAMES},

@@ -313,7 +313,7 @@ def _selector_iter9_trifurc(dets):
     p = str(BASE)
     if p not in sys.path:
         sys.path.insert(0, p)
-    import algorithms.selector_iter9_trifurc as _mod
+    import algorithms.M02_selector_trifurc as _mod
     return _mod.predict(dets)
 
 
@@ -322,7 +322,7 @@ def _geometric_mean_blend(dets):
     p = str(BASE)
     if p not in sys.path:
         sys.path.insert(0, p)
-    import algorithms.geometric_mean_blend as _mod
+    import algorithms.M03_blend_geometric as _mod
     return _mod.predict(dets)
 
 
@@ -331,7 +331,7 @@ def _floor_clamped_hybrid(dets):
     p = str(BASE)
     if p not in sys.path:
         sys.path.insert(0, p)
-    import algorithms.floor_clamped_hybrid as _mod
+    import algorithms.M04_blend_floor_clamped as _mod
     return _mod.predict(dets)
 
 
@@ -340,47 +340,56 @@ def _selector_with_b2b3(dets):
     p = str(BASE)
     if p not in sys.path:
         sys.path.insert(0, p)
-    import algorithms.selector_with_b2b3 as _mod
+    import algorithms.M01_selector_b2b3 as _mod
     return _mod.predict(dets)
 
 
 # ─── method registry ─────────────────────────────────────────
 
 METHOD_GROUPS = {
-    # statistical/divisor
-    "naive": naive_count,
-    "corrected": corrected_naive,
-    "adaptive_corrected": adaptive_corrected,
-    "density_scaled_vis": density_scaled_vis,
-    "side_coverage": side_coverage,
-    "hybrid_vis_corr": hybrid_vis_corr,
-    # visibility/geometry
-    "visibility": visibility_count,
-    "best_visibility_grid": best_visibility_grid,
-    "adaptive_visibility": adaptive_visibility,
-    "class_aware_vis": class_aware_vis,
-    # matching/graph (works ok on JSON; noisy on TXT)
-    "relaxed_match": relaxed_match,
-    # v6-v9 selectors
-    "v6_selector": v6_selector,
-    "v7_stacking_density": _stacking_density,
-    "v7_stacking_bracketed": _stacking_bracketed,
-    "v7_ordinal_b3": _ordinal_b3,
-    "v8_entropy_modulated": _entropy_modulated,
-    "v8_entropy_stacking": _v8_entropy_stacking,
-    "v8_b2_b4_boosted": _b2_b4_boosted,
-    "v8_floor_anchor_50": _floor_anchored,
-    "v8_per_side_median": _per_side_median,
-    "v8_side_agreement": _side_agreement,
-    "v8_multi_consensus": _multi_consensus,
-    "v9_selector": v9_selector,
-    "v9_b2_median_v6": v9_b2_median_v6,
-    "v9_median_strong5": v9_median_strong5,
-    # iter11 (2026-05-10)
-    "selector_with_b2b3": _selector_with_b2b3,
-    "selector_iter9_trifurc": _selector_iter9_trifurc,
-    "geometric_mean_blend": _geometric_mean_blend,
-    "floor_clamped_hybrid": _floor_clamped_hybrid,
+    # production / selectors
+    "M01_selector_b2b3": _selector_with_b2b3,
+    "M02_selector_trifurc": _selector_iter9_trifurc,
+    # blends
+    "M03_blend_geometric": _geometric_mean_blend,
+    "M04_blend_floor_clamped": _floor_clamped_hybrid,
+    "M05_blend_vis_divide": hybrid_vis_corr,
+    # weight (visibility / coverage)
+    "M06_weight_visibility": visibility_count,
+    "M07_weight_coverage": side_coverage,
+    "M08_divide_density_vis": density_scaled_vis,
+    # median family
+    "M09_median_strong5": v9_median_strong5,
+    # entropy
+    "M10_entropy_divide": _entropy_modulated,
+    # median b2
+    "M11_median_b2": v9_b2_median_v6,
+    # selector overrides (overfits 228 dev set)
+    "M12_selector_overrides": v9_selector,
+    # stacking
+    "M13_stack_bracket": _stacking_bracketed,
+    "M14_stack_density": _stacking_density,
+    # divide / boost
+    "M15_divide_global": corrected_naive,
+    "M16_boost_b2b4": _b2_b4_boosted,
+    # selector regime backbone
+    "M17_selector_regime": v6_selector,
+    # entropy stack
+    "M18_entropy_stack": _v8_entropy_stacking,
+    # divide adaptive / weight grid
+    "M19_divide_adaptive": adaptive_corrected,
+    "M20_weight_visibility_grid": best_visibility_grid,
+    # specialist / experimental
+    "M21_ordinal_b3": _ordinal_b3,
+    "M22_anchor_floor50": _floor_anchored,
+    "M23_agree_side": _side_agreement,
+    "M24_weight_class_aware": class_aware_vis,
+    "M25_consensus_multi": _multi_consensus,
+    "M26_median_per_side": _per_side_median,
+    "M27_weight_visibility_adaptive": adaptive_visibility,
+    # baselines (reference floor — DO NOT use in production)
+    "M28_baseline_match_strict": relaxed_match,
+    "M29_baseline_naive_sum": naive_count,
 }
 
 _V6_PARAMS: dict = {}
@@ -477,7 +486,7 @@ def main():
     for mname in method_names:
         totals = {c: int(per_tree_df[f"{mname}_{c}"].sum()) for c in NAMES}
         grand = sum(totals.values())
-        naive_grand = int(per_tree_df[[f"naive_{c}" for c in NAMES]].sum().sum())
+        naive_grand = int(per_tree_df[[f"M29_baseline_naive_sum_{c}" for c in NAMES]].sum().sum())
         agg_rows.append({
             "method": mname,
             **{c: totals[c] for c in NAMES},

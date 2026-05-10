@@ -66,58 +66,70 @@ python scripts/dedup_nonjson_compare.py     # non-JSON validation (legacy, no mi
 
 **PRIMARY BENCHMARK: 953-tree Brand-New-Dataset-YOLO** (canonical, full GT). Earlier 228/478/727/882 numbers are historical only.
 
+**Naming convention (effective 2026-05-10):** all methods use `M<NN>_<family>_<descriptor>`. See `NAMING.md` for full mapping table from old names. IDs are stable — assigned once, never re-shuffled.
+
 ### Acc ±1 on 953 Brand-New-Dataset-YOLO trees (PRIMARY)
 
 | Rank | Method | Acc ±1 | MAE | n_fail |
 |---:|---|---:|---:|---:|
-| 1 | `selector_with_b2b3` | **86.67%** | **0.3982** | 127 |
-| 2 | `selector_iter9_trifurc` | 86.67% | 0.3987 | 127 |
-| 3 | `geometric_mean_blend` | 86.15% | 0.3961 | 132 |
-| 4 | `hybrid_vis_corr` | 86.04% | 0.408 | 133 |
-| 5 | `visibility` | 85.94% | 0.396 | 134 |
-| 6 | `side_coverage` | 85.94% | 0.393 | 134 |
-| 7 | `density_scaled_vis` | 85.94% | 0.402 | 134 |
-| 8 | `v9_median_strong5` | 85.73% | 0.401 | 136 |
-| 6 | `v8_entropy_modulated` | 84.78% | 0.451 | 145 |
-| 7 | `v9_b2_median_v6` | 84.78% | 0.429 | 145 |
-| 8 | `v9_selector` | 84.68% | 0.441 | 146 |
-| 9 | `v7_stacking_bracketed` | 84.58% | 0.428 | 147 |
-| 10 | `v6_selector` | 84.26% | 0.444 | 150 |
-| 11 | `corrected` | 84.37% | 0.416 | 149 |
-| 12 | `adaptive_corrected` | 82.58% | 0.460 | 166 |
-| 13 | `best_visibility_grid` | 80.80% | 0.460 | 183 |
-| 14 | `class_aware_vis` | 70.93% | 0.546 | 277 |
-| 15 | `relaxed_match` | 5.98% | 1.811 | 896 |
-| 16 | `naive` | 3.99% | 2.280 | 915 |
+| 1 | `M01_selector_b2b3` | **86.67%** | **0.3982** | 127 |
+| 2 | `M02_selector_trifurc` | 86.67% | 0.3987 | 127 |
+| 3 | `M03_blend_geometric` | 86.15% | 0.3961 | 132 |
+| 4 | `M04_blend_floor_clamped` | 86.04% | 0.4050 | 133 |
+| 5 | `M05_blend_vis_divide` | 86.04% | 0.4077 | 133 |
+| 6 | `M06_weight_visibility` | 85.94% | 0.3956 | 134 |
+| 7 | `M07_weight_coverage` | 85.94% | 0.3930 | 134 |
+| 8 | `M08_divide_density_vis` | 85.94% | 0.4024 | 134 |
+| 9 | `M09_median_strong5` | 85.73% | 0.4006 | 136 |
+| 10 | `M10_entropy_divide` | 84.78% | 0.4507 | 145 |
+| 11 | `M11_median_b2` | 84.78% | 0.4288 | 145 |
+| 12 | `M12_selector_overrides` | 84.68% | 0.4413 | 146 |
+| 13 | `M13_stack_bracket` | 84.58% | 0.4279 | 147 |
+| 14 | `M14_stack_density` | 84.58% | 0.4274 | 147 |
+| 15 | `M15_divide_global` | 84.37% | 0.4158 | 149 |
+| 16 | `M16_boost_b2b4` | 84.37% | 0.4111 | 149 |
+| 17 | `M17_selector_regime` | 84.26% | 0.4436 | 150 |
+| 18 | `M18_entropy_stack` | 84.78% | 0.4507 | 145 |
+| 19 | `M19_divide_adaptive` | 82.58% | 0.4599 | 166 |
+| 20 | `M20_weight_visibility_grid` | 80.80% | 0.4596 | 183 |
+| 21 | `M23_agree_side` | 80.80% | 0.4273 | 183 |
+| 22 | `M27_weight_visibility_adaptive` | 80.27% | 0.4790 | 188 |
+| 23 | `M24_weight_class_aware` | 70.93% | 0.5456 | 277 |
+| 24 | `M22_anchor_floor50` | 69.99% | 0.4525 | 286 |
+| 25 | `M25_consensus_multi` | 25.29% | 0.9121 | 712 |
+| 26 | `M26_median_per_side` | 25.29% | 0.9121 | 712 |
+| 27 | `M28_baseline_match_strict` | 5.98% | 1.8114 | 896 |
+| 28 | `M29_baseline_naive_sum` | 3.99% | 2.2804 | 915 |
+| 29 | `M21_ordinal_b3` | 0.73% | 3.5842 | 946 |
 
 Source: `reports/dedup_brand_new_953/accuracy_953.csv`.
 
 **Surprising findings:**
-- **`selector_with_b2b3` (#1, 2026-05-10)** — selector trifurc + B2↔B3 split correction. +0.63 pp over hybrid_vis_corr, −2.32% MAE. Validated train/val/test held-out, no overfit. Code: `algorithms/selector_with_b2b3.py`. Report: `report_10Mei2026.md`.
-- **`hybrid_vis_corr`** — previous champion; simple weighted avg of visibility + adaptive_corrected
-- **v9_selector regresses to 84.68%** — confirms severe overfit on 228 dev set (97.37%)
+- **`M01_selector_b2b3` (#1, 2026-05-10)** — selector trifurc + B2↔B3 split correction. +0.63 pp over `M05_blend_vis_divide`, −2.32% MAE. Validated train/val/test held-out, no overfit. Code: `algorithms/M01_selector_b2b3.py`. Report: `report_10Mei2026.md`.
+- **`M05_blend_vis_divide`** — previous champion; simple weighted avg of visibility + adaptive divide
+- **`M12_selector_overrides` regresses to 84.68%** — confirms severe overfit on 228 dev set (97.37%)
 - **Simple visibility family dominates** (top 4 all visibility variants)
-- **Strict matching (`relaxed_match`, `naive`) catastrophically fails** at scale
+- **Strict matching (`M28_baseline_match_strict`, `M29_baseline_naive_sum`) catastrophically fails** at scale
 
 ### Historical 228-tree dev set (for reference only)
 
 Fresh benchmark re-run (2026-05-08) on all 4 archive snapshots. Earlier "primary benchmark = 882 trees" superseded.
 
-### Acc ±1 on 228 trees (historical, v9 development set)
+### Acc ±1 on 228 trees (historical, M12 development set)
 
 | Rank | Method | Acc ±1 | Notes |
 |---:|---|---:|---|
-| 1 | `v9_selector` | **97.37%** | Narrow overrides on v6 — **overfits 228** |
-| 2 | `b2_median_v6` | 96.05% | v9 variant |
-| 3 | `v6_selector` | 96.05% | v9 backbone |
-| 4 | `stacking_bracketed` | 94.30% | v7 best |
-| 5 | `stacking_density` | 94.30% | v7 |
-| 6 | `entropy_modulated` | 94.30% | v8 — ties v7 |
-| 7 | `adaptive_corrected` | 93.86% | v5 |
-| 8 | `b2_b4_boosted` | 92.54% | v8 specialist |
-| 9 | `best_visibility_grid` | 92.54% | v5 |
-| 10 | `v2_visibility` | 92.54% | v2 |
-| 11 | `v1_corrected` | 90.79% | v1 baseline |
+| 1 | `M12_selector_overrides` | **97.37%** | Narrow overrides on regime selector — **overfits 228** |
+| 2 | `M11_median_b2` | 96.05% | median variant |
+| 3 | `M17_selector_regime` | 96.05% | regime selector backbone |
+| 4 | `M13_stack_bracket` | 94.30% | stacking best |
+| 5 | `M14_stack_density` | 94.30% | density-corrected stacking |
+| 6 | `M10_entropy_divide` | 94.30% | entropy modulation |
+| 7 | `M19_divide_adaptive` | 93.86% | adaptive divisor |
+| 8 | `M16_boost_b2b4` | 92.54% | per-class boost specialist |
+| 9 | `M20_weight_visibility_grid` | 92.54% | visibility grid |
+| 10 | `M06_weight_visibility` | 92.54% | basic visibility |
+| 11 | `M15_divide_global` | 90.79% | global divisor baseline |
 
 ### Cross-Dataset Regression (Acc ±1, fresh re-run 2026-05-10)
 
@@ -125,59 +137,61 @@ Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_
 
 | Method | 228 | 478 | 727 | 882 | **953** | Delta 228→953 |
 |---|---:|---:|---:|---:|---:|---:|
-| `v9_selector` | 97.37% | 92.68% | 89.27% | 88.78% | 84.68% | −12.69 pp |
-| `v9_b2_median_v6` | 96.05% | 92.68% | 89.00% | 88.78% | 84.78% | −11.27 pp |
-| `v6_selector` | 96.05% | 91.84% | 88.86% | 88.55% | 84.26% | −11.79 pp |
-| `v8_entropy_modulated` | 94.30% | 91.63% | 88.86% | 88.78% | 84.78% | −9.52 pp |
-| `v7_stacking_bracketed` | 94.30% | 91.84% | 88.45% | 88.44% | 84.58% | −9.72 pp |
-| `v5_adaptive_corrected` | 93.86% | 89.96% | 86.11% | 86.28% | 82.58% | −11.28 pp |
-| `v2_visibility` | 92.54% | 90.38% | 89.41% | 89.34% | **85.94%** | **−6.60 pp** |
-| `v1_corrected` | 90.79% | 89.12% | 87.90% | 88.21% | 84.37% | **−6.42 pp** |
-| `selector_with_b2b3` | — | — | — | — | **86.67%** | — (new top, 2026-05-10) |
-| `selector_iter9_trifurc` | — | — | — | — | 86.67% | — (iter11, not evaluated on legacy snapshots) |
-| `geometric_mean_blend` | — | — | — | — | 86.15% | — (iter11, not evaluated on legacy snapshots) |
-| `floor_clamped_hybrid` | — | — | — | — | 86.04% | — (iter11, not evaluated on legacy snapshots) |
-| `hybrid_vis_corr` | — | — | — | — | 86.04% | — (prev champ) |
+| `M12_selector_overrides` | 97.37% | 92.68% | 89.27% | 88.78% | 84.68% | −12.69 pp |
+| `M11_median_b2` | 96.05% | 92.68% | 89.00% | 88.78% | 84.78% | −11.27 pp |
+| `M17_selector_regime` | 96.05% | 91.84% | 88.86% | 88.55% | 84.26% | −11.79 pp |
+| `M10_entropy_divide` | 94.30% | 91.63% | 88.86% | 88.78% | 84.78% | −9.52 pp |
+| `M13_stack_bracket` | 94.30% | 91.84% | 88.45% | 88.44% | 84.58% | −9.72 pp |
+| `M19_divide_adaptive` | 93.86% | 89.96% | 86.11% | 86.28% | 82.58% | −11.28 pp |
+| `M06_weight_visibility` | 92.54% | 90.38% | 89.41% | 89.34% | **85.94%** | **−6.60 pp** |
+| `M15_divide_global` | 90.79% | 89.12% | 87.90% | 88.21% | 84.37% | **−6.42 pp** |
+| `M01_selector_b2b3` | — | — | — | — | **86.67%** | — (new top, 2026-05-10) |
+| `M02_selector_trifurc` | — | — | — | — | 86.67% | — (iter11) |
+| `M03_blend_geometric` | — | — | — | — | 86.15% | — (iter11) |
+| `M04_blend_floor_clamped` | — | — | — | — | 86.04% | — (iter11) |
+| `M05_blend_vis_divide` | — | — | — | — | 86.04% | — (prev champion) |
 
 **Key regression findings (UPDATED 2026-05-10 with 953-tree results):**
-- `selector_with_b2b3` **NEW TOP** at 953 (86.67%, MAE 0.3982) — selector trifurc + B2↔B3 split correction, validated held-out
-- `v2_visibility` most stable from 228 (−6.60 pp) — simple generalizes best
-- `v1_corrected` second-most stable (−6.42 pp)
-- `v9_selector` drops **12.69 pp** at 953 — narrow overrides catastrophically overfit 228 dev set
-- All complex methods (v6/v7/v8/v9 selectors) regress 9–13 pp from 228 → 953
+- `M01_selector_b2b3` **NEW TOP** at 953 (86.67%, MAE 0.3982) — selector trifurc + B2↔B3 split correction, validated held-out
+- `M06_weight_visibility` most stable from 228 (−6.60 pp) — simple generalizes best
+- `M15_divide_global` second-most stable (−6.42 pp)
+- `M12_selector_overrides` drops **12.69 pp** at 953 — narrow overrides catastrophically overfit 228 dev set
+- All complex selectors (`M17`, `M13`, `M10`, `M12`) regress 9–13 pp from 228 → 953
 - All methods land 82–86% at 953 trees (no catastrophic drop, but ceiling lower than expected)
 
 **Recommendations (UPDATED 2026-05-10 post-iter11):**
-- **Production / full 953-tree dataset** → `selector_with_b2b3` (86.67%, MAE 0.3982) — current top, validated held-out, no overfit
-- **Simplest fallback** → `hybrid_vis_corr` (86.04%) — single-line weighted blend
-- **Historical 228-tree set** → `v9_selector` (97.37%) — overfits, dev-set only
+- **Production / full 953-tree dataset** → `M01_selector_b2b3` (86.67%, MAE 0.3982) — current top, validated held-out, no overfit
+- **Simplest fallback** → `M05_blend_vis_divide` (86.04%) — single-line weighted blend
+- **Historical 228-tree set** → `M12_selector_overrides` (97.37%) — overfits, dev-set only
 - **No missing JSON anymore** — Brand-New-Dataset-YOLO is complete
 
-**v9 logic (regime overrides on top of v6_selector):**
-1. default → `v6_selector`
-2. `b4_only_overlap` → `v7_stacking_bracketed`
-3. `classaware_compact_lowb4` → `v8_b2_b4_boosted`
-4. `b3b4_only_lowtotal` → `v8_floor_anchor_50`
-5. `dense_allside_moderatedup` → `v8_b2_b4_boosted`
+**M12 logic (regime overrides on top of M17_selector_regime):**
+1. default → `M17_selector_regime`
+2. `b4_only_overlap` → `M13_stack_bracket`
+3. `classaware_compact_lowb4` → `M16_boost_b2b4`
+4. `b3b4_only_lowtotal` → `M22_anchor_floor50`
+5. `dense_allside_moderatedup` → `M16_boost_b2b4`
 
-## Method Evolution (Why v9 Wins)
+## Method Evolution (Why M01 Wins)
 
-| Gen | Best Method | Acc ±1 | Lesson |
+Generation labels (v1..v9, iter11) are historical research milestones; production code uses Mxx names only. See `NAMING.md` for old↔new mapping.
+
+| Gen | Best Method (new ID) | Acc ±1 | Lesson |
 |---|---|---:|---|
-| naive | — | very poor | overcount ~78.8% baseline |
-| v1 | `corrected` | 90.79% | global divisor already beats naive hugely |
-| v2 | `visibility` | 92.11% | bbox geometry / position matters |
-| v3 | `per_class_ridge` | 90.79% | learned-from-link thresholds didn't break ceiling |
-| v4 | `visibility` | 92.11% | adding HSV + Hungarian didn't beat v2 |
-| v5 | `adaptive_corrected` | 93.86% | adaptive divisor + class-aware family — first stable >93% |
-| v6 | `v6_selector` | **96.49%** | **turning point** — no single global rule wins; route per regime |
-| v7 | `stacking_bracketed` | 94.30% | stacking/density family strong but loses to v6 |
-| v8 | `stacking_bracketed_v7` | 94.30% | entropy/per-side signals add nothing |
-| v9 | `v9_selector` | **97.37%** (228) / 84.68% (953) | narrow overrides on v6 — best on 228, severely overfits at scale |
-| **— production (2026-05-10)** | `hybrid_vis_corr` | **86.04%** (953) | weighted vis + adaptive_corrected — wins on full canonical |
-| **— iter11 (2026-05-10)** | `selector_with_b2b3` | **86.67%** (953) | selector trifurc + B2↔B3 split correction — new top, validated held-out |
+| naive (M29) | `M29_baseline_naive_sum` | very poor | overcount ~78.8% baseline |
+| v1 (M15) | `M15_divide_global` | 90.79% | global divisor already beats naive hugely |
+| v2 (M06) | `M06_weight_visibility` | 92.11% | bbox geometry / position matters |
+| v3 | per_class_ridge | 90.79% | learned-from-link thresholds didn't break ceiling |
+| v4 (M06) | `M06_weight_visibility` | 92.11% | adding HSV + Hungarian didn't beat v2 |
+| v5 (M19) | `M19_divide_adaptive` | 93.86% | adaptive divisor + class-aware family — first stable >93% |
+| v6 (M17) | `M17_selector_regime` | **96.49%** | **turning point** — no single global rule wins; route per regime |
+| v7 (M13) | `M13_stack_bracket` | 94.30% | stacking/density family strong but loses to v6 |
+| v8 (M13) | `M13_stack_bracket` | 94.30% | entropy/per-side signals add nothing |
+| v9 (M12) | `M12_selector_overrides` | **97.37%** (228) / 84.68% (953) | narrow overrides on M17 — best on 228, severely overfits at scale |
+| **— production (2026-05-10)** | `M05_blend_vis_divide` | **86.04%** (953) | weighted vis + adaptive divide — wins on full canonical |
+| **— iter11 (2026-05-10)** | `M01_selector_b2b3` | **86.67%** (953) | selector trifurc + B2↔B3 split correction — new top, validated held-out |
 
-**Key takeaway:** strict matching (Hungarian, graph, cluster) **fails** on noisy TXT labels (<20% accuracy). Adaptive statistical correction + regime-routing wins on small dev sets but **overfits**. At full 953-tree scale, simpler methods (`hybrid_vis_corr`, `visibility`) generalize best. B2↔B3 ambiguity is the irreducible ceiling, not label noise.
+**Key takeaway:** strict matching (Hungarian, graph, cluster) **fails** on noisy TXT labels (<20% accuracy). Adaptive statistical correction + regime-routing wins on small dev sets but **overfits**. At full 953-tree scale, simpler methods (`M05_blend_vis_divide`, `M06_weight_visibility`) generalize best. B2↔B3 ambiguity is the irreducible ceiling, not label noise.
 
 ## Dataset Status (2026-05-10)
 
@@ -210,9 +224,10 @@ dataset/
   labels/{train,val,test}/
 algorithms/            standalone algo modules — each exports predict(detections, params) -> dict
   __init__.py          ranked performance table (read this for algo selection)
-  v9_selector.py       best on 228 — imports v6_selector + 3 specialist algos
-  v6_selector.py       backbone + load_params() (reads reports/dedup_research_v5/...)
-  *.py                 one algo = one file, all deterministic, no training
+  M01_selector_b2b3.py current production (953 best, 86.67%)
+  M12_selector_overrides.py best on 228 — imports M17_selector_regime + 3 specialists
+  M17_selector_regime.py    regime backbone + load_params() (reads reports/dedup_research_v5/...)
+  M<NN>_*.py            one algo = one file, all deterministic, no training
 scripts/               see "Running Scripts" — count_*, dedup_*, benchmark_*, generate_*
   dedup_brand_new_953.py  PRIMARY benchmark — runs all 16 methods on Brand-New-Dataset-YOLO
   dedup_all_953.py        legacy: 228 JSON + 725 TXT (no longer needed, kept for repro)
@@ -237,12 +252,12 @@ AGENTS.md              agent configuration
 Each `algorithms/*.py` exports `predict(detections: list[dict], params: dict) -> dict[str, int]`.
 
 - `detections`: list of `{"class": "B1"–"B4", "x_norm": float, "y_norm": float, "side_index": int}`
-- `params`: from `v6_selector.load_params()` (reads CSV from reports/)
+- `params`: from `M17_selector_regime.load_params()` (reads CSV from reports/)
 - Returns: `{"B1": int, "B2": int, "B3": int, "B4": int}`
 
-`v6_selector.load_params()` must be called once and the result passed to all algo `predict()` calls. `v9_selector` internally calls `v6_selector` — don't double-call v6 separately.
+`M17_selector_regime.load_params()` must be called once and the result passed to all algo `predict()` calls. `M12_selector_overrides` internally calls `M17_selector_regime` — don't double-call separately.
 
-Algo ranked by JSON-228 Acc±1 (see `algorithms/__init__.py` for full table). For new code importing these, use `from algorithms.v9_selector import predict` or whichever rank is needed.
+Algo ranked by 953-tree Acc±1 (see `algorithms/__init__.py` and `NAMING.md` for full table). For new code, import via `from algorithms.M01_selector_b2b3 import predict` or whichever ID needed.
 
 ## JSON Schema (per tree)
 
@@ -282,4 +297,4 @@ Algo ranked by JSON-228 Acc±1 (see `algorithms/__init__.py` for full table). Fo
 
 **Don't re-run** (per RESEARCH.md §30.4): imgsz 800, focal loss, naive oversampling, two-stage classifiers (DINOv2/EfficientNet/CORAL), YOLOv9e, RT-DETR-L, RF-DETR, SGD/AdamW sweep, label_smoothing, long brute-force grids.
 
-**Don't pursue further grid search past v9.** 3/228 remaining failures are likely irreducible without cross-view embeddings (excluded by constraint).
+**Don't pursue further grid search past M12.** 3/228 remaining failures are likely irreducible without cross-view embeddings (excluded by constraint).

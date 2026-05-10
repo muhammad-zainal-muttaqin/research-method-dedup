@@ -1,36 +1,81 @@
-# Folder ini berisi implementasi algoritma dedup yang telah dibersihkan dari
-# boilerplate evaluasi. Setiap file = satu algoritma dengan fungsi predict().
+# algorithms/ — dedup method registry
 #
-# Semua algoritma bersifat:
-#   - Deterministik (output sama untuk input yang sama)
-#   - Tanpa training / gradient / embedding
-#   - Closed-form atau heuristik berbasis statistik dataset
+# Naming convention: M<NN>_<family>_<descriptor>
+# See ../NAMING.md for full glossary, mapping table, and stability rule.
 #
-# Ranking performa pada benchmark JSON 228 pohon (Acc ±1):
-#   Rank  File                      Gen  Acc      MAE     Gagal
-#   1     v9_selector.py            v9   98.68%   0.2533  3
-#   2     b2_median_v6.py           v9   96.49%   0.2588  8
-#   3     v6_selector.py            v6   96.49%   0.2632  8
-#   4     median_strong5.py         v9   95.18%   0.2390  11
-#   5     stacking_bracketed.py     v7   94.30%   0.2643  13
-#   6     stacking_density.py       v7   94.30%   0.2708  13
-#   7     entropy_modulated.py      v8   94.30%   0.2763  13
-#   8     adaptive_corrected.py     v5   93.86%   0.2774  14
-#   9     b2_b4_boosted.py          v8   92.54%   0.2632  17
-#   10    best_visibility_grid.py   v5   92.54%   0.2664  17
-#   11    ordinal_b3.py             v7   91.23%   0.2939  20   ← broken di non-JSON
-#   12    class_aware_vis.py        v5   85.09%   0.3805  34
-#   13    side_agreement.py         v8   83.33%   0.3618  38
-#   14    floor_anchor_50.py        v8   69.74%   0.4211  69   ← spesialis
-#   —     multi_consensus.py        v8   18.86%   0.9583  185  ← undercount ekstrem
-#   —     per_side_median.py        v8   18.86%   0.9583  185  ← undercount ekstrem
+# Each module exports predict(detections, [params]) -> dict[str, int].
+# All methods deterministic, no training, no embeddings, no gradients.
 #
-# Benchmark 953 pohon Brand-New-Dataset-YOLO (canonical, 2026-05-10):
-#   Rank  File                      Acc      MAE     Gagal
-#   1     selector_with_b2b3.py     86.67%   0.3982  127
-#   2     selector_iter9_trifurc    86.67%   0.3987  127
-#   3     geometric_mean_blend      86.15%   0.3961  132
-#   4     floor_clamped_hybrid      86.04%   0.4050  133
-#   5     hybrid_vis_corr.py        86.04%   0.4077  133
-#   6     visibility.py             85.94%   0.3960  134
-#   7     side_coverage.py          85.94%   0.3930  134
+# Mxx IDs are STABLE — assigned once on 2026-05-10, never re-shuffled.
+# Initial assignment ranking-based on 953-tree benchmark, tie-break by MAE.
+# Numeric order is NOT an ongoing ranking.
+#
+# Ranking on Brand-New-Dataset-YOLO 953 trees (canonical, 2026-05-10):
+#
+#   ID   Name                          Acc±1     MAE     n_fail
+#   M01  M01_selector_b2b3             86.67%   0.3982   127     ← production
+#   M02  M02_selector_trifurc          86.67%   0.3987   127
+#   M03  M03_blend_geometric           86.15%   0.3961   132
+#   M04  M04_blend_floor_clamped       86.04%   0.4050   133
+#   M05  M05_blend_vis_divide          86.04%   0.4077   133     ← simple fallback
+#   M06  M06_weight_visibility         85.94%   0.3960   134
+#   M07  M07_weight_coverage           85.94%   0.3930   134
+#   M08  M08_divide_density_vis        85.94%   0.4020   134
+#   M09  M09_median_strong5            85.73%   0.4010   136
+#   M10  M10_entropy_divide            84.78%   0.4510   145
+#   M11  M11_median_b2                 84.78%   0.4290   145
+#   M12  M12_selector_overrides        84.68%   0.4410   146     ⚠ overfits 228 dev
+#   M13  M13_stack_bracket             84.58%   0.4280   147
+#   M14  M14_stack_density             84.58%   —        —
+#   M15  M15_divide_global             84.37%   0.4160   149
+#   M16  M16_boost_b2b4                84.37%   —        —
+#   M17  M17_selector_regime           84.26%   0.4440   150
+#   M18  M18_entropy_stack             —        —        —
+#   M19  M19_divide_adaptive           82.58%   0.4600   166
+#   M20  M20_weight_visibility_grid    80.80%   0.4600   183
+#   M21  M21_ordinal_b3                low      —        —       ← broken on 953
+#   M22  M22_anchor_floor50            —        —        —       ← specialist
+#   M23  M23_agree_side                —        —        —
+#   M24  M24_weight_class_aware        70.93%   0.5460   277
+#   M25  M25_consensus_multi           18.86%   —        —       ← extreme undercount
+#   M26  M26_median_per_side           18.86%   —        —       ← extreme undercount
+#   M27  M27_weight_visibility_adaptive —       —        —
+#   M28  M28_baseline_match_strict      5.98%   1.8110   896     ← reference floor
+#   M29  M29_baseline_naive_sum         3.99%   2.2800   915     ← reference floor
+#
+# Recommended:
+#   - production (full 953 dataset) → M01_selector_b2b3
+#   - simple fallback                → M05_blend_vis_divide
+#   - reference floor                → M29_baseline_naive_sum
+
+METHOD_IDS = [
+    "M01_selector_b2b3",
+    "M02_selector_trifurc",
+    "M03_blend_geometric",
+    "M04_blend_floor_clamped",
+    "M05_blend_vis_divide",
+    "M06_weight_visibility",
+    "M07_weight_coverage",
+    "M08_divide_density_vis",
+    "M09_median_strong5",
+    "M10_entropy_divide",
+    "M11_median_b2",
+    "M12_selector_overrides",
+    "M13_stack_bracket",
+    "M14_stack_density",
+    "M15_divide_global",
+    "M16_boost_b2b4",
+    "M17_selector_regime",
+    "M18_entropy_stack",
+    "M19_divide_adaptive",
+    "M20_weight_visibility_grid",
+    "M21_ordinal_b3",
+    "M22_anchor_floor50",
+    "M23_agree_side",
+    "M24_weight_class_aware",
+    "M25_consensus_multi",
+    "M26_median_per_side",
+    "M27_weight_visibility_adaptive",
+    "M28_baseline_match_strict",
+    "M29_baseline_naive_sum",
+]

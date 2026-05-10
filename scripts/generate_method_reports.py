@@ -25,17 +25,17 @@ ROBUST = BENCH / "robustness_summary.csv"
 SPLIT = BENCH / "domain_breakdown.csv"
 
 ALGO_FILE = {
-    "v9_selector": "algorithms/v9_selector.py",
-    "v9_b2_median_v6": "algorithms/b2_median_v6.py",
-    "v6_selector": "algorithms/v6_selector.py",
-    "v8_b2_b4_boosted": "algorithms/b2_b4_boosted.py",
-    "v7_stacking_bracketed": "algorithms/stacking_bracketed.py",
-    "v2_visibility": None,
-    "v5_best_visibility": "algorithms/best_visibility_grid.py",
-    "v7_stacking_density": "algorithms/stacking_density.py",
-    "v8_entropy_modulated": "algorithms/entropy_modulated.py",
-    "v5_adaptive_corrected": "algorithms/adaptive_corrected.py",
-    "v1_corrected": None,
+    "M12_selector_overrides":     "algorithms/M12_selector_overrides.py",
+    "M11_median_b2":              "algorithms/M11_median_b2.py",
+    "M17_selector_regime":        "algorithms/M17_selector_regime.py",
+    "M16_boost_b2b4":             "algorithms/M16_boost_b2b4.py",
+    "M13_stack_bracket":          "algorithms/M13_stack_bracket.py",
+    "M06_weight_visibility":      "algorithms/M06_weight_visibility.py",
+    "M20_weight_visibility_grid": "algorithms/M20_weight_visibility_grid.py",
+    "M14_stack_density":          "algorithms/M14_stack_density.py",
+    "M10_entropy_divide":         "algorithms/M10_entropy_divide.py",
+    "M19_divide_adaptive":        "algorithms/M19_divide_adaptive.py",
+    "M15_divide_global":          "algorithms/M15_divide_global.py",
 }
 
 

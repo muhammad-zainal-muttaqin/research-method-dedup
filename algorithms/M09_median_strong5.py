@@ -65,11 +65,11 @@ def predict(detections: list, params: dict) -> dict:
     -------
     dict[str, int]
     """
-    from algorithms.v6_selector import predict as v6_predict
-    from algorithms.stacking_bracketed import predict as stacking_pred
-    from algorithms.b2_b4_boosted import predict as b2b4_pred
-    from algorithms.floor_anchor_50 import predict as floor_pred
-    from algorithms.per_side_median import predict as median_pred
+    from algorithms.M17_selector_regime import predict as v6_predict
+    from algorithms.M13_stack_bracket import predict as stacking_pred
+    from algorithms.M16_boost_b2b4 import predict as b2b4_pred
+    from algorithms.M22_anchor_floor50 import predict as floor_pred
+    from algorithms.M26_median_per_side import predict as median_pred
 
     preds = [
         v6_predict(detections, params),
