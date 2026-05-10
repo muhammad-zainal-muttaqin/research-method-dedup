@@ -1,10 +1,15 @@
-# Laporan Eksperimen 10 Mei 2026 — `selector_with_b2b3`
+# Laporan Eksperimen 10 Mei 2026 — `M01_selector_b2b3`
+
+> **Catatan penamaan (efektif 2026-05-10):** dokumen ini ditulis sebelum
+> rename ke skema `Mxx_*`. Nama lama seperti "selector_with_b2b3" /
+> "hybrid_vis_corr" / "geometric_mean_blend" sudah diganti otomatis.
+> Lihat [`NAMING.md`](NAMING.md) untuk tabel pemetaan lengkap.
 
 Iterasi 1–13 pada folder [`exp_10 May 2026/`](exp%2010%20May%202026/) berakhir
-pada algoritma **`selector_with_b2b3`** sebagai metode terbaik baru untuk
+pada algoritma **`M01_selector_b2b3`** sebagai metode terbaik baru untuk
 benchmark 953 pohon Brand-New-Dataset-YOLO.
 
-Kode produksi tersedia di [`algorithms/selector_with_b2b3.py`](algorithms/selector_with_b2b3.py).
+Kode produksi tersedia di [`algorithms/M01_selector_b2b3.py`](algorithms/M01_selector_b2b3.py).
 
 ---
 
@@ -22,14 +27,14 @@ Kode produksi tersedia di [`algorithms/selector_with_b2b3.py`](algorithms/select
 | `Acc ±1` test | 88,62% | held-out |
 | `worst_drop` | 0,00 pp | tidak overfit |
 
-Improvement vs juara sebelumnya `hybrid_vis_corr` (86,04% / MAE 0,4077):
+Improvement vs juara sebelumnya `M05_blend_vis_divide` (86,04% / MAE 0,4077):
 **+0,63 pp Acc±1**, **−2,32% MAE**.
 
 ### Enam metrik mandatory lengkap
 
 Berdasarkan `reports/dedup_brand_new_953/accuracy_953.csv` (run terbaru, 2026-05-10):
 
-| Metrik | `selector_with_b2b3` | `geometric_mean_blend` | `hybrid_vis_corr` |
+| Metrik | `M01_selector_b2b3` | `M03_blend_geometric` | `M05_blend_vis_divide` |
 |---|---:|---:|---:|
 | **MAE per kelas** | | | |
 | &nbsp;&nbsp;B1 | 0,1805 | 0,1752 | 0,2078 |
@@ -59,7 +64,7 @@ Berdasarkan `reports/dedup_brand_new_953/accuracy_953.csv` (run terbaru, 2026-05
 | Metode | Acc±1 (all) | MAE | train | val | test |
 |---|---:|---:|---:|---:|---:|
 | `b2b3_iter9_split` | 86,67% | 0,3982 | 87,34% | 82,58% | 88,62% |
-| **`selector_with_b2b3`** | **86,67%** | **0,3982** | 87,34% | 82,58% | 88,62% |
+| **`M01_selector_b2b3`** | **86,67%** | **0,3982** | 87,34% | 82,58% | 88,62% |
 | `iter9_baseline` | 86,67% | 0,3987 | 87,34% | 82,58% | 88,62% |
 | `mode5` | 85,94% | 0,3930 | 86,35% | 83,15% | 87,43% |
 | `median5` | 85,94% | 0,3930 | 86,35% | 83,15% | 87,43% |
@@ -75,11 +80,11 @@ Sumber: [`exp_10 May 2026/iter11_results.csv`](exp%2010%20May%202026/iter11_resu
 
 Dua tahap:
 
-1. **Selector trifurkasi** (`selector_iter9_trifurc`) memilih estimator
+1. **Selector trifurkasi** (`M02_selector_trifurc`) memilih estimator
    dasar per profil pohon:
    - `b3frac ≥ 0,60` dan `n_total ≥ 25` → `median3_floor`
-   - `naive_B1 ≥ 3` dan `b3frac < 0,45` dan `naive_B4 < 10` → `adaptive_corrected`
-   - lainnya → `geometric_mean_blend`
+   - `naive_B1 ≥ 3` dan `b3frac < 0,45` dan `naive_B4 < 10` → `M19_divide_adaptive`
+   - lainnya → `M03_blend_geometric`
 2. **Koreksi split B2↔B3**: total `B2 + B3` dipertahankan, rasio
    dialokasikan ulang menurut frekuensi naive B2/B3. Menjawab ambiguitas
    visual B2↔B3 yang menyebabkan kesalahan kelas tetapi bukan kesalahan
@@ -88,7 +93,7 @@ Dua tahap:
 Pseudokode ringkas:
 
 ```
-pred = selector_iter9_trifurc(detections)
+pred = M02_selector_trifurc(detections)
 joint = pred["B2"] + pred["B3"]
 if joint > 0 and ada B2 atau B3 di detections:
     frac_b3 = n_b3 / (n_b2 + n_b3)
@@ -97,7 +102,7 @@ if joint > 0 and ada B2 atau B3 di detections:
 return pred
 ```
 
-Implementasi lengkap di [`algorithms/selector_with_b2b3.py`](algorithms/selector_with_b2b3.py).
+Implementasi lengkap di [`algorithms/M01_selector_b2b3.py`](algorithms/M01_selector_b2b3.py).
 
 ---
 
@@ -105,7 +110,7 @@ Implementasi lengkap di [`algorithms/selector_with_b2b3.py`](algorithms/selector
 
 Pembuktian dari [`exp_10 May 2026/iter13_FINAL_HONEST_STOP.md`](exp%2010%20May%202026/iter13_FINAL_HONEST_STOP.md):
 
-**MAE per-kelas pada `selector_with_b2b3`:**
+**MAE per-kelas pada `M01_selector_b2b3`:**
 
 | Kelas | MAE | Distribusi err 0 / 1 / ≥2 |
 |---|---:|---|
@@ -129,7 +134,7 @@ dalam constraint riset (no training, no embedding) tanpa overfit.
 
 | Iter | Tujuan | Outcome |
 |---|---|---|
-| 1 | Ensemble 3-estimator | winner (geometric_mean_blend) |
+| 1 | Ensemble 3-estimator | winner (M03_blend_geometric) |
 | 2 | Failure analysis | analisis (CSV residual) |
 | 3 | Cross-validated corrections | zero-improvement (honest report) |
 | 4 | Split analysis | winner (split-aware base) |
@@ -139,7 +144,7 @@ dalam constraint riset (no training, no embedding) tanpa overfit.
 | 8 | Multi-selector refinement | winner (refined trifurc) |
 | 9 | Final benchmark iter9 | winner (86,67%) |
 | 10 | Oracle ceiling analysis | 90,14% toolkit, 89,61% realistic |
-| 11 | Mode-vote + b2b3 split | **winner final → `selector_with_b2b3`** |
+| 11 | Mode-vote + b2b3 split | **winner final → `M01_selector_b2b3`** |
 | 12 | Total-first reformulation | zero-improvement |
 | 13 | MAE breakdown + stop | mathematical proof, loop dihentikan |
 
@@ -150,7 +155,7 @@ Detail tiap iterasi di [`exp_10 May 2026/iter*_report.md`](exp%2010%20May%202026
 ## Cara pemakaian
 
 ```python
-from algorithms.selector_with_b2b3 import predict
+from algorithms.M01_selector_b2b3 import predict
 
 dets = [
     {"class": "B3", "x_norm": 0.5, "y_norm": 0.4, "side_index": 0},

@@ -1,3 +1,3 @@
-domain,n_trees,n_json,n_txt_naive,B1,B2,B3,B4,total
+domain,n_trees,n_json,n_txt_M29_baseline_naive_sum,B1,B2,B3,B4,total
 DAMIMAS,854,228,626,1892,3354,6882,2981,15109
 LONSUM,99,0,99,17,152,679,174,1022
