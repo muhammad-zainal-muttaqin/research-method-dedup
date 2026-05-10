@@ -1,0 +1,4 @@
+split,n_trees,DAMIMAS,LONSUM,n_dets_mean,n_dets_med,gt_total_mean,gt_total_med,gt_B1_mean,gt_B2_mean,gt_B3_mean,gt_B4_mean,gt_B1_med,gt_B2_med,gt_B3_med,gt_B4_med,naive_to_gt_ratio_mean
+train,608,539,69,19.54,19.5,10.38,10.0,1.077,1.952,5.317,2.036,1.0,2.0,5.0,2.0,1.907
+val,178,163,15,19.73,20.0,10.26,10.0,0.719,1.904,5.337,2.303,0.0,2.0,5.0,2.0,1.983
+test,167,152,15,18.89,20.0,10.25,10.0,0.958,1.701,5.335,2.251,1.0,1.0,5.0,2.0,1.856

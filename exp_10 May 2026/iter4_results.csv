@@ -1,0 +1,11 @@
+method,acc_all,mae_all,acc_train,acc_val,acc_test,d_train,d_val,d_test,n_up,worst_drop,passes_multi_split
+geometric_mean_blend,86.15,0.3961,87.17,81.46,87.43,0.16,0.0,0.0,1,0.0,False
+baseline_floor_clamped_hybrid,86.04,0.405,87.01,81.46,87.43,0.0,0.0,0.0,0,0.0,False
+hybrid_w70_floor,86.04,0.4037,87.01,81.46,87.43,0.0,0.0,0.0,0,0.0,False
+naive_ceiling_clamp,86.04,0.405,87.01,81.46,87.43,0.0,0.0,0.0,0,0.0,False
+hybrid_w55_floor,86.04,0.405,87.01,81.46,87.43,0.0,0.0,0.0,0,0.0,False
+hybrid_w60_floor,86.04,0.405,87.01,81.46,87.43,0.0,0.0,0.0,0,0.0,False
+hybrid_w65_floor,86.04,0.4042,87.01,81.46,87.43,0.0,0.0,0.0,0,0.0,False
+median3_floor,85.94,0.393,86.35,83.15,87.43,-0.66,1.69,0.0,1,-0.66,False
+hybrid_w75_floor,85.83,0.4001,86.51,82.02,87.43,-0.5,0.56,0.0,1,-0.5,False
+density_floor_clamp,85.2,0.4161,86.02,81.46,86.23,-0.99,0.0,-1.2,0,-1.2,False

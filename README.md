@@ -6,27 +6,34 @@ Pipeline deduplikasi multi-tampilan untuk menghitung jumlah tandan unik per poho
 
 ## Hasil akhir
 
-Metode `hybrid_vis_corr` mencapai akurasi `Acc ±1` sebesar **86,04%** pada 953 pohon (`Brand-New-Dataset-YOLO/json/`), sesuai *benchmark* final tertanggal 10 Mei 2026.
+Metode **`selector_with_b2b3`** mencapai akurasi `Acc ±1` sebesar **86,67%**
+dengan `MAE` **0,3982** pada 953 pohon (`Brand-New-Dataset-YOLO/json/`),
+sesuai eksperimen final tertanggal 10 Mei 2026 (iterasi 1–13). Detail di
+[`report_10Mei2026.md`](report_10Mei2026.md). Kode produksi:
+[`algorithms/selector_with_b2b3.py`](algorithms/selector_with_b2b3.py).
 
-### Lima metode terbaik pada 953 pohon
+### Tujuh metode terbaik pada 953 pohon
 
 | Peringkat | Metode | `Acc ±1` | `MAE` | Pohon gagal |
 |---:|---|---:|---:|---:|
-| 1 | `hybrid_vis_corr` | **86,04%** | 0,408 | 133 |
-| 2 | `visibility` | 85,94% | 0,396 | 134 |
-| 3 | `side_coverage` | 85,94% | 0,393 | 134 |
-| 4 | `density_scaled_vis` | 85,94% | 0,402 | 134 |
-| 5 | `v9_median_strong5` | 85,73% | 0,401 | 136 |
+| 1 | `selector_with_b2b3` | **86,67%** | **0,3982** | 127 |
+| 2 | `selector_iter9_trifurc` | 86,67% | 0,3987 | 127 |
+| 3 | `geometric_mean_blend` | 86,15% | 0,3961 | 132 |
+| 4 | `floor_clamped_hybrid` | 86,04% | 0,4050 | 133 |
+| 5 | `hybrid_vis_corr` | 86,04% | 0,4077 | 133 |
+| 6 | `visibility` | 85,94% | 0,3960 | 134 |
+| 7 | `side_coverage` | 85,94% | 0,3930 | 134 |
 
 ### Rekomendasi pemakaian
 
 | Kebutuhan | Pilihan |
 |---|---|
-| Akurasi tertinggi (produksi) | `hybrid_vis_corr` |
+| Akurasi tertinggi (produksi) | `selector_with_b2b3` (86,67%, MAE 0,3982) |
+| Alternatif paling sederhana | `hybrid_vis_corr` (86,04%, satu baris bobot) |
 | Tercepat dan tahan derau koordinat | `v1_corrected` (0,005 ms/pohon, akurasi 84,37%) |
 | Hindari di produksi | `v9_selector` — terlalu cocok (*overfit*) pada dataset 228, turun 12,69 poin persen di 953 |
 
-Sumber data: [`reports/dedup_brand_new_953/accuracy_953.csv`](reports/dedup_brand_new_953/accuracy_953.csv).
+Sumber data: [`exp_10 May 2026/iter11_results.csv`](exp%2010%20May%202026/iter11_results.csv) dan [`reports/dedup_brand_new_953/accuracy_953.csv`](reports/dedup_brand_new_953/accuracy_953.csv).
 
 ---
 
@@ -61,7 +68,10 @@ Daftar lengkap 16 metode aktif diurutkan menurun berdasarkan `Acc ±1`. Hasil di
 
 | Metode | `Acc ±1` | `MAE` | `mean_total_err` | Pohon gagal |
 |---|---:|---:|---:|---:|
-| `hybrid_vis_corr` | **86,04%** | 0,408 | 1,631 | 133 |
+| `selector_with_b2b3` | **86,67%** | **0,3982** | 1,593 | 127 |
+| `selector_iter9_trifurc` | 86,67% | 0,3987 | 1,595 | 127 |
+| `geometric_mean_blend` | 86,15% | 0,3961 | 1,584 | 132 |
+| `hybrid_vis_corr` | 86,04% | 0,408 | 1,631 | 133 |
 | `visibility` | 85,94% | 0,396 | 1,582 | 134 |
 | `side_coverage` | 85,94% | 0,393 | 1,572 | 134 |
 | `density_scaled_vis` | 85,94% | 0,402 | 1,610 | 134 |
@@ -91,7 +101,8 @@ Kenaikan ukuran dataset dari 228 menjadi 953 pohon memengaruhi setiap metode sec
 
 | Metode | 228 | 478 | 727 | 882 | **953** | Delta 228→953 |
 |---|---:|---:|---:|---:|---:|---:|
-| `hybrid_vis_corr` | — | — | — | — | **86,04%** | — (puncak baru) |
+| `selector_with_b2b3` | — | — | — | — | **86,67%** | — (puncak baru, 10 Mei 2026) |
+| `hybrid_vis_corr` | — | — | — | — | 86,04% | — (juara sebelumnya) |
 | `visibility` / `v2_visibility` | 92,54% | 90,38% | 89,41% | 89,34% | 85,94% | −6,60 pp |
 | `v5_best_visibility` | 92,54% | 90,38% | 89,41% | 89,34% | 85,94% | −6,60 pp |
 | `v9_b2_median_v6` | 96,05% | 92,68% | 89,00% | 88,78% | 84,78% | −11,27 pp |
@@ -104,12 +115,13 @@ Kenaikan ukuran dataset dari 228 menjadi 953 pohon memengaruhi setiap metode sec
 | `v6_selector` | 96,05% | 91,84% | 88,86% | 88,55% | 84,26% | −11,79 pp |
 | `v5_adaptive_corrected` | 93,86% | 89,96% | 86,11% | 86,28% | 82,58% | −11,28 pp |
 
-Empat poin penting dari regresi ini:
+Lima poin penting dari regresi ini:
 
-1. `hybrid_vis_corr` menjadi puncak baru pada 953. Komposisi sederhana mengalahkan seluruh *selector* berbasis aturan kompleks.
-2. Metode sederhana yaitu `v1_corrected` dan `v2_visibility` paling stabil dengan delta hanya 6,4 hingga 6,6 poin persen — generalisasi terbaik.
-3. `v9_selector` turun 12,69 poin persen — bukti kuat bahwa *narrow overrides* yang dirancang pada dataset 228 terlalu cocok pada pola lokal dan tidak generalisasi.
-4. Pencocokan ketat (`naive`, `relaxed_match`) gagal total pada skala penuh, mengonfirmasi bahwa derau koordinat label TXT tidak dapat diatasi tanpa *embedding* lintas tampilan.
+1. `selector_with_b2b3` adalah puncak baru pada 953 (86,67%, MAE 0,3982). Trifurkasi selector + koreksi split B2↔B3 mengalahkan `hybrid_vis_corr` 0,63 poin persen sambil memangkas MAE 2,32%. Detail: [`report_10Mei2026.md`](report_10Mei2026.md).
+2. `hybrid_vis_corr` (juara sebelumnya). Komposisi sederhana mengalahkan seluruh *selector* berbasis aturan kompleks.
+3. Metode sederhana yaitu `v1_corrected` dan `v2_visibility` paling stabil dengan delta hanya 6,4 hingga 6,6 poin persen — generalisasi terbaik.
+4. `v9_selector` turun 12,69 poin persen — bukti kuat bahwa *narrow overrides* yang dirancang pada dataset 228 terlalu cocok pada pola lokal dan tidak generalisasi.
+5. Pencocokan ketat (`naive`, `relaxed_match`) gagal total pada skala penuh, mengonfirmasi bahwa derau koordinat label TXT tidak dapat diatasi tanpa *embedding* lintas tampilan.
 
 Sumber: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_727/`, `reports/benchmark_882/`, dan `reports/dedup_brand_new_953/`.
 
@@ -133,7 +145,9 @@ Setiap generasi metode dijelaskan ringkas di bawah ini. Detail rumus, derivasi p
 
 **v9 — `v9_selector`**: *Narrow overrides* di atas v6, mencapai 97,37% pada dataset 228 dengan menambah aturan khusus untuk empat *regime* sempit. Skor turun drastis menjadi 84,68% pada 953 — bukti klasik *overfit*.
 
-**`hybrid_vis_corr` (juara 953)**: Rata-rata terbobot dari `visibility` dan `adaptive_corrected` dengan komposisi 60% visibility dan 40% *adaptive*. Sederhana, tidak punya parameter yang diturunkan dari satu *snapshot* tertentu, sehingga generalisasi paling baik pada dataset penuh.
+**`hybrid_vis_corr`**: Rata-rata terbobot dari `visibility` dan `adaptive_corrected` dengan komposisi 60% visibility dan 40% *adaptive*. Juara 953 sebelum eksperimen 10 Mei 2026.
+
+**`selector_with_b2b3` (juara 953 saat ini)**: Selector trifurkasi + koreksi split B2↔B3. Tahap 1 memilih estimator dasar per profil pohon (B3-dominan padat → median3_floor, B1 cukup + B3 sedikit + B4 sedikit → adaptive_corrected, lainnya → geometric_mean_blend). Tahap 2 mempertahankan total `B2 + B3` namun mengalokasikan ulang rasio menggunakan frekuensi naive — menjawab ambiguitas visual B2↔B3. Hasil 86,67% / MAE 0,3982 pada 953 pohon, validated train/val/test held-out tanpa overfit (worst_drop 0,00 pp).
 
 Pelajaran utama: pencocokan *bbox* individual gagal pada label TXT bernoise, koreksi statistik agregat jauh lebih efektif, dan ambiguitas B2↔B3 menjadi *ceiling* irreducible yang membatasi seluruh metode.
 
@@ -218,6 +232,7 @@ Pekerjaan ini bersifat 100% algoritmik dan tidak boleh memakai: jaringan Siamese
 ## Dokumen pelengkap
 
 - [`RESEARCH.md`](RESEARCH.md) — dokumen riset utama, mulai dari Bagian 0.
+- [`report_10Mei2026.md`](report_10Mei2026.md) — laporan eksperimen final 10 Mei 2026 (`selector_with_b2b3`).
 - [`report_05Mei2026.md`](report_05Mei2026.md) — laporan rinci hasil pada 882 pohon.
 - [`reports/benchmark_multidim/REPORT.md`](reports/benchmark_multidim/REPORT.md) — laporan multi-dimensi (akurasi, kecepatan, *robustness*, *domain*).
 - [`CLAUDE.md`](CLAUDE.md) dan [`AGENTS.md`](AGENTS.md) — panduan operasional untuk asisten otomatis.

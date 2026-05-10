@@ -1,0 +1,12 @@
+method,acc,mae,n_fail,acc_train,acc_val,acc_test
+selector_iter9,86.67,0.3987,127,87.34,82.58,88.62
+geometric_mean_blend,86.15,0.3961,132,87.17,81.46,87.43
+b2b3_joint_split,86.15,0.3956,132,87.17,81.46,87.43
+median3_floor,85.94,0.393,134,86.35,83.15,87.43
+visibility,85.94,0.3956,134,86.35,83.15,87.43
+density_scaled_vis,85.94,0.4024,134,86.35,83.15,87.43
+side_coverage,85.94,0.393,134,86.35,83.15,87.43
+adaptive_corrected,82.58,0.4599,166,82.89,79.21,85.03
+area_clustered_tight,13.75,1.4418,822,12.5,15.17,16.77
+area_clustered_default,7.66,1.6716,880,7.57,7.87,7.78
+area_clustered_loose,6.61,1.7705,890,7.07,6.74,4.79

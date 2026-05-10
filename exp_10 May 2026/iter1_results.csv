@@ -1,0 +1,16 @@
+method,acc_within1_pct,MAE,mean_total_err,n_fail
+baseline_hybrid_vis_corr,86.04,0.4077,1.6306,133
+triple_avg,86.04,0.4063,1.6254,133
+floor_clamped_hybrid,86.04,0.405,1.6201,133
+hybrid_w65,86.04,0.4069,1.6275,133
+hybrid_w70,86.04,0.4063,1.6254,133
+hybrid_w55,86.04,0.4077,1.6306,133
+hybrid_w60,86.04,0.4077,1.6306,133
+floor_clamped_vis,85.94,0.393,1.5719,134
+trimmed_mean5,85.94,0.4019,1.6076,134
+baseline_visibility,85.94,0.3956,1.5824,134
+median_top5,85.94,0.4022,1.6086,134
+hybrid_w80,85.94,0.4008,1.6034,134
+hybrid_w75,85.83,0.4027,1.6107,135
+hybrid_w50,83.63,0.437,1.7482,156
+hybrid_w45,83.21,0.4436,1.7744,160

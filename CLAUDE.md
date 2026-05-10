@@ -70,8 +70,11 @@ python scripts/dedup_nonjson_compare.py     # non-JSON validation (legacy, no mi
 
 | Rank | Method | Acc ±1 | MAE | n_fail |
 |---:|---|---:|---:|---:|
-| 1 | `hybrid_vis_corr` | **86.04%** | 0.408 | 133 |
-| 2 | `visibility` | 85.94% | 0.396 | 134 |
+| 1 | `selector_with_b2b3` | **86.67%** | **0.3982** | 127 |
+| 2 | `selector_iter9_trifurc` | 86.67% | 0.3987 | 127 |
+| 3 | `geometric_mean_blend` | 86.15% | 0.3961 | 132 |
+| 4 | `hybrid_vis_corr` | 86.04% | 0.408 | 133 |
+| 5 | `visibility` | 85.94% | 0.396 | 134 |
 | 3 | `side_coverage` | 85.94% | 0.393 | 134 |
 | 4 | `density_scaled_vis` | 85.94% | 0.402 | 134 |
 | 5 | `v9_median_strong5` | 85.73% | 0.401 | 136 |
@@ -90,7 +93,8 @@ python scripts/dedup_nonjson_compare.py     # non-JSON validation (legacy, no mi
 Source: `reports/dedup_brand_new_953/accuracy_953.csv`.
 
 **Surprising findings:**
-- **`hybrid_vis_corr` (#1)** — simple weighted avg of visibility + adaptive_corrected wins at scale
+- **`selector_with_b2b3` (#1, 2026-05-10)** — selector trifurc + B2↔B3 split correction. +0.63 pp over hybrid_vis_corr, −2.32% MAE. Validated train/val/test held-out, no overfit. Code: `algorithms/selector_with_b2b3.py`. Report: `report_10Mei2026.md`.
+- **`hybrid_vis_corr`** — previous champion; simple weighted avg of visibility + adaptive_corrected
 - **v9_selector regresses to 84.68%** — confirms severe overfit on 228 dev set (97.37%)
 - **Simple visibility family dominates** (top 4 all visibility variants)
 - **Strict matching (`relaxed_match`, `naive`) catastrophically fails** at scale
@@ -129,7 +133,8 @@ Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_
 | `v5_adaptive_corrected` | 93.86% | 89.96% | 86.11% | 86.28% | 82.58% | −11.28 pp |
 | `v2_visibility` | 92.54% | 90.38% | 89.41% | 89.34% | **85.94%** | **−6.60 pp** |
 | `v1_corrected` | 90.79% | 89.12% | 87.90% | 88.21% | 84.37% | **−6.42 pp** |
-| `hybrid_vis_corr` | — | — | — | — | **86.04%** | — (new top) |
+| `hybrid_vis_corr` | — | — | — | — | 86.04% | — (prev champ) |
+| `selector_with_b2b3` | — | — | — | — | **86.67%** | — (new top, 2026-05-10) |
 
 **Key regression findings (UPDATED 2026-05-10 with 953-tree results):**
 - `hybrid_vis_corr` **NEW TOP** at 953 (86.04%) — weighted mix of visibility + adaptive_corrected
@@ -139,8 +144,9 @@ Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_
 - All complex methods (v6/v7/v8/v9 selectors) regress 9–13 pp from 228 → 953
 - All methods land 82–86% at 953 trees (no catastrophic drop, but ceiling lower than expected)
 
-**Recommendations (UPDATED 2026-05-10):**
-- **Production / full 953-tree dataset** → `hybrid_vis_corr` (86.04%) — top of canonical benchmark
+**Recommendations (UPDATED 2026-05-10 post-iter11):**
+- **Production / full 953-tree dataset** → `selector_with_b2b3` (86.67%, MAE 0.3982) — current top, validated held-out, no overfit
+- **Simplest fallback** → `hybrid_vis_corr` (86.04%) — single-line weighted blend
 - **Historical 228-tree set** → `v9_selector` (97.37%) — overfits, dev-set only
 - **No missing JSON anymore** — Brand-New-Dataset-YOLO is complete
 
@@ -166,6 +172,7 @@ Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_
 | v8 | `stacking_bracketed_v7` | 94.30% | entropy/per-side signals add nothing |
 | v9 | `v9_selector` | **97.37%** (228) / 84.68% (953) | narrow overrides on v6 — best on 228, severely overfits at scale |
 | **— production (2026-05-10)** | `hybrid_vis_corr` | **86.04%** (953) | weighted vis + adaptive_corrected — wins on full canonical |
+| **— iter11 (2026-05-10)** | `selector_with_b2b3` | **86.67%** (953) | selector trifurc + B2↔B3 split correction — new top, validated held-out |
 
 **Key takeaway:** strict matching (Hungarian, graph, cluster) **fails** on noisy TXT labels (<20% accuracy). Adaptive statistical correction + regime-routing wins on small dev sets but **overfits**. At full 953-tree scale, simpler methods (`hybrid_vis_corr`, `visibility`) generalize best. B2↔B3 ambiguity is the irreducible ceiling, not label noise.
 

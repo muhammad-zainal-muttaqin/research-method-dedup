@@ -24,3 +24,11 @@
 #   14    floor_anchor_50.py        v8   69.74%   0.4211  69   ← spesialis
 #   —     multi_consensus.py        v8   18.86%   0.9583  185  ← undercount ekstrem
 #   —     per_side_median.py        v8   18.86%   0.9583  185  ← undercount ekstrem
+#
+# Benchmark 953 pohon Brand-New-Dataset-YOLO (canonical, 2026-05-10):
+#   Rank  File                      Acc      MAE     Gagal
+#   1     selector_with_b2b3.py     86.67%   0.3982  127
+#   2     selector_iter9_trifurc    86.67%   0.3987  127
+#   3     geometric_mean_blend      86.15%   0.3961  132
+#   4     hybrid_vis_corr.py        86.04%   0.4077  133
+#   5     visibility.py             85.94%   0.3960  134
