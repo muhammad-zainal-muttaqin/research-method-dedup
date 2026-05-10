@@ -7,28 +7,30 @@ Pipeline deduplikasi multi-tampilan untuk menghitung jumlah tandan unik per poho
 ## Hasil akhir
 
 Metode **`M01_selector_b2b3`** mencapai akurasi `Acc ±1` sebesar **86,67%**
-dengan `MAE` **0,3982** pada 953 pohon (`Brand-New-Dataset-YOLO/json/`),
+dengan **Macro class-MAE 0,3982** (Total-count MAE 1,4145, Total ±1 74,08%, Exact profile 26,34%) pada 953 pohon (`Brand-New-Dataset-YOLO/json/`),
 sesuai eksperimen final tertanggal 10 Mei 2026 (iterasi 1–13). Detail di
 [`report_10Mei2026.md`](report_10Mei2026.md). Kode produksi:
 [`algorithms/M01_selector_b2b3.py`](algorithms/M01_selector_b2b3.py).
 
 ### Tujuh metode terbaik pada 953 pohon
 
-| Peringkat | Metode | `Acc ±1` | `MAE` | Macro class-MAE | Exact profile | Total ±1 | Pohon gagal |
-|---:|---|---:|---:|---:|---:|---:|---:|
-| 1 | `M01_selector_b2b3` | **86,67%** | **0,3982** | 0,3982 | 26,34% | 74,08% | 127 |
-| 2 | `M02_selector_trifurc` | 86,67% | 0,3987 | 0,3987 | 26,34% | 74,08% | 127 |
-| 3 | `M03_blend_geometric` | 86,15% | 0,3961 | 0,3961 | 26,86% | 74,50% | 132 |
-| 4 | `M04_blend_floor_clamped` | 86,04% | 0,4050 | 0,4050 | 25,81% | 74,19% | 133 |
-| 5 | `M05_blend_vis_divide` | 86,04% | 0,4077 | 0,4077 | 25,29% | 73,98% | 133 |
-| 6 | `visibility` | 85,94% | 0,3956 | 0,3956 | 25,29% | 73,56% | 134 |
-| 7 | `M07_weight_coverage` | 85,94% | 0,3930 | 0,3930 | 25,81% | 73,77% | 134 |
+Catatan: pada dataset 4 kelas berimbang (n sama tiap kelas), `Macro class-MAE` ≡ MAE rata-rata flat. Kolom MAE redundan sengaja dihilangkan.
+
+| Peringkat | Metode | `Acc ±1` | Macro class-MAE | `MAE_B1` | `MAE_B2` | `MAE_B3` | `MAE_B4` | Exact profile | Total-count MAE | Total ±1 | bias B1 | bias B2 | bias B3 | bias B4 | Pohon gagal |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | `M01_selector_b2b3` | **86,67%** | **0,3982** | 0,1805 | 0,3463 | 0,7566 | 0,3095 | 26,34% | 1,4145 | 74,08% | +0,1448 | +0,1763 | +0,1689 | −0,1039 | 127 |
+| 2 | `M02_selector_trifurc` | 86,67% | 0,3987 | 0,1805 | 0,3484 | 0,7566 | 0,3095 | 26,34% | 1,4145 | 74,08% | +0,1448 | +0,1763 | +0,1689 | −0,1039 | 127 |
+| 3 | `M03_blend_geometric` | 86,15% | 0,3961 | 0,1752 | 0,3379 | 0,7671 | 0,3043 | 26,86% | 1,4061 | 74,50% | +0,1417 | +0,1322 | +0,1522 | −0,1700 | 132 |
+| 4 | `M04_blend_floor_clamped` | 86,04% | 0,4050 | 0,2078 | 0,3400 | 0,7681 | 0,3043 | 25,81% | 1,4103 | 74,19% | +0,1910 | +0,1343 | +0,1616 | −0,1700 | 133 |
+| 5 | `M05_blend_vis_divide` | 86,04% | 0,4077 | 0,2078 | 0,3400 | 0,7692 | 0,3137 | 25,29% | 1,4145 | 73,98% | +0,1910 | +0,1343 | +0,1605 | −0,1794 | 133 |
+| 6 | `M06_weight_visibility` | 85,94% | 0,3956 | 0,2078 | 0,3326 | 0,7314 | 0,3106 | 25,29% | 1,3641 | 73,56% | +0,1910 | +0,1228 | +0,0976 | −0,1973 | 134 |
+| 7 | `M07_weight_coverage` | 85,94% | 0,3930 | 0,2078 | 0,3326 | 0,7303 | 0,3012 | 25,81% | 1,3599 | 73,77% | +0,1910 | +0,1228 | +0,0986 | −0,1878 | 134 |
 
 ### Rekomendasi pemakaian
 
 | Kebutuhan | Pilihan |
 |---|---|
-| Akurasi tertinggi (produksi) | `M01_selector_b2b3` (86,67%, MAE 0,3982) |
+| Akurasi tertinggi (produksi) | `M01_selector_b2b3` (86,67%, Macro class-MAE 0,3982) |
 | Alternatif paling sederhana | `M05_blend_vis_divide` (86,04%, satu baris bobot) |
 | Tercepat dan tahan derau koordinat | `M15_divide_global` (0,005 ms/pohon, akurasi 84,37%) |
 | Hindari di produksi | `M12_selector_overrides` — terlalu cocok (*overfit*) pada dataset 228, turun 12,69 poin persen di 953 |
@@ -77,32 +79,39 @@ Sumber *ground truth*: web app [`tools_sawit/`](tools_sawit/) dengan skema v2 �
 
 ## Tabel *benchmark* lengkap pada 953 pohon
 
-Daftar lengkap 16 metode aktif diurutkan menurun berdasarkan `Acc ±1`. Hasil dihitung dengan `scripts/dedup_brand_new_953.py`.
+Daftar lengkap 29 metode diurutkan menurun berdasarkan `Acc ±1`. Hasil dihitung dengan `scripts/dedup_brand_new_953.py`. Kolom mengikuti enam metrik wajib di `CLAUDE.md` (Macro class-MAE, MAE per kelas, Exact profile, Total-count MAE, Total ±1, dan bias per kelas).
 
-| Metode | `Acc ±1` | `MAE` | Macro class-MAE | Exact profile | Total ±1 | `mean_total_err` | Pohon gagal |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| `M01_selector_b2b3` | **86,67%** | **0,3982** | 0,3982 | 26,34% | 74,08% | 1,593 | 127 |
-| `M02_selector_trifurc` | 86,67% | 0,3987 | 0,3987 | 26,34% | 74,08% | 1,595 | 127 |
-| `M03_blend_geometric` | 86,15% | 0,3961 | 0,3961 | 26,86% | 74,50% | 1,584 | 132 |
-| `M05_blend_vis_divide` | 86,04% | 0,4077 | 0,4077 | 25,29% | 73,98% | 1,631 | 133 |
-| `visibility` | 85,94% | 0,3956 | 0,3956 | 25,29% | 73,56% | 1,582 | 134 |
-| `M07_weight_coverage` | 85,94% | 0,3930 | 0,3930 | 25,81% | 73,77% | 1,572 | 134 |
-| `M08_divide_density_vis` | 85,94% | 0,4024 | 0,4024 | 25,39% | 73,56% | 1,610 | 134 |
-| `M09_median_strong5` | 85,73% | 0,4006 | 0,4006 | 27,39% | 72,51% | 1,602 | 136 |
-| `M10_entropy_divide` | 84,78% | 0,4507 | 0,4507 | 23,92% | 66,32% | 1,803 | 145 |
-| `M11_median_b2` | 84,78% | 0,4294 | 0,4294 | 23,08% | 69,78% | 1,718 | 145 |
-| `M18_entropy_stack` | 84,78% | 0,4507 | 0,4507 | 23,92% | 66,32% | 1,803 | 145 |
-| `M12_selector_overrides` | 84,68% | 0,4410 | 0,4410 | 22,35% | 68,21% | 1,764 | 146 |
-| `M13_stack_bracket` | 84,58% | 0,4284 | 0,4284 | 25,39% | 68,52% | 1,714 | 147 |
-| `M14_stack_density` | 84,58% | 0,4347 | 0,4347 | 23,92% | 67,89% | 1,739 | 147 |
-| `corrected` | 84,37% | 0,4158 | 0,4158 | 23,29% | 68,52% | 1,663 | 149 |
-| `M16_boost_b2b4` | 84,37% | 0,4111 | 0,4111 | 26,86% | 71,98% | 1,644 | 149 |
-| `M17_selector_regime` | 84,26% | 0,4436 | 0,4436 | 21,93% | 67,89% | 1,774 | 150 |
-| `M19_divide_adaptive` | 82,58% | 0,4599 | 0,4599 | 21,51% | 65,58% | 1,840 | 166 |
-| `M20_weight_visibility_grid` | 80,80% | 0,4596 | 0,4596 | 19,73% | 65,90% | 1,838 | 183 |
-| `M24_weight_class_aware` | 70,93% | 0,5456 | 0,5456 | 12,38% | 58,45% | 2,183 | 277 |
-| `M28_baseline_match_strict` | 5,98% | 1,8114 | 1,8114 | 2,41% | 5,04% | 7,246 | 896 |
-| `M29_baseline_naive_sum` | 3,99% | 2,2804 | 2,2804 | 1,89% | 2,83% | 9,122 | 915 |
+| Metode | `Acc ±1` | Macro class-MAE | `MAE_B1` | `MAE_B2` | `MAE_B3` | `MAE_B4` | Exact profile | Total-count MAE | Total ±1 | bias B1 | bias B2 | bias B3 | bias B4 | Pohon gagal |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `M01_selector_b2b3` | **86,67%** | **0,3982** | 0,1805 | 0,3463 | 0,7566 | 0,3095 | 26,34% | 1,4145 | 74,08% | +0,1448 | +0,1763 | +0,1689 | −0,1039 | 127 |
+| `M02_selector_trifurc` | 86,67% | 0,3987 | 0,1805 | 0,3484 | 0,7566 | 0,3095 | 26,34% | 1,4145 | 74,08% | +0,1448 | +0,1763 | +0,1689 | −0,1039 | 127 |
+| `M03_blend_geometric` | 86,15% | 0,3961 | 0,1752 | 0,3379 | 0,7671 | 0,3043 | 26,86% | 1,4061 | 74,50% | +0,1417 | +0,1322 | +0,1522 | −0,1700 | 132 |
+| `M04_blend_floor_clamped` | 86,04% | 0,4050 | 0,2078 | 0,3400 | 0,7681 | 0,3043 | 25,81% | 1,4103 | 74,19% | +0,1910 | +0,1343 | +0,1616 | −0,1700 | 133 |
+| `M05_blend_vis_divide` | 86,04% | 0,4077 | 0,2078 | 0,3400 | 0,7692 | 0,3137 | 25,29% | 1,4145 | 73,98% | +0,1910 | +0,1343 | +0,1605 | −0,1794 | 133 |
+| `M06_weight_visibility` | 85,94% | 0,3956 | 0,2078 | 0,3326 | 0,7314 | 0,3106 | 25,29% | 1,3641 | 73,56% | +0,1910 | +0,1228 | +0,0976 | −0,1973 | 134 |
+| `M07_weight_coverage` | 85,94% | 0,3930 | 0,2078 | 0,3326 | 0,7303 | 0,3012 | 25,81% | 1,3599 | 73,77% | +0,1910 | +0,1228 | +0,0986 | −0,1878 | 134 |
+| `M08_divide_density_vis` | 85,94% | 0,4024 | 0,2078 | 0,3389 | 0,7513 | 0,3116 | 25,39% | 1,3914 | 73,56% | +0,1910 | +0,1312 | +0,1259 | −0,1962 | 134 |
+| `M09_median_strong5` | 85,73% | 0,4006 | 0,1637 | 0,3295 | 0,8132 | 0,2959 | 27,39% | 1,4638 | 72,51% | +0,1259 | +0,1049 | +0,3389 | −0,1112 | 136 |
+| `M10_entropy_divide` | 84,78% | 0,4507 | 0,1857 | 0,3987 | 0,8741 | 0,3442 | 23,92% | 1,6348 | 66,32% | +0,1626 | +0,2497 | +0,4460 | +0,1007 | 145 |
+| `M11_median_b2` | 84,78% | 0,4294 | 0,1931 | 0,3295 | 0,8646 | 0,3305 | 23,08% | 1,5603 | 69,78% | +0,1385 | +0,1049 | +0,4407 | +0,0220 | 145 |
+| `M18_entropy_stack` | 84,78% | 0,4507 | 0,1857 | 0,3987 | 0,8741 | 0,3442 | 23,92% | 1,6348 | 66,32% | +0,1626 | +0,2497 | +0,4460 | +0,1007 | 145 |
+| `M12_selector_overrides` | 84,68% | 0,4410 | 0,1931 | 0,3799 | 0,8615 | 0,3295 | 22,35% | 1,6044 | 68,21% | +0,1385 | +0,2371 | +0,4313 | +0,0210 | 146 |
+| `M13_stack_bracket` | 84,58% | 0,4284 | 0,1637 | 0,3683 | 0,8573 | 0,3242 | 25,39% | 1,5729 | 68,52% | +0,1259 | +0,2088 | +0,4082 | +0,0304 | 147 |
+| `M14_stack_density` | 84,58% | 0,4347 | 0,1773 | 0,3683 | 0,8615 | 0,3316 | 23,92% | 1,5939 | 67,89% | +0,1123 | +0,2088 | +0,4040 | +0,0231 | 147 |
+| `M15_divide_global` | 84,37% | 0,4158 | 0,2015 | 0,3316 | 0,8164 | 0,3137 | 23,29% | 1,4596 | 68,52% | +0,1847 | +0,1364 | +0,3232 | −0,0325 | 149 |
+| `M16_boost_b2b4` | 84,37% | 0,4111 | 0,1637 | 0,3253 | 0,8573 | 0,2980 | 26,86% | 1,4911 | 71,98% | +0,1259 | +0,0504 | +0,4082 | −0,1238 | 149 |
+| `M17_selector_regime` | 84,26% | 0,4436 | 0,1931 | 0,3861 | 0,8646 | 0,3305 | 21,93% | 1,6149 | 67,89% | +0,1385 | +0,2497 | +0,4407 | +0,0220 | 150 |
+| `M19_divide_adaptive` | 82,58% | 0,4599 | 0,1952 | 0,3746 | 0,9307 | 0,3389 | 21,51% | 1,6905 | 65,58% | +0,1364 | +0,2340 | +0,5194 | +0,0661 | 166 |
+| `M20_weight_visibility_grid` | 80,80% | 0,4596 | 0,2424 | 0,3767 | 0,9119 | 0,3075 | 19,73% | 1,5656 | 65,90% | +0,2298 | +0,2256 | +0,5446 | −0,1207 | 183 |
+| `M23_agree_side` | 80,80% | 0,4273 | 0,1102 | 0,3463 | 0,8888 | 0,3641 | 22,35% | 1,5603 | 65,37% | −0,0010 | −0,0504 | −0,1647 | −0,2298 | 183 |
+| `M27_weight_visibility_adaptive` | 80,27% | 0,4790 | 0,2602 | 0,3882 | 0,9412 | 0,3263 | 18,57% | 1,6474 | 64,01% | +0,2476 | +0,2539 | +0,5572 | −0,0850 | 188 |
+| `M24_weight_class_aware` | 70,93% | 0,5456 | 0,2015 | 0,4858 | 1,1878 | 0,3075 | 12,38% | 1,8111 | 58,45% | +0,1847 | +0,3872 | +0,9696 | −0,2046 | 277 |
+| `M22_anchor_floor50` | 69,99% | 0,4525 | 0,1312 | 0,3158 | 1,0252 | 0,3379 | 16,89% | 1,5540 | 60,55% | +0,0703 | −0,0388 | −0,7880 | −0,2392 | 286 |
+| `M25_consensus_multi` | 25,29% | 0,9121 | 0,1826 | 0,5383 | 2,1731 | 0,7545 | 5,46% | 3,6401 | 16,79% | −0,1763 | −0,5383 | −2,1689 | −0,7545 | 712 |
+| `M26_median_per_side` | 25,29% | 0,9121 | 0,1826 | 0,5383 | 2,1731 | 0,7545 | 5,46% | 3,6401 | 16,79% | −0,1763 | −0,5383 | −2,1689 | −0,7545 | 712 |
+| `M28_baseline_match_strict` | 5,98% | 1,8114 | 0,4680 | 1,1196 | 4,3221 | 1,3358 | 2,41% | 7,0147 | 5,04% | −0,3316 | −1,0357 | −4,3200 | −1,3211 | 896 |
+| `M29_baseline_naive_sum` | 3,99% | 2,2804 | 1,1511 | 1,7775 | 4,8342 | 1,3589 | 1,89% | 9,1217 | 2,83% | +1,1511 | +1,7775 | +4,8342 | +1,3589 | 915 |
+| `M21_ordinal_b3` | 0,73% | 3,5842 | 1,9895 | 2,8993 | 6,3242 | 3,1238 | 0,00% | 14,3368 | 0,00% | −1,9895 | −2,8993 | −6,3242 | −3,1238 | 946 |
 
 Catatan: metode `M29_baseline_naive_sum`, `M28_baseline_match_strict`, dan `M21_ordinal_b3` sengaja dipertahankan sebagai pembanding dan bukti bahwa pendekatan pencocokan langsung tidak dapat diandalkan di skala penuh.
 
@@ -133,7 +142,7 @@ Kenaikan ukuran dataset dari 228 menjadi 953 pohon memengaruhi setiap metode sec
 
 Lima poin penting dari regresi ini:
 
-1. `M01_selector_b2b3` adalah puncak baru pada 953 (86,67%, MAE 0,3982). Trifurkasi selector + koreksi split B2↔B3 mengalahkan `M05_blend_vis_divide` 0,63 poin persen sambil memangkas MAE 2,32%. Detail: [`report_10Mei2026.md`](report_10Mei2026.md).
+1. `M01_selector_b2b3` adalah puncak baru pada 953 (86,67%, Macro class-MAE 0,3982). Trifurkasi selector + koreksi split B2↔B3 mengalahkan `M05_blend_vis_divide` 0,63 poin persen sambil memangkas Macro class-MAE 2,32%. Detail: [`report_10Mei2026.md`](report_10Mei2026.md).
 2. `M05_blend_vis_divide` (juara sebelumnya). Komposisi sederhana mengalahkan seluruh *selector* berbasis aturan kompleks.
 3. Metode sederhana yaitu `M15_divide_global` dan `M06_weight_visibility` paling stabil dengan delta hanya 6,4 hingga 6,6 poin persen — generalisasi terbaik.
 4. `M12_selector_overrides` turun 12,69 poin persen — bukti kuat bahwa *narrow overrides* yang dirancang pada dataset 228 terlalu cocok pada pola lokal dan tidak generalisasi.
@@ -163,7 +172,7 @@ Setiap generasi metode dijelaskan ringkas di bawah ini. Detail rumus, derivasi p
 
 **`M05_blend_vis_divide`**: Rata-rata terbobot dari `visibility` dan `M19_divide_adaptive` dengan komposisi 60% visibility dan 40% *adaptive*. Juara 953 sebelum eksperimen 10 Mei 2026.
 
-**`M01_selector_b2b3` (juara 953 saat ini)**: Selector trifurkasi + koreksi split B2↔B3. Tahap 1 memilih estimator dasar per profil pohon (B3-dominan padat → median3_floor, B1 cukup + B3 sedikit + B4 sedikit → M19_divide_adaptive, lainnya → M03_blend_geometric). Tahap 2 mempertahankan total `B2 + B3` namun mengalokasikan ulang rasio menggunakan frekuensi naive — menjawab ambiguitas visual B2↔B3. Hasil 86,67% / MAE 0,3982 pada 953 pohon, validated train/val/test held-out tanpa overfit (worst_drop 0,00 pp).
+**`M01_selector_b2b3` (juara 953 saat ini)**: Selector trifurkasi + koreksi split B2↔B3. Tahap 1 memilih estimator dasar per profil pohon (B3-dominan padat → median3_floor, B1 cukup + B3 sedikit + B4 sedikit → M19_divide_adaptive, lainnya → M03_blend_geometric). Tahap 2 mempertahankan total `B2 + B3` namun mengalokasikan ulang rasio menggunakan frekuensi naive — menjawab ambiguitas visual B2↔B3. Hasil 86,67% / Macro class-MAE 0,3982 pada 953 pohon, validated train/val/test held-out tanpa overfit (worst_drop 0,00 pp).
 
 Pelajaran utama: pencocokan *bbox* individual gagal pada label TXT bernoise, koreksi statistik agregat jauh lebih efektif, dan ambiguitas B2↔B3 menjadi *ceiling* irreducible yang membatasi seluruh metode.
 

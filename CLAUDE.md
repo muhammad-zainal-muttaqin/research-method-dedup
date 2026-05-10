@@ -70,37 +70,39 @@ python scripts/dedup_nonjson_compare.py     # non-JSON validation (legacy, no mi
 
 ### Acc ±1 on 953 Brand-New-Dataset-YOLO trees (PRIMARY)
 
-| Rank | Method | Acc ±1 | MAE | n_fail |
-|---:|---|---:|---:|---:|
-| 1 | `M01_selector_b2b3` | **86.67%** | **0.3982** | 127 |
-| 2 | `M02_selector_trifurc` | 86.67% | 0.3987 | 127 |
-| 3 | `M03_blend_geometric` | 86.15% | 0.3961 | 132 |
-| 4 | `M04_blend_floor_clamped` | 86.04% | 0.4050 | 133 |
-| 5 | `M05_blend_vis_divide` | 86.04% | 0.4077 | 133 |
-| 6 | `M06_weight_visibility` | 85.94% | 0.3956 | 134 |
-| 7 | `M07_weight_coverage` | 85.94% | 0.3930 | 134 |
-| 8 | `M08_divide_density_vis` | 85.94% | 0.4024 | 134 |
-| 9 | `M09_median_strong5` | 85.73% | 0.4006 | 136 |
-| 10 | `M10_entropy_divide` | 84.78% | 0.4507 | 145 |
-| 11 | `M11_median_b2` | 84.78% | 0.4288 | 145 |
-| 12 | `M12_selector_overrides` | 84.68% | 0.4413 | 146 |
-| 13 | `M13_stack_bracket` | 84.58% | 0.4279 | 147 |
-| 14 | `M14_stack_density` | 84.58% | 0.4274 | 147 |
-| 15 | `M15_divide_global` | 84.37% | 0.4158 | 149 |
-| 16 | `M16_boost_b2b4` | 84.37% | 0.4111 | 149 |
-| 17 | `M17_selector_regime` | 84.26% | 0.4436 | 150 |
-| 18 | `M18_entropy_stack` | 84.78% | 0.4507 | 145 |
-| 19 | `M19_divide_adaptive` | 82.58% | 0.4599 | 166 |
-| 20 | `M20_weight_visibility_grid` | 80.80% | 0.4596 | 183 |
-| 21 | `M23_agree_side` | 80.80% | 0.4273 | 183 |
-| 22 | `M27_weight_visibility_adaptive` | 80.27% | 0.4790 | 188 |
-| 23 | `M24_weight_class_aware` | 70.93% | 0.5456 | 277 |
-| 24 | `M22_anchor_floor50` | 69.99% | 0.4525 | 286 |
-| 25 | `M25_consensus_multi` | 25.29% | 0.9121 | 712 |
-| 26 | `M26_median_per_side` | 25.29% | 0.9121 | 712 |
-| 27 | `M28_baseline_match_strict` | 5.98% | 1.8114 | 896 |
-| 28 | `M29_baseline_naive_sum` | 3.99% | 2.2804 | 915 |
-| 29 | `M21_ordinal_b3` | 0.73% | 3.5842 | 946 |
+Note: on balanced 4-class dataset, Macro class-MAE ≡ flat MAE numerically. Full per-class MAE / bias / Total-count MAE breakdown in `README.md` benchmark table or `reports/dedup_brand_new_953/accuracy_953.csv`.
+
+| Rank | Method | Acc ±1 | Macro class-MAE | Total-count MAE | Total ±1 | Exact profile | n_fail |
+|---:|---|---:|---:|---:|---:|---:|---:|
+| 1 | `M01_selector_b2b3` | **86.67%** | **0.3982** | 1.4145 | 74.08% | 26.34% | 127 |
+| 2 | `M02_selector_trifurc` | 86.67% | 0.3987 | 1.4145 | 74.08% | 26.34% | 127 |
+| 3 | `M03_blend_geometric` | 86.15% | 0.3961 | 1.4061 | 74.50% | 26.86% | 132 |
+| 4 | `M04_blend_floor_clamped` | 86.04% | 0.4050 | 1.4103 | 74.19% | 25.81% | 133 |
+| 5 | `M05_blend_vis_divide` | 86.04% | 0.4077 | 1.4145 | 73.98% | 25.29% | 133 |
+| 6 | `M06_weight_visibility` | 85.94% | 0.3956 | 1.3641 | 73.56% | 25.29% | 134 |
+| 7 | `M07_weight_coverage` | 85.94% | 0.3930 | 1.3599 | 73.77% | 25.81% | 134 |
+| 8 | `M08_divide_density_vis` | 85.94% | 0.4024 | 1.3914 | 73.56% | 25.39% | 134 |
+| 9 | `M09_median_strong5` | 85.73% | 0.4006 | 1.4638 | 72.51% | 27.39% | 136 |
+| 10 | `M10_entropy_divide` | 84.78% | 0.4507 | 1.6348 | 66.32% | 23.92% | 145 |
+| 11 | `M11_median_b2` | 84.78% | 0.4294 | 1.5603 | 69.78% | 23.08% | 145 |
+| 12 | `M12_selector_overrides` | 84.68% | 0.4410 | 1.6044 | 68.21% | 22.35% | 146 |
+| 13 | `M13_stack_bracket` | 84.58% | 0.4284 | 1.5729 | 68.52% | 25.39% | 147 |
+| 14 | `M14_stack_density` | 84.58% | 0.4347 | 1.5939 | 67.89% | 23.92% | 147 |
+| 15 | `M15_divide_global` | 84.37% | 0.4158 | 1.4596 | 68.52% | 23.29% | 149 |
+| 16 | `M16_boost_b2b4` | 84.37% | 0.4111 | 1.4911 | 71.98% | 26.86% | 149 |
+| 17 | `M17_selector_regime` | 84.26% | 0.4436 | 1.6149 | 67.89% | 21.93% | 150 |
+| 18 | `M18_entropy_stack` | 84.78% | 0.4507 | 1.6348 | 66.32% | 23.92% | 145 |
+| 19 | `M19_divide_adaptive` | 82.58% | 0.4599 | 1.6905 | 65.58% | 21.51% | 166 |
+| 20 | `M20_weight_visibility_grid` | 80.80% | 0.4596 | 1.5656 | 65.90% | 19.73% | 183 |
+| 21 | `M23_agree_side` | 80.80% | 0.4273 | 1.5603 | 65.37% | 22.35% | 183 |
+| 22 | `M27_weight_visibility_adaptive` | 80.27% | 0.4790 | 1.6474 | 64.01% | 18.57% | 188 |
+| 23 | `M24_weight_class_aware` | 70.93% | 0.5456 | 1.8111 | 58.45% | 12.38% | 277 |
+| 24 | `M22_anchor_floor50` | 69.99% | 0.4525 | 1.5540 | 60.55% | 16.89% | 286 |
+| 25 | `M25_consensus_multi` | 25.29% | 0.9121 | 3.6401 | 16.79% | 5.46% | 712 |
+| 26 | `M26_median_per_side` | 25.29% | 0.9121 | 3.6401 | 16.79% | 5.46% | 712 |
+| 27 | `M28_baseline_match_strict` | 5.98% | 1.8114 | 7.0147 | 5.04% | 2.41% | 896 |
+| 28 | `M29_baseline_naive_sum` | 3.99% | 2.2804 | 9.1217 | 2.83% | 1.89% | 915 |
+| 29 | `M21_ordinal_b3` | 0.73% | 3.5842 | 14.3368 | 0.00% | 0.00% | 946 |
 
 Source: `reports/dedup_brand_new_953/accuracy_953.csv`.
 
@@ -152,7 +154,7 @@ Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_
 | `M05_blend_vis_divide` | — | — | — | — | 86.04% | — (prev champion) |
 
 **Key regression findings (UPDATED 2026-05-10 with 953-tree results):**
-- `M01_selector_b2b3` **NEW TOP** at 953 (86.67%, MAE 0.3982) — selector trifurc + B2↔B3 split correction, validated held-out
+- `M01_selector_b2b3` **NEW TOP** at 953 (86.67%, Macro class-MAE 0.3982) — selector trifurc + B2↔B3 split correction, validated held-out
 - `M06_weight_visibility` most stable from 228 (−6.60 pp) — simple generalizes best
 - `M15_divide_global` second-most stable (−6.42 pp)
 - `M12_selector_overrides` drops **12.69 pp** at 953 — narrow overrides catastrophically overfit 228 dev set
@@ -160,7 +162,7 @@ Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_
 - All methods land 82–86% at 953 trees (no catastrophic drop, but ceiling lower than expected)
 
 **Recommendations (UPDATED 2026-05-10 post-iter11):**
-- **Production / full 953-tree dataset** → `M01_selector_b2b3` (86.67%, MAE 0.3982) — current top, validated held-out, no overfit
+- **Production / full 953-tree dataset** → `M01_selector_b2b3` (86.67%, Macro class-MAE 0.3982) — current top, validated held-out, no overfit
 - **Simplest fallback** → `M05_blend_vis_divide` (86.04%) — single-line weighted blend
 - **Historical 228-tree set** → `M12_selector_overrides` (97.37%) — overfits, dev-set only
 - **No missing JSON anymore** — Brand-New-Dataset-YOLO is complete
