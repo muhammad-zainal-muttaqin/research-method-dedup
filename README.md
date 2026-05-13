@@ -102,15 +102,18 @@ python scripts/run_counting_rf.py
 
 ## Track D: End-to-End (Deteksi → Penghitungan)
 
-Pipeline: YOLO26s → inferensi 4–8 sisi → fitur 13-dim → SVM/RF → prediksi 4 kelas.
+Pipeline: YOLO26s (lokal, mAP50=0.506) → inferensi 4–8 sisi → algoritma penghitungan → prediksi 4 kelas.
+
+> ⚠️ **Catatan konsistensi:** Detektor terbaik (Track B) adalah YOLO26m (mAP50=0.528), namun bobotnya hanya tersimpan di RunPod dan belum tersedia untuk inferensi lokal. Pipeline E2E menggunakan y26s vanilla retrain lokal (mAP50=0.506) sebagai aproksimasi. Eksperimen y26m E2E berstatus **pending** (memerlukan akses RunPod).
 
 | Pipeline | Macro MAE | Macro Acc ±1 | Acc±1 B1 | Acc±1 B2 | Acc±1 B3 | Acc±1 B4 | Profil Tepat |
 |:---|---:|---:|---:|---:|---:|---:|---:|
 | y26s → SVM | 1.163 | 68.9% | 93.7% | 68.4% | 48.4% | 65.3% | 0.0% |
 | y26s → RF | 1.216 | 66.6% | 96.8% | 68.4% | 48.4% | 52.6% | 1.1% |
-| **M01 heuristik (target)** | **0.398** | **86.7%** | — | — | — | — | 26.3% |
+| y26s → M01 heuristik | 1.403 | 65.5% | 89.5% | 66.3% | 38.9% | 67.4% | 2.1% |
+| **M01 heuristik (fitur GT, target)** | **0.398** | **86.7%** | — | — | — | — | 26.3% |
 
-**Bottleneck:** Propagasi galat detektor YOLO menjadi penyebab utama kegagalan pipeline E2E. Setiap deteksi palsu (FP) dan deteksi yang terlewat (FN) mengubah nilai `naive_sum`, `max_per_side`, dan `mean_per_side` secara langsung, sehingga SVM/RF menerima input yang sudah tidak akurat. Fitur 13-dim sendiri sudah memadai apabila detektor sempurna — terbukti dari Track C (GT → SVM) yang mencapai Macro Acc±1 = 96.1% dengan arsitektur fitur identik. Peningkatan mAP yang marginal (0.445 → 0.506) tidak cukup untuk memperbaiki pipeline secara signifikan.
+**Bottleneck:** Propagasi galat detektor YOLO menjadi penyebab utama kegagalan semua varian pipeline E2E. Ketiga algoritma penghitungan (SVM, RF, M01) menghasilkan Macro Acc±1 yang hampir identik (65–69%) saat menerima deteksi YOLO yang sama — membuktikan bahwa bottleneck bukan pada algoritma penghitungan, melainkan pada kualitas detektor. Sebagai pembanding, M01 dengan fitur GT mencapai 86.7%, dan SVM dengan fitur GT mencapai 96.1% (Track C) — keduanya menggunakan arsitektur yang identik tetapi menerima deteksi yang sempurna.
 
 ```bash
 python scripts/run_e2e_inference.py --weights baseline-run/weights/y26s_vanilla_local.pt
