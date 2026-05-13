@@ -7,7 +7,7 @@
 
 ## 0. State Sekarang (2026-05-13)
 
-### Eksperimen DONE (3/9) — vanilla Ultralytics defaults
+### Eksperimen DONE (9/9) — semua selesai 2026-05-13
 
 | # | Model | Best epoch | mAP50 | mAP50-95 | best.pt path |
 |---|---|---:|---:|---:|---|
@@ -16,6 +16,16 @@
 | 3 | **YOLO26m vanilla** | 20 | **0.528** | **0.240** | `runs/detect/sawit-ulm/vanilla-train/y26m/weights/best.pt` |
 
 Log mentah: `baseline-run/vanilla_y26{n,s,m}.txt`.
+
+| # | Model | Best epoch | mAP50 | mAP50-95 | Notes |
+|---:|---|---:|---:|---:|---|
+| 4 | y26s no-pretrained | 57 | **0.511** | 0.231 | scratch = pretrained! |
+| 5 | y26s no-aug | 6 | **0.465** | 0.216 | overfit cepat, early stop ep=56 |
+| 6 | SVM (GT feat) | — | — | — | Macro class-MAE=0.318 |
+| 7 | RF (GT feat) | — | — | — | Macro class-MAE=0.353 |
+| 8 | y26s→SVM E2E | — | — | — | Macro MAE=1.163 |
+| 9 | y26s→RF E2E | — | — | — | Macro MAE=1.216 |
+| — | vanilla y26s retrain | 21 | **0.506** | 0.234 | lokal, ≈ RunPod 0.501 |
 
 ### Per-class detail (val, mAP50)
 
@@ -39,14 +49,19 @@ Log mentah: `baseline-run/vanilla_y26{n,s,m}.txt`.
 - B2↔B3 konsisten lemah (irreducible — lihat CLAUDE.md JSON-01 audit)
 - y26m converge cepat (best epoch 20) → model besar overfit cepat di dataset kecil
 
-### Eksperimen TODO (6/9)
+### Eksperimen DONE (9/9)
 
-- [ ] **#4** Ablasi: y26s tanpa pretrained
-- [ ] **#5** Ablasi: y26s tanpa augmentasi
-- [ ] **#6** SVM dari GT features (counting)
-- [ ] **#7** Random Forest dari GT features (counting)
-- [ ] **#8** End-to-end: y26s → SVM
-- [ ] **#9** End-to-end: y26s → RF
+- [x] **#4** Ablasi: y26s tanpa pretrained → mAP50=0.511 (ep=57, scratch = pretrained!)
+- [x] **#5** Ablasi: y26s tanpa augmentasi → mAP50=0.465 (ep=6, overfit cepat)
+- [x] **#6** SVM dari GT features → Macro class-MAE=0.318
+- [x] **#7** Random Forest dari GT features → Macro class-MAE=0.353
+- [x] **#8** End-to-end: y26s → SVM → Macro class-MAE=1.163 (heuristik menang)
+- [x] **#9** End-to-end: y26s → RF → Macro class-MAE=1.216 (heuristik menang)
+
+### Kesimpulan
+
+- **Heuristik M01_selector_b2b3 tetap production choice** — tidak ada ML pipeline yang bisa menyaingi.
+- ML counting butuh feature yang side-aware, bukan naive 13-dim aggregation.
 
 ---
 
