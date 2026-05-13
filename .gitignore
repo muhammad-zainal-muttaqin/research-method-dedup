@@ -42,8 +42,9 @@ Tested-Brand-New-Dataset-YOLO/
 # Ultralytics training output (weights, plots, results.csv per run)
 runs/
 
-# YOLO weight files (download/train fresh, jangan commit)
+# YOLO weight files — commit baseline-run/weights/*.pt explicitly
 *.pt
+!baseline-run/weights/*.pt
 *.engine
 *.onnx
 
