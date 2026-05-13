@@ -5,71 +5,56 @@
 
 ---
 
-## 0. State Sekarang (2026-05-13)
+## 0. State Sekarang (2026-05-13) — SEMUA SELESAI
 
-### Eksperimen DONE (9/9) — semua selesai 2026-05-13
+Seluruh eksperimen deteksi, counting, dan E2E telah selesai. Semua model dilatih secara lokal dengan konfigurasi konsisten: `batch=16`, `imgsz=640`, `epochs=100`, `patience=50`, `seed=42`. Semua bobot tersimpan di `baseline-run/weights/`.
 
-| # | Model | Best epoch | mAP50 | mAP50-95 | best.pt path |
-|---|---|---:|---:|---:|---|
-| 1 | YOLO26n vanilla | 30 | 0.511 | 0.237 | `runs/detect/sawit-ulm/vanilla-train/y26n/weights/best.pt` |
-| 2 | YOLO26s vanilla | 32 | 0.501 | 0.235 | `runs/detect/sawit-ulm/vanilla-train/y26s/weights/best.pt` |
-| 3 | **YOLO26m vanilla** | 20 | **0.528** | **0.240** | `runs/detect/sawit-ulm/vanilla-train/y26m/weights/best.pt` |
+### Hasil Deteksi (lokal, batch=16, test set)
 
-Log mentah: `baseline-run/vanilla_y26{n,s,m}.txt`.
-
-### Local Training Results (RTX A5000)
-
-| # | Model | Best epoch | mAP50 | mAP50-95 | Notes |
+| # | Model | Best Epoch | mAP50 | mAP50-95 | best.pt |
 |---:|---|---:|---:|---:|---|
-| 4 | y26s no-pretrained | 57 | **0.511** | 0.231 | scratch = pretrained! best.pt di `baseline-run/weights/` |
-| 5 | y26s no-aug | 6 | **0.465** | 0.216 | overfit cepat, early stop ep=56 |
-| — | vanilla y26s retrain | 21 | **0.506** | 0.234 | lokal, ≈ RunPod 0.501, dipakai E2E |
+| 1 | **y26n vanilla** | 38 | **0.521** | 0.237 | `baseline-run/weights/y26n_vanilla_local.pt` |
+| 2 | y26s vanilla | 21 | 0.506 | 0.235 | `baseline-run/weights/y26s_vanilla_local.pt` |
+| 3 | y26m vanilla | 33 | 0.509 | 0.231 | `baseline-run/weights/y26m_vanilla_local.pt` |
+| 4 | y26s no-pretrained | 57 | 0.511 | 0.231 | `baseline-run/weights/y26s_nopretrained.pt` |
+| 5 | y26s no-augmentation | 6 | 0.465 | 0.216 | `baseline-run/weights/y26s_noaug.pt` |
 
-### Counting Results (test set, 95 trees)
+### Hasil Counting — Fitur GT (test set, n=95)
 
-| # | Model | Macro MAE | Total MAE | Total ±1 | Acc±1 B3 |
-|---:|---|---:|---:|---:|---:|
-| 6 | SVM (GT feat) | **0.318** | 1.126 | 72.6% | 91.6% |
-| 7 | RF (GT feat) | 0.353 | 1.200 | 70.5% | 90.5% |
-| 8 | y26s→SVM E2E | 1.163 | 2.337 | 38.9% | 48.4% |
-| 9 | y26s→RF E2E | 1.216 | 2.337 | 40.0% | 48.4% |
-| — | **M01 heuristik** | **0.398** | **1.414** | **86.7%** | — |
+| # | Model | Macro MAE | Macro Acc ±1 | Acc±1 B1 | Acc±1 B3 | Profil Tepat |
+|---:|---|---:|---:|---:|---:|---:|
+| 6 | **SVM (GT feat)** | **0.318** | **96.1%** | 100.0% | 91.6% | 27.4% |
+| 7 | RF (GT feat) | 0.353 | 95.3% | 96.8% | 90.5% | 27.4% |
+| — | M01 heuristik (target) | 0.398 | 86.7% | — | — | 26.3% |
 
-### Per-class detail (val, mAP50)
+### Hasil E2E — Matrix Lengkap (test set, n=95)
 
-| Model | B1 | B2 | B3 | B4 | Speed (ms) | Params |
-|---|---:|---:|---:|---:|---:|---:|
-| y26n | 0.728 | 0.410 | 0.576 | 0.331 | 0.2 | 2.4M |
-| y26s | 0.719 | 0.393 | 0.585 | 0.308 | 0.5 | 9.5M |
-| y26m | 0.757 | 0.411 | 0.595 | 0.348 | 0.8 | 20.4M |
-
-### Per-class recall (val)
-
-| Model | B1 R | B2 R | B3 R | B4 R |
-|---|---:|---:|---:|---:|
-| y26n | 0.784 | 0.443 | 0.621 | 0.364 |
-| y26s | 0.769 | 0.488 | 0.698 | 0.242 |
-| y26m | 0.688 | 0.483 | 0.672 | 0.421 |
-
-**Observasi:**
-- y26m menang tipis, tapi y26n hampir setara dengan **4× lebih cepat** (0.2ms vs 0.8ms)
-- B4 lemah di semua model (mAP50 0.31-0.35) — sample-starved + visual overlap
-- B2↔B3 konsisten lemah (irreducible — lihat CLAUDE.md JSON-01 audit)
-- y26m converge cepat (best epoch 20) → model besar overfit cepat di dataset kecil
-
-### Eksperimen DONE (9/9)
-
-- [x] **#4** Ablasi: y26s tanpa pretrained → mAP50=0.511 (ep=57, scratch = pretrained!)
-- [x] **#5** Ablasi: y26s tanpa augmentasi → mAP50=0.465 (ep=6, overfit cepat)
-- [x] **#6** SVM dari GT features → Macro class-MAE=0.318
-- [x] **#7** Random Forest dari GT features → Macro class-MAE=0.353
-- [x] **#8** End-to-end: y26s → SVM → Macro class-MAE=1.163 (heuristik menang)
-- [x] **#9** End-to-end: y26s → RF → Macro class-MAE=1.216 (heuristik menang)
+| Detektor | mAP50 | Penghitung | Macro Acc ±1 | Macro MAE |
+|---|---:|---|---:|---:|
+| y26n vanilla | 0.521 | SVM | 70.0% | 1.145 |
+| y26n vanilla | 0.521 | RF | 68.2% | 1.218 |
+| y26n vanilla | 0.521 | M01 | 67.1% | 1.337 |
+| y26s vanilla | 0.506 | SVM | 68.9% | 1.163 |
+| y26s vanilla | 0.506 | RF | 66.6% | 1.216 |
+| y26s vanilla | 0.506 | M01 | 65.5% | 1.403 |
+| y26s scratch | 0.511 | SVM | 68.9% | 1.145 |
+| y26s scratch | 0.511 | RF | 67.9% | 1.229 |
+| y26s scratch | 0.511 | M01 | 69.2% | 1.266 |
+| y26s no-aug | 0.465 | SVM | 70.5% | 1.126 |
+| y26s no-aug | 0.465 | RF | 68.4% | 1.184 |
+| y26s no-aug | 0.465 | M01 | 66.6% | 1.384 |
+| **y26m vanilla** | 0.509 | **SVM** | **71.6%** | **1.118** |
+| y26m vanilla | 0.509 | RF | 67.9% | 1.211 |
+| y26m vanilla | 0.509 | M01 | 64.5% | 1.400 |
+| M01 GT (target) | — | — | **86.7%** | **0.398** |
 
 ### Kesimpulan
 
-- **Heuristik M01_selector_b2b3 tetap production choice** — tidak ada ML pipeline yang bisa menyaingi.
-- ML counting butuh feature yang side-aware, bukan naive 13-dim aggregation.
+- **Heuristik M01_selector_b2b3 tetap production choice** — Macro Acc±1 = 86.7%, valid per RULES.txt.
+- **SVM dengan fitur GT (96.1%) mengungguli M01** — desain fitur 13-dim terbukti adequate; bottleneck E2E ada di detektor.
+- **Pipeline E2E terbaik: y26m → SVM (71.6%)** — masih 15 pp di bawah heuristik GT.
+- Seluruh 15 kombinasi E2E berada dalam rentang 64–72%: algoritma penghitung bukan penyebab utama kegagalan.
+- Script unified: `python scripts/run_e2e_pipeline.py --name NAME --weights PATH`
 
 ---
 
@@ -107,7 +92,7 @@ Salin dari `baseline-run/vanilla_y26s.txt` baris 1-112. Highlight:
 ```yaml
 optimizer: auto
 patience: 50
-batch: 16            # y26s default; y26n bisa 64, y26m bisa 16-32
+batch: 16            # WAJIB sama untuk semua eksperimen — jangan ubah
 imgsz: 640
 cos_lr: False
 seed: 42

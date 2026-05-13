@@ -1,5 +1,36 @@
 # Research: Multi-View Oil Palm Fruit Detection & Classification
-**Dataset: DAMIMAS | Ditulis: 2026-04-23 | Revisi: 2026-04-23 (v2: 2026-04-23)**
+**Dataset: DAMIMAS | Ditulis: 2026-04-23 | Revisi terakhir: 2026-05-13**
+
+---
+
+## RINGKASAN HASIL AKHIR (2026-05-13) — Baca Ini Dulu
+
+> Section 1–26 di bawah merupakan dokumentasi historis eksperimen. Hasil final dan angka terkini ada di sini.
+
+### Empat Track Penelitian
+
+| Track | Metode Terbaik | Macro Acc ±1 | Keterangan |
+|:---|:---|---:|:---|
+| A. Heuristik | M01_selector_b2b3 | **86.67%** | Produksi, valid per RULES.txt |
+| B. Deteksi | YOLO26n lokal | mAP50 = **0.521** | batch=16, konsisten |
+| C. ML Counting (fitur GT) | SVM RBF | **96.1%** | Batas atas; input deteksi sempurna |
+| D. End-to-End terbaik | y26m → SVM | **71.6%** | Semua 15 kombinasi: 64–72% |
+
+### Temuan Kunci
+
+1. **SVM dengan fitur GT (96.1%) mengungguli M01 heuristik (86.7%)** — membuktikan bahwa desain fitur 13-dim sudah memadai apabila detektor tidak menghasilkan FP/FN.
+2. **Bottleneck E2E ada di detektor, bukan algoritma penghitung** — SVM, RF, dan M01 semua menghasilkan 64–72% dengan input YOLO yang sama; perbedaan antar algoritma tidak signifikan.
+3. **mAP tidak berbanding lurus dengan performa E2E** — y26s-noaug (mAP50=0.465) menghasilkan E2E SVM 70.5%, hampir sama dengan y26m (mAP50=0.509, E2E SVM 71.6%).
+4. **COCO pretraining tidak wajib** — y26s dari scratch (0.511) ≈ y26s pretrained (0.506).
+5. **M60 dan M53 tidak valid** per `exp_12 may 2026/RULES.txt` — menggunakan tabel divisor berbasis GT; disimpan hanya sebagai referensi historis.
+
+### Referensi Cepat
+
+- Hasil lengkap heuristik: `reports/dedup_brand_new_953/accuracy_953.csv`
+- Hasil ML: `reports/counting_svm/`, `reports/counting_rf/`
+- Hasil E2E: `reports/e2e_{name}_{method}/metrics.json`
+- Bobot model: `baseline-run/weights/*.pt`
+- Panduan replikasi: `README.md`, `CLAUDE-TRAINING.md`
 
 ---
 
