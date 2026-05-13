@@ -9,47 +9,48 @@ Dataset: **953 pohon** | Kelas: **B1→B2→B3→B4** (ordinal) | License: **CC 
 
 ### Per-Track Champion
 
-| Track | Method | Macro MAE | Acc ±1 | Status |
-|---|---:|---:|---:|:---|
-| A. Heuristic Counting | M01_selector_b2b3 | 0.398 | **86.67%** | ✅ Production (valid) |
-| B. Detection | YOLO26m | — | mAP50=**0.528** | ✅ Best detector |
-| C. ML Counting (GT features) | SVM (RBF) | **0.318** | — | ✅ Best ML counter |
-| D. End-to-End | y26s→SVM | 1.163 | 38.9% | ⚠️ Lower bound |
+| Track | Metode | Macro MAE | Macro Acc ±1 | Status |
+|:---|:---|---:|---:|:---|
+| A. Heuristik | M01_selector_b2b3 | 0.398 | 86.67% | ✅ Produksi (valid) |
+| B. Deteksi | YOLO26m | — | mAP50 = **0.528** | ✅ Detektor terbaik |
+| C. ML Counting (fitur GT) | SVM RBF | **0.318** | **96.1%** | ✅ ML terbaik |
+| D. End-to-End | y26s → SVM | 1.163 | 68.9% | ⚠️ Batas bawah |
 
-### Absolute Best per Metric
+### Metrik Terbaik Keseluruhan
 
-| Metric | Value | Method |
-|---|---:|---|
-| Highest Acc ±1 (valid) | **86.67%** | M01_selector_b2b3 |
-| Lowest Macro MAE (valid) | **0.398** | M01_selector_b2b3 |
-| Best mAP50 | **0.528** | YOLO26m |
-| Best ML Counting | **0.318 MAE** | SVM (GT features) |
-| Fastest | **0.005 ms/tree** | M15_divide_global |
+| Metrik | Nilai | Metode |
+|:---|---:|:---|
+| Macro Acc ±1 tertinggi — ML (fitur GT) | **96.1%** | SVM GT features |
+| Macro Acc ±1 tertinggi — heuristik valid | **86.67%** | M01_selector_b2b3 |
+| Macro MAE terendah — ML (fitur GT) | **0.318** | SVM GT features |
+| Macro MAE terendah — heuristik valid | **0.398** | M01_selector_b2b3 |
+| mAP50 terbaik | **0.528** | YOLO26m |
+| Tercepat | **0.005 ms/pohon** | M15_divide_global |
 
-### Key Insight
+### Temuan Utama
 
-Heuristic M01 (**86.67%**) >>> ML End-to-End (**38.9%**).
-Bottleneck E2E bukan desain fitur 13-dim (terbukti: GT features → SVM = MAE 0.318 dengan fitur identik), melainkan **error propagation dari YOLO detector** — FP/FN merusak nilai naive_sum/max_per_side sebelum masuk SVM.
-M60/M53 mencapai 90.24% tetapi **invalid** per `exp_12 may 2026/RULES.txt` — menggunakan divisor table yang di-derive dari training split (domain-specific calibration, tidak generalizable).
+Pipeline ML dengan fitur GT (Track C) mengungguli heuristik terbaik M01: SVM mencapai Macro Acc±1 = **96.1%** dibandingkan **86.67%** milik M01, sehingga membuktikan bahwa desain fitur 13-dim sudah memadai apabila detektor menghasilkan deteksi yang benar.
+
+Namun, pipeline ujung-ke-ujung (Track D) hanya mencapai Macro Acc±1 = **68.9%** karena propagasi galat detektor YOLO — setiap deteksi palsu (FP) dan deteksi yang terlewat (FN) merusak nilai `naive_sum`, `max_per_side`, dan `mean_per_side` sebelum masuk ke SVM/RF, sehingga model menerima input yang sudah tidak akurat.
+
+> M60 dan M53 mencapai 90.24%, tetapi keduanya **tidak valid** per `exp_12 may 2026/RULES.txt` karena menggunakan tabel divisor yang diturunkan dari training split — bukan dari prinsip geometri murni — sehingga tidak dapat digeneralisasi ke kebun lain.
 
 ---
 
 ## Track A: Heuristic Counting (No Training)
 
-| Rank | Method | Acc ±1 | Macro MAE | Exact Profile |
-|---|---:|---|---:|---:|
-| Rank | Method | Acc ±1 | Macro MAE | Exact Profile | Valid? |
-|---|---:|---|---:|---:|:---|
-| — | M60_blind_strict | 90.24% | 0.302 | — | ❌ GT-calibrated |
-| — | M53_three_band_override | 90.24% | 0.304 | — | ❌ GT-calibrated |
-| 1 | **M01_selector_b2b3** | **86.67%** | **0.398** | 26.3% | ✅ Valid |
-| 2 | M05_blend_vis_divide | 86.04% | 0.408 | 25.3% | ✅ Valid |
-| 3 | M06_weight_visibility | 85.94% | 0.396 | 25.3% | ✅ Valid |
-| 4 | M15_divide_global | 84.37% | 0.416 | 23.3% | ✅ Valid |
+| Peringkat | Metode | Macro Acc ±1 | Macro MAE | Profil Tepat | Valid? |
+|:---:|:---|---:|---:|---:|:---:|
+| — | M60_blind_strict | 90.24% | 0.302 | — | ❌ |
+| — | M53_three_band_override | 90.24% | 0.304 | — | ❌ |
+| 1 | **M01_selector_b2b3** | **86.67%** | **0.398** | 26.3% | ✅ |
+| 2 | M05_blend_vis_divide | 86.04% | 0.408 | 25.3% | ✅ |
+| 3 | M06_weight_visibility | 85.94% | 0.396 | 25.3% | ✅ |
+| 4 | M15_divide_global | 84.37% | 0.416 | 23.3% | ✅ |
 
-Full table (29 methods): `reports/dedup_brand_new_953/accuracy_953.csv`
+Tabel lengkap 29 metode: `reports/dedup_brand_new_953/accuracy_953.csv`
 
-> ⚠️ M60 dan M53 menggunakan divisor table yang di-derive dari training split — **invalid** per `exp_12 may 2026/RULES.txt` (domain-specific calibration, tidak generalizable ke kebun lain). Disimpan sebagai historical reference saja.
+> ❌ M60 dan M53 tidak valid per `exp_12 may 2026/RULES.txt`: keduanya menggunakan tabel divisor yang diturunkan dari statistik training split (kalibrasi domain-spesifik), bukan dari prinsip geometri murni. Disimpan hanya sebagai referensi historis.
 
 ```bash
 python scripts/dedup_brand_new_953.py
@@ -81,14 +82,14 @@ yolo detect train model=yolo26m.pt data=local_data.yaml epochs=100 batch=16 imgs
 
 ---
 
-## Track C: ML Counting (from GT Features)
+## Track C: ML Counting (Fitur dari GT)
 
-Feature 13-dim per tree: naive_sum(B1-B4), max_per_side(B1-B4), mean_per_side(B1-B4), n_sides.
+Fitur 13 dimensi per pohon: `naive_sum` (B1–B4), `max_per_side` (B1–B4), `mean_per_side` (B1–B4), `n_sides`.
 
-| Model | Macro MAE | Exact Profile | Total ±1 | Acc±1 B1 | Acc±1 B2 | Acc±1 B3 | Acc±1 B4 |
-|---:|---:|---:|---:|---:|---:|---:|---:|
-| **SVM (RBF, GridSearchCV)** | **0.318** | 27.4% | 72.6% | **100%** | 95.8% | 91.6% | 96.8% |
-| RF (n=200, max_depth=10) | 0.353 | 27.4% | 70.5% | 96.8% | 96.8% | 90.5% | 96.8% |
+| Model | Macro MAE | Macro Acc ±1 | Acc±1 B1 | Acc±1 B2 | Acc±1 B3 | Acc±1 B4 | Profil Tepat |
+|:---|---:|---:|---:|---:|---:|---:|---:|
+| **SVM (RBF, GridSearchCV)** | **0.318** | **96.1%** | **100.0%** | 95.8% | 91.6% | 96.8% | 27.4% |
+| RF (n=200, max_depth=10) | 0.353 | 95.3% | 96.8% | 96.8% | 90.5% | 96.8% | 27.4% |
 
 Detail: `reports/counting_{svm,rf}/metrics.json`
 
@@ -99,17 +100,17 @@ python scripts/run_counting_rf.py
 
 ---
 
-## Track D: End-to-End (Detection → Counting)
+## Track D: End-to-End (Deteksi → Penghitungan)
 
-Pipeline: YOLO26s → infer 4–8 sisi → 13-dim features → SVM/RF → 4-class count.
+Pipeline: YOLO26s → inferensi 4–8 sisi → fitur 13-dim → SVM/RF → prediksi 4 kelas.
 
-| Pipeline | Macro MAE | Total MAE | Total ±1 | Exact Profile |
-|---:|---:|---:|---:|---:|
-| y26s→SVM | 1.163 | 2.337 | 38.9% | 0.0% |
-| y26s→RF | 1.216 | 2.337 | 40.0% | 1.1% |
-| **M01 heuristic (target)** | **0.398** | **1.414** | **86.7%** | — |
+| Pipeline | Macro MAE | Macro Acc ±1 | Acc±1 B1 | Acc±1 B2 | Acc±1 B3 | Acc±1 B4 | Profil Tepat |
+|:---|---:|---:|---:|---:|---:|---:|---:|
+| y26s → SVM | 1.163 | 68.9% | 93.7% | 68.4% | 48.4% | 65.3% | 0.0% |
+| y26s → RF | 1.216 | 66.6% | 96.8% | 68.4% | 48.4% | 52.6% | 1.1% |
+| **M01 heuristik (target)** | **0.398** | **86.7%** | — | — | — | — | 26.3% |
 
-**Bottleneck:** Error propagation dari YOLO detector (FP/FN merusak 13-dim features sebelum masuk SVM/RF). Fitur 13-dim sendiri **cukup** bila input sempurna — Track C (GT → SVM) mencapai MAE 0.318 dengan arsitektur fitur identik. Peningkatan mAP marginal (0.445→0.506) tidak cukup memperbaiki E2E — butuh representasi robust terhadap FP/FN.
+**Bottleneck:** Propagasi galat detektor YOLO menjadi penyebab utama kegagalan pipeline E2E. Setiap deteksi palsu (FP) dan deteksi yang terlewat (FN) mengubah nilai `naive_sum`, `max_per_side`, dan `mean_per_side` secara langsung, sehingga SVM/RF menerima input yang sudah tidak akurat. Fitur 13-dim sendiri sudah memadai apabila detektor sempurna — terbukti dari Track C (GT → SVM) yang mencapai Macro Acc±1 = 96.1% dengan arsitektur fitur identik. Peningkatan mAP yang marginal (0.445 → 0.506) tidak cukup untuk memperbaiki pipeline secara signifikan.
 
 ```bash
 python scripts/run_e2e_inference.py --weights baseline-run/weights/y26s_vanilla_local.pt
@@ -119,14 +120,14 @@ python scripts/run_e2e_rf.py
 
 ---
 
-## Overall Verdict
+## Kesimpulan
 
-| Use Case | Recommendation |
-|---|---|
-| Production counting | **M01_selector_b2b3** (86.67%, valid per RULES.txt) |
-| Detection only | **YOLO26m** (mAP50=0.528) |
-| ML research baseline | **SVM on GT features** (0.318 MAE) |
-| End-to-end ML | ⚠️ Butuh representasi robust terhadap FP/FN dari detector |
+| Kasus Penggunaan | Rekomendasi |
+|:---|:---|
+| Penghitungan produksi | **M01_selector_b2b3** — Macro Acc±1 = 86.67%, valid per RULES.txt |
+| Deteksi saja | **YOLO26m** — mAP50 = 0.528 |
+| Baseline riset ML | **SVM pada fitur GT** — Macro Acc±1 = 96.1%, Macro MAE = 0.318 |
+| End-to-end ML | ⚠️ Diperlukan representasi fitur yang robust terhadap FP/FN detektor |
 
 ---
 
