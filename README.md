@@ -11,7 +11,7 @@ Dataset: **953 pohon** | Kelas: **B1→B2→B3→B4** (ordinal) | License: **CC 
 
 | Track | Method | Macro MAE | Acc ±1 | Status |
 |---|---:|---:|---:|:---|
-| A. Heuristic Counting | M60_blind_strict | 0.302 | **90.24%** | ✅ Production |
+| A. Heuristic Counting | M01_selector_b2b3 | 0.398 | **86.67%** | ✅ Production (valid) |
 | B. Detection | YOLO26m | — | mAP50=**0.528** | ✅ Best detector |
 | C. ML Counting (GT features) | SVM (RBF) | **0.318** | — | ✅ Best ML counter |
 | D. End-to-End | y26s→SVM | 1.163 | 38.9% | ⚠️ Lower bound |
@@ -20,16 +20,17 @@ Dataset: **953 pohon** | Kelas: **B1→B2→B3→B4** (ordinal) | License: **CC 
 
 | Metric | Value | Method |
 |---|---:|---|
-| Highest Acc ±1 | **90.24%** | M60_blind_strict |
-| Lowest Macro MAE | **0.302** | M60_blind_strict |
+| Highest Acc ±1 (valid) | **86.67%** | M01_selector_b2b3 |
+| Lowest Macro MAE (valid) | **0.398** | M01_selector_b2b3 |
 | Best mAP50 | **0.528** | YOLO26m |
 | Best ML Counting | **0.318 MAE** | SVM (GT features) |
 | Fastest | **0.005 ms/tree** | M15_divide_global |
 
 ### Key Insight
 
-Heuristic M60 (**90.24%**) >>> ML End-to-End (**38.9%**).
+Heuristic M01 (**86.67%**) >>> ML End-to-End (**38.9%**).
 Bottleneck E2E bukan desain fitur 13-dim (terbukti: GT features → SVM = MAE 0.318 dengan fitur identik), melainkan **error propagation dari YOLO detector** — FP/FN merusak nilai naive_sum/max_per_side sebelum masuk SVM.
+M60/M53 mencapai 90.24% tetapi **invalid** per `exp_12 may 2026/RULES.txt` — menggunakan divisor table yang di-derive dari training split (domain-specific calibration, tidak generalizable).
 
 ---
 
@@ -37,16 +38,18 @@ Bottleneck E2E bukan desain fitur 13-dim (terbukti: GT features → SVM = MAE 0.
 
 | Rank | Method | Acc ±1 | Macro MAE | Exact Profile |
 |---|---:|---|---:|---:|
-| 1 | **M60_blind_strict** | **90.24%** | **0.302** | — |
-| 2 | M53_three_band_override | 90.24% | 0.304 | — |
-| 3 | M01_selector_b2b3 | 86.67% | 0.398 | 26.3% |
-| 4 | M05_blend_vis_divide | 86.04% | 0.408 | 25.3% |
-| 5 | M06_weight_visibility | 85.94% | 0.396 | 25.3% |
-| 6 | M15_divide_global | 84.37% | 0.416 | 23.3% |
+| Rank | Method | Acc ±1 | Macro MAE | Exact Profile | Valid? |
+|---|---:|---|---:|---:|:---|
+| — | M60_blind_strict | 90.24% | 0.302 | — | ❌ GT-calibrated |
+| — | M53_three_band_override | 90.24% | 0.304 | — | ❌ GT-calibrated |
+| 1 | **M01_selector_b2b3** | **86.67%** | **0.398** | 26.3% | ✅ Valid |
+| 2 | M05_blend_vis_divide | 86.04% | 0.408 | 25.3% | ✅ Valid |
+| 3 | M06_weight_visibility | 85.94% | 0.396 | 25.3% | ✅ Valid |
+| 4 | M15_divide_global | 84.37% | 0.416 | 23.3% | ✅ Valid |
 
 Full table (29 methods): `reports/dedup_brand_new_953/accuracy_953.csv`
 
-**Novelty M60:** Side-aware median ratio divisor per `(n_sides, class)` + strict bilateral filter overrides (gain on train AND val). Evaluasi blind — test set dilihat sekali di akhir. Detail: [`exp_12 may 2026/REPORT.md`](exp_12%20may%202026/REPORT.md).
+> ⚠️ M60 dan M53 menggunakan divisor table yang di-derive dari training split — **invalid** per `exp_12 may 2026/RULES.txt` (domain-specific calibration, tidak generalizable ke kebun lain). Disimpan sebagai historical reference saja.
 
 ```bash
 python scripts/dedup_brand_new_953.py
@@ -120,7 +123,7 @@ python scripts/run_e2e_rf.py
 
 | Use Case | Recommendation |
 |---|---|
-| Production counting | **M60_blind_strict** (90.24%, no training) |
+| Production counting | **M01_selector_b2b3** (86.67%, valid per RULES.txt) |
 | Detection only | **YOLO26m** (mAP50=0.528) |
 | ML research baseline | **SVM on GT features** (0.318 MAE) |
 | End-to-end ML | ⚠️ Butuh representasi robust terhadap FP/FN dari detector |
