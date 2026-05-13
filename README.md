@@ -29,7 +29,7 @@ Dataset: **953 pohon** | Kelas: **B1→B2→B3→B4** (ordinal) | License: **CC 
 ### Key Insight
 
 Heuristic M60 (**90.24%**) >>> ML End-to-End (**38.9%**).
-Bottleneck E2E bukan detector quality, tapi feature aggregation (13-dim kehilangan side-level info).
+Bottleneck E2E bukan desain fitur 13-dim (terbukti: GT features → SVM = MAE 0.318 dengan fitur identik), melainkan **error propagation dari YOLO detector** — FP/FN merusak nilai naive_sum/max_per_side sebelum masuk SVM.
 
 ---
 
@@ -66,6 +66,7 @@ python scripts/dedup_brand_new_953.py
 
 | Experiment | Best Epoch | mAP50 | mAP50-95 | Catatan |
 |---:|---:|---:|---:|---|
+| y26s vanilla retrain (lokal) | 21 | 0.506 | 0.234 | ≈ RunPod 0.501 — dipakai E2E pipeline |
 | y26s no-pretrained | 57 | **0.511** | 0.231 | Scratch = pretrained! |
 | y26s no-augmentation | 6 | 0.465 | 0.216 | Overfit, early stop ep=56 |
 
@@ -105,7 +106,7 @@ Pipeline: YOLO26s → infer 4–8 sisi → 13-dim features → SVM/RF → 4-clas
 | y26s→RF | 1.216 | 2.337 | 40.0% | 1.1% |
 | **M01 heuristic (target)** | **0.398** | **1.414** | **86.7%** | — |
 
-**Bottleneck:** Bukan detector quality (mAP50=0.506 vs 0.445 → hasil E2E hampir identik). Feature 13-dim aggregation kehilangan informasi visibility dan overlap antar-sisi.
+**Bottleneck:** Error propagation dari YOLO detector (FP/FN merusak 13-dim features sebelum masuk SVM/RF). Fitur 13-dim sendiri **cukup** bila input sempurna — Track C (GT → SVM) mencapai MAE 0.318 dengan arsitektur fitur identik. Peningkatan mAP marginal (0.445→0.506) tidak cukup memperbaiki E2E — butuh representasi robust terhadap FP/FN.
 
 ```bash
 python scripts/run_e2e_inference.py --weights baseline-run/weights/y26s_vanilla_local.pt
@@ -122,7 +123,7 @@ python scripts/run_e2e_rf.py
 | Production counting | **M60_blind_strict** (90.24%, no training) |
 | Detection only | **YOLO26m** (mAP50=0.528) |
 | ML research baseline | **SVM on GT features** (0.318 MAE) |
-| End-to-end ML | ⚠️ Butuh side-aware feature engineering |
+| End-to-end ML | ⚠️ Butuh representasi robust terhadap FP/FN dari detector |
 
 ---
 
