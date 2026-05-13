@@ -102,23 +102,35 @@ python scripts/run_counting_rf.py
 
 ## Track D: End-to-End (Deteksi → Penghitungan)
 
-Pipeline: YOLO26s (lokal, mAP50=0.506) → inferensi 4–8 sisi → algoritma penghitungan → prediksi 4 kelas.
+Setiap detektor diuji dengan tiga algoritma penghitungan: SVM (RBF, GridSearchCV), RF (n=200, max_depth=10), dan M01 heuristik. Inferensi dilakukan pada seluruh 953 pohon; SVM/RF dilatih ulang dari fitur detektor masing-masing. Semua angka dilaporkan pada test set (n=95).
 
-> ⚠️ **Catatan konsistensi:** Detektor terbaik (Track B) adalah YOLO26m (mAP50=0.528), namun bobotnya hanya tersimpan di RunPod dan belum tersedia untuk inferensi lokal. Pipeline E2E menggunakan y26s vanilla retrain lokal (mAP50=0.506) sebagai aproksimasi. Eksperimen y26m E2E berstatus **pending** (memerlukan akses RunPod).
+| Detektor | mAP50 | Counting | Macro MAE | Macro Acc ±1 | Acc±1 B1 | Acc±1 B2 | Acc±1 B3 | Acc±1 B4 | Profil Tepat |
+|:---|---:|:---|---:|---:|---:|---:|---:|---:|---:|
+| y26n vanilla | 0.511 | **SVM** | 1.126 | **71.1%** | 93.7% | 71.6% | 53.7% | 65.3% | 1.1% |
+| y26n vanilla | 0.511 | RF | 1.216 | 64.7% | 93.7% | 64.2% | 45.3% | 55.8% | 1.1% |
+| y26n vanilla | 0.511 | M01 | 1.334 | 66.3% | 91.6% | 58.9% | 49.5% | 65.3% | 1.1% |
+| y26s vanilla | 0.506 | SVM | 1.163 | 68.9% | 93.7% | 68.4% | 48.4% | 65.3% | 0.0% |
+| y26s vanilla | 0.506 | RF | 1.216 | 66.6% | 96.8% | 68.4% | 48.4% | 52.6% | 1.1% |
+| y26s vanilla | 0.506 | M01 | 1.403 | 65.5% | 89.5% | 66.3% | 38.9% | 67.4% | 2.1% |
+| y26s scratch | 0.511 | SVM | 1.145 | 68.9% | 90.5% | 68.4% | 51.6% | 65.3% | 2.1% |
+| y26s scratch | 0.511 | RF | 1.229 | 67.9% | 93.7% | 65.3% | 55.8% | 56.8% | 1.1% |
+| y26s scratch | 0.511 | **M01** | 1.266 | **69.2%** | 91.6% | 63.2% | 52.6% | 69.5% | 2.1% |
+| y26s no-aug | 0.465 | SVM | 1.126 | 70.5% | 91.6% | 69.5% | 56.8% | 64.2% | 1.1% |
+| y26s no-aug | 0.465 | **RF** | 1.184 | 68.4% | 92.6% | 66.3% | 55.8% | 58.9% | 1.1% |
+| y26s no-aug | 0.465 | M01 | 1.384 | 66.6% | 90.5% | 68.4% | 43.2% | 64.2% | 0.0% |
+| y26m vanilla | 0.528 | SVM | ⏳ | ⏳ | — | — | — | — | — |
+| y26m vanilla | 0.528 | RF | ⏳ | ⏳ | — | — | — | — | — |
+| y26m vanilla | 0.528 | M01 | ⏳ | ⏳ | — | — | — | — | — |
+| **M01 (fitur GT — target)** | — | — | **0.398** | **86.7%** | — | — | — | — | 26.3% |
 
-| Pipeline | Macro MAE | Macro Acc ±1 | Acc±1 B1 | Acc±1 B2 | Acc±1 B3 | Acc±1 B4 | Profil Tepat |
-|:---|---:|---:|---:|---:|---:|---:|---:|
-| y26s → SVM | 1.163 | 68.9% | 93.7% | 68.4% | 48.4% | 65.3% | 0.0% |
-| y26s → RF | 1.216 | 66.6% | 96.8% | 68.4% | 48.4% | 52.6% | 1.1% |
-| y26s → M01 heuristik | 1.403 | 65.5% | 89.5% | 66.3% | 38.9% | 67.4% | 2.1% |
-| **M01 heuristik (fitur GT, target)** | **0.398** | **86.7%** | — | — | — | — | 26.3% |
+**Bottleneck:** Semua 12 kombinasi detektor × counting menghasilkan Macro Acc±1 dalam rentang sempit **64–71%**, jauh di bawah M01 berbasis GT (86.7%). Algoritma penghitungan yang lebih baik (SVM vs RF vs M01) tidak mengubah kesimpulan secara signifikan — bottleneck sejati adalah propagasi galat YOLO ke fitur `naive_sum`, `max_per_side`, dan `mean_per_side`. Temuan pendukung: SVM dengan fitur GT mencapai 96.1% (Track C) menggunakan arsitektur fitur identik.
 
-**Bottleneck:** Propagasi galat detektor YOLO menjadi penyebab utama kegagalan semua varian pipeline E2E. Ketiga algoritma penghitungan (SVM, RF, M01) menghasilkan Macro Acc±1 yang hampir identik (65–69%) saat menerima deteksi YOLO yang sama — membuktikan bahwa bottleneck bukan pada algoritma penghitungan, melainkan pada kualitas detektor. Sebagai pembanding, M01 dengan fitur GT mencapai 86.7%, dan SVM dengan fitur GT mencapai 96.1% (Track C) — keduanya menggunakan arsitektur yang identik tetapi menerima deteksi yang sempurna.
+**Temuan tak terduga:** y26s-noaug (mAP50=0.465, detektor terlemah) menghasilkan SVM 70.5%, hampir setara dengan y26n (mAP50=0.511, SVM 71.1%). Ini mengindikasikan bahwa distribusi error detektor — bukan besarnya mAP — yang menentukan kualitas fitur 13-dim untuk counting.
 
 ```bash
-python scripts/run_e2e_inference.py --weights baseline-run/weights/y26s_vanilla_local.pt
-python scripts/run_e2e_svm.py
-python scripts/run_e2e_rf.py
+# Jalankan E2E untuk satu detektor (inference + SVM + RF + M01):
+python scripts/run_e2e_pipeline.py --name y26n_vanilla_local \
+    --weights baseline-run/weights/y26n_vanilla_local.pt
 ```
 
 ---
