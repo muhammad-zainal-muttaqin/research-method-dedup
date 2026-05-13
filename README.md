@@ -70,11 +70,12 @@ python scripts/dedup_brand_new_953.py
 
 | Experiment | Best Epoch | mAP50 | mAP50-95 | Catatan |
 |---:|---:|---:|---:|---|
-| y26s vanilla retrain (lokal) | 21 | 0.506 | 0.234 | ≈ RunPod 0.501 — dipakai E2E pipeline |
+| y26m vanilla retrain (lokal) | 33 | 0.509 | 0.231 | Lokal ≈ RunPod 0.528 (gap kecil karena env berbeda) |
+| y26s vanilla retrain (lokal) | 21 | 0.506 | 0.234 | ≈ RunPod 0.501 |
 | y26s no-pretrained | 57 | **0.511** | 0.231 | Scratch = pretrained! |
 | y26s no-augmentation | 6 | 0.465 | 0.216 | Overfit, early stop ep=56 |
 
-**Insight:** COCO pretrained tidak wajib — y26s dari scratch menghasilkan mAP50 sama dengan pretrained (0.511). Augmentasi esensial: tanpa augmentasi mAP50 drop ke 0.465 dan overfit di epoch 6.
+**Insight:** COCO pretrained tidak wajib — y26s dari scratch menghasilkan mAP50 sama dengan pretrained (0.511). Augmentasi esensial: tanpa augmentasi mAP50 drop ke 0.465 dan overfit di epoch 6. Y26m lokal (0.509) sedikit lebih rendah dari RunPod (0.528) karena perbedaan environment training.
 
 ```bash
 yolo detect train model=yolo26m.pt data=local_data.yaml epochs=100 batch=16 imgsz=640
@@ -118,9 +119,9 @@ Setiap detektor diuji dengan tiga algoritma penghitungan: SVM (RBF, GridSearchCV
 | y26s no-aug | 0.465 | SVM | 1.126 | 70.5% | 91.6% | 69.5% | 56.8% | 64.2% | 1.1% |
 | y26s no-aug | 0.465 | **RF** | 1.184 | 68.4% | 92.6% | 66.3% | 55.8% | 58.9% | 1.1% |
 | y26s no-aug | 0.465 | M01 | 1.384 | 66.6% | 90.5% | 68.4% | 43.2% | 64.2% | 0.0% |
-| y26m vanilla | 0.528 | SVM | ⏳ | ⏳ | — | — | — | — | — |
-| y26m vanilla | 0.528 | RF | ⏳ | ⏳ | — | — | — | — | — |
-| y26m vanilla | 0.528 | M01 | ⏳ | ⏳ | — | — | — | — | — |
+| y26m vanilla | 0.509 | **SVM** | 1.118 | **71.6%** | 92.6% | 63.2% | 60.0% | 70.5% | 2.1% |
+| y26m vanilla | 0.509 | RF | 1.211 | 67.9% | 95.8% | 68.4% | 49.5% | 57.9% | 0.0% |
+| y26m vanilla | 0.509 | M01 | 1.400 | 64.5% | 90.5% | 56.8% | 40.0% | 70.5% | 0.0% |
 | **M01 (fitur GT — target)** | — | — | **0.398** | **86.7%** | — | — | — | — | 26.3% |
 
 **Bottleneck:** Semua 12 kombinasi detektor × counting menghasilkan Macro Acc±1 dalam rentang sempit **64–71%**, jauh di bawah M01 berbasis GT (86.7%). Algoritma penghitungan yang lebih baik (SVM vs RF vs M01) tidak mengubah kesimpulan secara signifikan — bottleneck sejati adalah propagasi galat YOLO ke fitur `naive_sum`, `max_per_side`, dan `mean_per_side`. Temuan pendukung: SVM dengan fitur GT mencapai 96.1% (Track C) menggunakan arsitektur fitur identik.
