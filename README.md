@@ -81,7 +81,7 @@ Full table of 29 methods: [`reports/dedup_brand_new_953/accuracy_953.csv`](repor
 ### Cross-dataset regression
 
 | Method | 228 | 478 | 727 | 882 | **953** | Delta |
-|---|---:|---:|---:|---:|---:|---:|---:|
+|---|---:|---:|---:|---:|---:|---:|
 | M06_weight_visibility | 92.54% | 90.38% | 89.41% | 89.34% | 85.94% | −6.60 pp |
 | M15_divide_global | 90.79% | 89.12% | 87.90% | 88.21% | 84.37% | **−6.42 pp** |
 | M12_selector_overrides | **97.37%** | 92.68% | 89.27% | 88.78% | 84.68% | −12.69 pp |
