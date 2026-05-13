@@ -1,0 +1,147 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "sc": "https://schema.org/",
+    "ml": "http://mlcommons.org/schema/",
+    "cr": "http://mlcommons.org/croissant/",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "dct": "http://purl.org/dc/terms/",
+    "citeAs": "cr:citeAs",
+    "data": {"@id": "cr:data", "@type": "@json"},
+    "dataType": {"@id": "cr:dataType", "@type": "@vocab"},
+    "description": "sc:description",
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileObject": "cr:fileObject",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isEnumeration": "cr:isEnumeration",
+    "isLivingDataset": "cr:isLivingDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform"
+  },
+  "@type": "sc:Dataset",
+  "name": "OilPalm-MultiView-BunchCount",
+  "description": "Multi-view oil palm fruit bunch detection and counting dataset. 953 trees photographed from 4-8 sides each, with expert-annotated YOLO labels and JSON ground truth for unique bunch deduplication. 4 maturity classes (ordinal B1→B4): B1 (ripe/merah, most mature), B2 (transition), B3 (hitam/black), B4 (kecil berduri, least mature). Naive detection sum overcounts by ~1.90x; JSON GT provides unique bunch count per tree per class.",
+  "url": "https://huggingface.co/datasets/ULM-DS-Lab/OilPalm-MultiView-BunchCount",
+  "version": "1.0.0",
+  "license": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "isLivingDataset": false,
+  "creator": [
+    {"@type": "sc:Person", "name": "Fatma Indriani", "honorificSuffix": "S.T., M.IT., Ph.D"},
+    {"@type": "sc:Person", "name": "Setyo Wahyu Saputro", "honorificSuffix": "S.Kom., M.Kom"},
+    {"@type": "sc:Person", "name": "Alia Rahmi", "honorificSuffix": "S.TP., M.Eng.Sc., Ph.D"},
+    {"@type": "sc:Person", "name": "Dwi Kartini", "honorificSuffix": "S.Kom., M.Kom"},
+    {"@type": "sc:Person", "name": "Triando Hamonangan Saragih", "honorificSuffix": "S.Kom., M.Kom"},
+    {"@type": "sc:Person", "name": "Naufal Said", "honorificSuffix": "S.Kom., M.Sc"},
+    {"@type": "sc:Person", "name": "Hartoni", "honorificSuffix": "S.P., M.P"},
+    {"@type": "sc:Organization", "name": "ULM Data Science Lab", "url": "https://fmipa.ulm.ac.id/ps/ilmu-komputer/"}
+  ],
+  "keywords": [
+    "oil palm",
+    "sawit",
+    "agriculture",
+    "object detection",
+    "multi-view",
+    "bunch counting",
+    "maturity classification",
+    "YOLO",
+    "deduplication",
+    "Indonesia"
+  ],
+  "inLanguage": "id",
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "repo",
+      "name": "repo",
+      "description": "Hugging Face repository",
+      "contentUrl": "https://huggingface.co/datasets/ULM-DS-Lab/OilPalm-MultiView-BunchCount",
+      "encodingFormat": "git+https",
+      "sha256": "https://github.com/mlcommons/croissant/issues/80"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "all-images",
+      "name": "all-images",
+      "description": "All 3992 images in flat structure (960x1280 JPEG). Split assignment (train/val/test) is recorded in each JSON ground truth file under the 'split' field.",
+      "containedIn": {"@id": "repo"},
+      "encodingFormat": "image/jpeg",
+      "includes": "images/*.jpg"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "yolo-labels",
+      "name": "yolo-labels",
+      "description": "YOLO format annotation files (class_id cx cy w h, normalized)",
+      "containedIn": {"@id": "repo"},
+      "encodingFormat": "text/plain",
+      "includes": "labels/**/*.txt"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "json-gt",
+      "name": "json-gt",
+      "description": "JSON ground truth files — unique bunch count per tree with cross-view deduplication (953 files)",
+      "containedIn": {"@id": "repo"},
+      "encodingFormat": "application/json",
+      "includes": "json/*.json"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "gt-parquet",
+      "name": "gt-parquet",
+      "description": "Parquet summary of ground truth: tree_id, split, varietas, total_unique_bunches, B1, B2, B3, B4",
+      "containedIn": {"@id": "repo"},
+      "encodingFormat": "application/x-parquet",
+      "includes": "data/ground_truth.parquet"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "images",
+      "name": "images",
+      "description": "Multi-view oil palm images with metadata",
+      "field": [
+        {"@type": "cr:Field", "@id": "images/file_name", "name": "file_name", "description": "Image filename", "dataType": "sc:Text", "source": {"fileSet": {"@id": "all-images"}, "extract": {"fileProperty": "filename"}}},
+        {"@type": "cr:Field", "@id": "images/tree_id", "name": "tree_id", "description": "Tree identifier, e.g. DAMIMAS_A21B_0001", "dataType": "sc:Text"},
+        {"@type": "cr:Field", "@id": "images/side", "name": "side", "description": "Camera side index (1-8)", "dataType": "sc:Integer"},
+        {"@type": "cr:Field", "@id": "images/split", "name": "split", "description": "Dataset split: train/val/test", "dataType": "sc:Text"}
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "ground_truth",
+      "name": "ground_truth",
+      "description": "Per-tree unique bunch count ground truth",
+      "field": [
+        {"@type": "cr:Field", "@id": "gt/tree_id", "name": "tree_id", "dataType": "sc:Text", "source": {"fileObject": {"@id": "gt-parquet"}, "extract": {"column": "tree_id"}}},
+        {"@type": "cr:Field", "@id": "gt/split", "name": "split", "dataType": "sc:Text", "source": {"fileObject": {"@id": "gt-parquet"}, "extract": {"column": "split"}}},
+        {"@type": "cr:Field", "@id": "gt/varietas", "name": "varietas", "description": "Palm variety (DAMIMAS or LONSUM)", "dataType": "sc:Text", "source": {"fileObject": {"@id": "gt-parquet"}, "extract": {"column": "varietas"}}},
+        {"@type": "cr:Field", "@id": "gt/num_sides", "name": "num_sides", "description": "Number of camera sides (4 or 8)", "dataType": "sc:Integer", "source": {"fileObject": {"@id": "gt-parquet"}, "extract": {"column": "num_sides"}}},
+        {"@type": "cr:Field", "@id": "gt/total_unique_bunches", "name": "total_unique_bunches", "description": "Ground truth unique bunch count per tree", "dataType": "sc:Integer", "source": {"fileObject": {"@id": "gt-parquet"}, "extract": {"column": "total_unique_bunches"}}},
+        {"@type": "cr:Field", "@id": "gt/B1", "name": "B1", "description": "Unique B1 bunches (ripe/merah — most mature)", "dataType": "sc:Integer", "source": {"fileObject": {"@id": "gt-parquet"}, "extract": {"column": "B1"}}},
+        {"@type": "cr:Field", "@id": "gt/B2", "name": "B2", "description": "Unique B2 bunches (transition stage)", "dataType": "sc:Integer", "source": {"fileObject": {"@id": "gt-parquet"}, "extract": {"column": "B2"}}},
+        {"@type": "cr:Field", "@id": "gt/B3", "name": "B3", "description": "Unique B3 bunches (hitam/black)", "dataType": "sc:Integer", "source": {"fileObject": {"@id": "gt-parquet"}, "extract": {"column": "B3"}}},
+        {"@type": "cr:Field", "@id": "gt/B4", "name": "B4", "description": "Unique B4 bunches (kecil berduri — least mature)", "dataType": "sc:Integer", "source": {"fileObject": {"@id": "gt-parquet"}, "extract": {"column": "B4"}}},
+        {"@type": "cr:Field", "@id": "gt/total_detections", "name": "total_detections", "description": "Naive sum of all detections across sides (overcounts)", "dataType": "sc:Integer", "source": {"fileObject": {"@id": "gt-parquet"}, "extract": {"column": "total_detections"}}},
+        {"@type": "cr:Field", "@id": "gt/duplicates_linked", "name": "duplicates_linked", "description": "Number of cross-view duplicate links identified by annotators", "dataType": "sc:Integer", "source": {"fileObject": {"@id": "gt-parquet"}, "extract": {"column": "duplicates_linked"}}}
+      ]
+    }
+  ]
+}

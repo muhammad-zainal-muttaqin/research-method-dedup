@@ -247,6 +247,11 @@ RESEARCH.md            primary research doc — read Section 0 first
 README.md              project overview + method evolution narrative + cross-dataset table
 report_05Mei2026.md    882-tree benchmark results (per-method full breakdown)
 AGENTS.md              agent configuration
+CLAUDE-TRAINING.md     onboarding untuk Claude di RunPod/Vast.ai
+                       (detection + counting ML pipeline — scope terpisah dari dedup)
+baseline-run/          vanilla detection training logs (y26n/s/m) + future ablations
+Tested-Brand-New-Dataset-YOLO/  detection training dataset (mirror of HF
+                                ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO)
 ```
 
 ## algorithms/ Package

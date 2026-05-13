@@ -1,0 +1,38 @@
+Trees: 953  M01 within±1: 827  fail: 126
+M01 Acc±1: 86.78%
+
+Per-class |err|>=2 share among failures:
+  B1: 25 trees (bias_sum=+85)
+  B2: 44 trees (bias_sum=+118)
+  B3: 90 trees (bias_sum=+208)
+  B4: 26 trees (bias_sum=-23)
+
+Sole-class failure breakdown:
+  B3: 52
+  multi: 39
+  B4: 17
+  B2: 13
+  B1: 5
+
+M01 failures recoverable by SOME existing candidate: 10/126
+Per-candidate recovery rate on M01 failures:
+  M01: 0
+  M03: 8
+  M05: 8
+  M06: 9
+  M07: 9
+
+M01 Acc±1 by detection-density bucket:
+  (0, 8]: 96.55%  (n=58)
+  (8, 16]: 93.09%  (n=246)
+  (16, 25]: 87.96%  (n=490)
+  (25, 40]: 78.79%  (n=132)
+  (40, 80]: 0.00%  (n=20)
+
+M01 Acc±1 by b3frac_naive bucket:
+  (0.0, 0.1]: 100.00%  (n=6)
+  (0.1, 0.3]: 93.20%  (n=103)
+  (0.3, 0.45]: 85.98%  (n=214)
+  (0.45, 0.6]: 86.81%  (n=273)
+  (0.6, 0.75]: 85.78%  (n=204)
+  (0.75, 1.0]: 84.33%  (n=134)

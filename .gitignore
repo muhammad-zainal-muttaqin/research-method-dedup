@@ -31,3 +31,22 @@ archive.zip
 /_merge*.py
 /_search_*.py
 /_verify_*.py
+
+# training detection dataset (mirror of HF ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO)
+# clone fresh dari HF di RunPod, jangan commit
+Tested-Brand-New-Dataset-YOLO/
+
+# zip backups (heavy)
+*.zip
+
+# Ultralytics training output (weights, plots, results.csv per run)
+runs/
+
+# YOLO weight files (download/train fresh, jangan commit)
+*.pt
+*.engine
+*.onnx
+
+# HF token + secrets
+.env
+*.token
