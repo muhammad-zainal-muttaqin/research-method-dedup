@@ -82,10 +82,10 @@ yolo detect train model=yolo26m.pt data=local_data.yaml epochs=100 batch=16 imgs
 
 Feature 13-dim per tree: naive_sum(B1-B4), max_per_side(B1-B4), mean_per_side(B1-B4), n_sides.
 
-| Model | Macro MAE | Exact Profile | Total ±1 | Acc±1 B1 | Acc±1 B3 |
-|---:|---:|---:|---:|---:|---:|
-| **SVM (RBF, GridSearchCV)** | **0.318** | 27.4% | 72.6% | 100% | 91.6% |
-| RF (n=200, max_depth=10) | 0.353 | 27.4% | 70.5% | 96.8% | 90.5% |
+| Model | Macro MAE | Exact Profile | Total ±1 | Acc±1 B1 | Acc±1 B2 | Acc±1 B3 | Acc±1 B4 |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| **SVM (RBF, GridSearchCV)** | **0.318** | 27.4% | 72.6% | **100%** | 95.8% | 91.6% | 96.8% |
+| RF (n=200, max_depth=10) | 0.353 | 27.4% | 70.5% | 96.8% | 96.8% | 90.5% | 96.8% |
 
 Detail: `reports/counting_{svm,rf}/metrics.json`
 
