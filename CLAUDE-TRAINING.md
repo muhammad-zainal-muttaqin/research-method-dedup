@@ -17,15 +17,23 @@
 
 Log mentah: `baseline-run/vanilla_y26{n,s,m}.txt`.
 
+### Local Training Results (RTX A5000)
+
 | # | Model | Best epoch | mAP50 | mAP50-95 | Notes |
 |---:|---|---:|---:|---:|---|
-| 4 | y26s no-pretrained | 57 | **0.511** | 0.231 | scratch = pretrained! |
+| 4 | y26s no-pretrained | 57 | **0.511** | 0.231 | scratch = pretrained! best.pt di `baseline-run/weights/` |
 | 5 | y26s no-aug | 6 | **0.465** | 0.216 | overfit cepat, early stop ep=56 |
-| 6 | SVM (GT feat) | — | — | — | Macro class-MAE=0.318 |
-| 7 | RF (GT feat) | — | — | — | Macro class-MAE=0.353 |
-| 8 | y26s→SVM E2E | — | — | — | Macro MAE=1.163 |
-| 9 | y26s→RF E2E | — | — | — | Macro MAE=1.216 |
-| — | vanilla y26s retrain | 21 | **0.506** | 0.234 | lokal, ≈ RunPod 0.501 |
+| — | vanilla y26s retrain | 21 | **0.506** | 0.234 | lokal, ≈ RunPod 0.501, dipakai E2E |
+
+### Counting Results (test set, 95 trees)
+
+| # | Model | Macro MAE | Total MAE | Total ±1 | Acc±1 B3 |
+|---:|---|---:|---:|---:|---:|
+| 6 | SVM (GT feat) | **0.318** | 1.126 | 72.6% | 91.6% |
+| 7 | RF (GT feat) | 0.353 | 1.200 | 70.5% | 90.5% |
+| 8 | y26s→SVM E2E | 1.163 | 2.337 | 38.9% | 48.4% |
+| 9 | y26s→RF E2E | 1.216 | 2.337 | 40.0% | 48.4% |
+| — | **M01 heuristik** | **0.398** | **1.414** | **86.7%** | — |
 
 ### Per-class detail (val, mAP50)
 

@@ -7,15 +7,18 @@ GPU: NVIDIA RTX A5000 24GB | Workspace: /workspace/runs/detect/
 
 ## Status
 
-| # | Eksperimen | Status | Log | Notes |
-|---|---|---|---|---|
-| 4 | y26s no-pretrained | ✅ DONE | baseline-run/y26s_nopretrained.txt | Best ep=57, mAP50=0.511, mAP50-95=0.231 — mengungguli vanilla! |
-| 5 | y26s no-augmentation | ✅ DONE | baseline-run/y26s_noaug.txt | Best ep=6, mAP50=0.465, early stop ep=56 — overfit cepat |
-| 6 | SVM dari GT features | ✅ DONE | reports/counting_svm/ | Macro class-MAE=0.3184, Acc±1 B3=91.6% |
-| 7 | RF dari GT features | ✅ DONE | reports/counting_rf/ | Macro class-MAE=0.3526, Acc±1 B3=90.5% |
-| 8 | End-to-end y26s→SVM | ✅ DONE | reports/e2e_svm/ | Macro class-MAE=1.150 — heuristik menang |
-| 9 | End-to-end y26s→RF | ✅ DONE | reports/e2e_rf/ | Macro class-MAE=1.253 — heuristik menang |
-| - | vanilla y26s retrain | ✅ DONE | baseline-run/y26s_vanilla_local.txt | referensi untuk #8/#9 |
+| # | Eksperimen | Status | Best Result | Detail |
+|---:|---|---|---:|---|
+| 1 | y26n vanilla (RunPod) | ✅ DONE | mAP50=0.511 (ep=30) | mAP50-95=0.237, 0.2ms, 2.4M params |
+| 2 | y26s vanilla (RunPod) | ✅ DONE | mAP50=0.501 (ep=32) | mAP50-95=0.235, 0.5ms, 9.5M params |
+| 3 | **y26m vanilla (RunPod)** | ✅ DONE | **mAP50=0.528 (ep=20)** | mAP50-95=0.240, 0.8ms, 20.4M params |
+| 4 | y26s no-pretrained (lokal) | ✅ DONE | mAP50=0.511 (ep=57) | scratch = pretrained! mAP50-95=0.231 |
+| 5 | y26s no-augmentation (lokal) | ✅ DONE | mAP50=0.465 (ep=6) | overfit, early stop ep=56 |
+| — | vanilla y26s retrain (lokal) | ✅ DONE | mAP50=0.506 (ep=21) | ≈ RunPod 0.501, dipakai E2E |
+| 6 | SVM dari GT features | ✅ DONE | Macro class-MAE=0.318 | Acc±1 B1=100%, B3=91.6% |
+| 7 | RF dari GT features | ✅ DONE | Macro class-MAE=0.353 | Acc±1 B1=96.8%, B3=90.5% |
+| 8 | End-to-end y26s→SVM | ✅ DONE | Macro class-MAE=1.163 | Lebih buruk 3× dari heuristik |
+| 9 | End-to-end y26s→RF | ✅ DONE | Macro class-MAE=1.216 | Lebih buruk 3× dari heuristik |
 
 ## Hasil #6 SVM (GT features, test set 95 trees)
 | Class | MAE | Bias | Acc±1 |
@@ -50,6 +53,32 @@ GPU: NVIDIA RTX A5000 24GB | Workspace: /workspace/runs/detect/
 | Exact-profile | 0.0% | 1.1% | — |
 
 **Verdict:** Heuristik M01 tetap menang telak. Feature aggregation 13-dim kehilangan informasi side-level.
+
+---
+
+## Komparasi Semua Metode Counting
+
+| Metode | Macro MAE | Total MAE | Total ±1 | Exact Profile |
+|---|---:|---:|---:|---:|
+| Naive sum (baseline buruk) | ~0.80 | ~3.2 | ~20% | ~0% |
+| SVM (GT features) | **0.318** | 1.126 | 72.6% | 27.4% |
+| RF (GT features) | 0.353 | 1.200 | 70.5% | 27.4% |
+| y26s→SVM (E2E) | 1.163 | 2.337 | 38.9% | 0.0% |
+| y26s→RF (E2E) | 1.216 | 2.337 | 40.0% | 1.1% |
+| **M01_selector_b2b3 (target)** | **0.398** | **1.414** | **86.7%** | — |
+
+---
+
+## Per-class Detail — Detection (val, dari CLAUDE-TRAINING.md §0)
+
+| Model | B1 mAP50 | B2 mAP50 | B3 mAP50 | B4 mAP50 | B1 Recall | B2 Recall | B3 Recall | B4 Recall |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| y26n vanilla | 0.728 | 0.410 | 0.576 | 0.331 | 0.784 | 0.443 | 0.621 | 0.364 |
+| y26s vanilla | 0.719 | 0.393 | 0.585 | 0.308 | 0.769 | 0.488 | 0.698 | 0.242 |
+| y26m vanilla | **0.757** | **0.411** | **0.595** | **0.348** | 0.688 | **0.483** | 0.672 | **0.421** |
+| y26s vanilla retrain | — | — | — | — | — | — | — | — |
+
+B4 weakest class (sample-starved, recall 24-42%). B2↔B3 irreducible visual ambiguity.
 
 ---
 
