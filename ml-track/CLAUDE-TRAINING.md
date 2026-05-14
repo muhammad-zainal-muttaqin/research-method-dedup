@@ -58,6 +58,112 @@ Seluruh eksperimen deteksi, counting, dan E2E telah selesai. Semua model dilatih
 
 ---
 
+## 0.1. Reproduksi Hasil (Tanpa Training Ulang)
+
+Semua weights sudah ada di repo (`ml-track/baseline-run/weights/`). Dataset diunduh dari HF. Urutan reproduksi:
+
+### Prasyarat
+
+```bash
+git clone https://github.com/muhammad-zainal-muttaqin/research-method-dedup.git
+cd research-method-dedup
+pip install -r requirements.txt
+pip install scikit-learn huggingface_hub ultralytics
+
+huggingface-cli login
+huggingface-cli download ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO \
+  --repo-type dataset --local-dir ./Brand-New-Dataset-YOLO
+```
+
+### Step 1: Reproduksi Deteksi — mAP50 / mAP50-95 (butuh GPU)
+
+```bash
+for WEIGHT in \
+  ml-track/baseline-run/weights/y26n_vanilla_local.pt \
+  ml-track/baseline-run/weights/y26s_vanilla_local.pt \
+  ml-track/baseline-run/weights/y26m_vanilla_local.pt \
+  ml-track/baseline-run/weights/y26s_nopretrained.pt \
+  ml-track/baseline-run/weights/y26s_noaug.pt; do
+  yolo detect val model=$WEIGHT \
+    data=Brand-New-Dataset-YOLO/data.yaml split=test
+done
+```
+
+Expected output (test set, n=412):
+
+| Weight | mAP50 | mAP50-95 |
+|---|---:|---:|
+| y26n_vanilla_local.pt | 0.521 | 0.237 |
+| y26s_vanilla_local.pt | 0.506 | 0.235 |
+| y26m_vanilla_local.pt | 0.509 | 0.231 |
+| y26s_nopretrained.pt  | 0.511 | 0.231 |
+| y26s_noaug.pt         | 0.465 | 0.216 |
+
+Toleransi: ±0.003 (deterministic, `seed=42` baked ke weights).
+
+### Step 2: Reproduksi Counting GT-Features — tanpa GPU
+
+```bash
+python scripts/build_counting_features.py   # ekstrak 13-dim features dari GT JSON
+python scripts/run_counting_svm.py          # → reports/counting_svm/metrics.json
+python scripts/run_counting_rf.py           # → reports/counting_rf/metrics.json
+```
+
+Verifikasi:
+
+```bash
+python -c "
+import json
+classes = ['B1', 'B2', 'B3', 'B4']
+for name in ['counting_svm', 'counting_rf']:
+    d = json.load(open(f'reports/{name}/metrics.json'))['test']
+    acc = sum(d[f'acc_pm1_{c}'] for c in classes) / len(classes)
+    print(f\"{name}: Acc±1={acc:.1%}, MAE={d['macro_class_mae']:.3f}\")
+"
+```
+
+Expected: `counting_svm: Acc±1=96.1%, MAE=0.318` | `counting_rf: Acc±1=95.3%, MAE=0.353`
+
+### Step 3: Reproduksi E2E — butuh GPU
+
+```bash
+# Jalankan semua 5 detektor (masing-masing run inference + SVM + RF + M01)
+for NAME_WEIGHT in \
+  "y26n_vanilla_local:ml-track/baseline-run/weights/y26n_vanilla_local.pt" \
+  "y26s_vanilla_local:ml-track/baseline-run/weights/y26s_vanilla_local.pt" \
+  "y26m_vanilla_local:ml-track/baseline-run/weights/y26m_vanilla_local.pt" \
+  "y26s_nopretrained:ml-track/baseline-run/weights/y26s_nopretrained.pt" \
+  "y26s_noaug:ml-track/baseline-run/weights/y26s_noaug.pt"; do
+  NAME="${NAME_WEIGHT%%:*}"
+  WEIGHT="${NAME_WEIGHT##*:}"
+  python scripts/run_e2e_pipeline.py --name $NAME --weights $WEIGHT
+done
+```
+
+Output per detektor: `reports/e2e_{name}_{svm,rf,m01}/metrics.json`
+
+Verifikasi best E2E (y26m → SVM):
+
+```bash
+python -c "
+import json
+d = json.load(open('reports/e2e_y26m_vanilla_local_svm/metrics.json'))['test']
+print(f\"E2E best: Acc±1={d['macro_acc_pm1']:.1%}, MAE={d['macro_class_mae']:.3f}\")
+"
+```
+
+Expected: `E2E best: Acc±1=71.6%, MAE=1.118`
+
+### Step 4: Generate SUMMARY
+
+```bash
+# Catatan: generate_training_summary.py menggunakan RUNS_DIR=/workspace/runs/detect
+# (path RunPod). Di lokal tanpa runs/, hanya membaca reports/ dan ml-track/baseline-run/*.txt
+python scripts/generate_training_summary.py   # → ml-track/baseline-run/SUMMARY.md
+```
+
+---
+
 ## 1. Environment Setup (RunPod / Vast.ai)
 
 **GPU:** 24GB+ VRAM (RTX 4090 / A100 / RTX 6000 Blackwell).
