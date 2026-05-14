@@ -1,0 +1,12 @@
+method,acc_pct,MAE,mean_total_error,n_fail,n_trees
+M06_weight_visibility,85.73,0.3864,1.5456,136,953
+M20_weight_visibility_grid,85.73,0.3864,1.5456,136,953
+M11_median_b2,84.99,0.4242,1.6967,143,953
+M12_selector_overrides,84.99,0.4342,1.7366,143,953
+M10_entropy_divide,84.89,0.447,1.788,144,953
+M13_stack_bracket,84.78,0.4231,1.6925,145,953
+M14_stack_density,84.78,0.4294,1.7177,145,953
+M17_selector_regime,84.78,0.4349,1.7398,145,953
+M15_divide_global,84.58,0.4042,1.617,147,953
+M16_boost_b2b4,84.58,0.4048,1.6191,147,953
+M19_divide_adaptive,82.69,0.4583,1.8332,165,953

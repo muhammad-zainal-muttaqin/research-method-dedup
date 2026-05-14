@@ -1,7 +1,7 @@
-path: /home/claudeuser/research-method-dedup/Brand-New-Dataset-YOLO
-train: train.txt
-val: val.txt
-test: test.txt
+path: /workspace/research-method-dedup/Brand-New-Dataset-YOLO
+train: /workspace/research-method-dedup/Brand-New-Dataset-YOLO/train_abs.txt
+val: /workspace/research-method-dedup/Brand-New-Dataset-YOLO/val_abs.txt
+test: /workspace/research-method-dedup/Brand-New-Dataset-YOLO/test_abs.txt
 
 nc: 4
 names:

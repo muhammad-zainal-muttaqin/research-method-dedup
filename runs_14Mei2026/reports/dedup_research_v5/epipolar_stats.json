@@ -1,0 +1,10 @@
+{
+  "adjacent": {
+    "cx_sum_mean": 0.992956553038105,
+    "cx_sum_std": 0.1554188730432339
+  },
+  "opposite": {
+    "cx_diff_mean": 0.0,
+    "cx_diff_std": 0.25
+  }
+}
