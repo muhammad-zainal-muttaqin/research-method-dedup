@@ -1,9 +1,0 @@
-tree_id,split,v6_error_sum,M20_weight_visibility_grid_grid_ok,M20_weight_visibility_grid_grid_error_sum,v5_M24_weight_class_aware_ok,v5_M24_weight_class_aware_error_sum,M13_stack_bracket_ok,M13_stack_bracket_error_sum,M10_entropy_divide_ok,M10_entropy_divide_error_sum,M23_agree_side_ok,M23_agree_side_error_sum,M22_anchor_floor50_ok,M22_anchor_floor50_error_sum,M26_median_per_side_ok,M26_median_per_side_error_sum,M25_consensus_multi_ok,M25_consensus_multi_error_sum,M16_boost_b2b4_ok,M16_boost_b2b4_error_sum,M12_selector_overrides_ok,M12_selector_overrides_error_sum,M09_median_strong5_ok,M09_median_strong5_error_sum,M11_median_b2_ok,M11_median_b2_error_sum
-DAMIMAS_A21B_0244,train,2,True,1,True,1,True,1,True,1,True,1,True,1,False,3,False,3,True,1,True,1,True,1,False,2
-DAMIMAS_A21B_0263,train,2,True,1,False,2,True,1,True,1,True,1,True,1,False,4,False,4,True,0,True,0,True,0,True,0
-DAMIMAS_A21B_0546,test,2,True,2,False,3,False,2,False,2,True,3,True,1,False,4,False,4,True,1,True,1,True,1,True,1
-DAMIMAS_A21B_0547,test,3,True,1,False,3,True,1,True,1,True,1,True,1,False,3,False,3,True,0,True,0,True,0,True,1
-DAMIMAS_A21B_0557,test,4,False,3,False,4,False,4,False,4,True,1,True,2,True,1,True,1,False,4,False,4,False,4,False,4
-DAMIMAS_A21B_0558,test,4,True,2,False,4,True,3,True,3,True,1,True,0,True,3,True,3,True,2,False,4,True,2,True,3
-DAMIMAS_A21B_0569,test,3,False,3,False,4,False,4,False,4,False,3,False,5,False,6,False,6,False,4,False,3,False,3,False,3
-DAMIMAS_A21B_0574,test,2,False,2,False,3,False,2,False,2,True,1,True,1,True,1,True,1,False,2,True,1,False,2,False,2

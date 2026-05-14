@@ -1,8 +1,0 @@
-method,acc_all,mae_all,acc_train,acc_val,acc_test
-iter11_baseline,86.67,0.3982,87.34,82.58,88.62
-iter9_trifurc,86.67,0.3987,87.34,82.58,88.62
-avg_split_keep_acc,77.23,0.4832,77.63,74.16,79.04
-total_then_split_iter9,66.84,0.6089,68.75,62.36,64.67
-total_then_split_iter9_b2b3,66.84,0.6089,68.75,62.36,64.67
-total_then_split_med,66.42,0.5839,68.26,61.24,65.27
-total_then_split_geo,66.42,0.5902,68.42,60.67,65.27

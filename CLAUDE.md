@@ -8,11 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Constraint:** **100% algorithmic / heuristic only.** No training, embeddings, backprop, or learned matchers. All methods must be deterministic and parameter-free (no gradient computation).
 
-**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. **Canonical JSON GT: `Brand-New-Dataset-YOLO/json/` = 953 trees (COMPLETE, no missing — created 2026-05-09).** This supersedes all earlier snapshots:
-- `Brand-New-Dataset-YOLO/` (953, full) — current canonical, contains `images/`, `labels/`, `json/`, `data.yaml`
-- `json_05 Mei 2026/` (882, legacy) — kept for historical reference only
-- `json/` (228, legacy) — kept for v9 dev-set reproduction
-- `archive/` (228/478/727 snapshots) — read-only history
+**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. **Canonical JSON GT: `Brand-New-Dataset-YOLO/json/` = 953 trees (COMPLETE).** Earlier snapshots (228 / 478 / 727 / 882) live under `archive/_to_review/` and are read-only history. `json/` (228) and `dataset/labels/` are kept at root only as live inputs for `scripts/count_all_trees.py` and `scripts/count_gt_vs_naive.py`. `Tested-Brand-New-Dataset-YOLO/` is kept at root as the split (train/val/test + `split_manifest.csv`) consumed by the E2E pipeline (`scripts/run_e2e_*.py`).
 
 Mostly 4 sides/tree, 45 have 8. Images 960×1280 JPEG. Classes ordinal B1→B4. **Core hard problem: B2↔B3 visually ambiguous** (irreducible per JSON-01 audit, label noise = 0%).
 
@@ -33,34 +29,25 @@ python scripts/count_all_trees.py
 # JSON-05 + JSON-01 audit (228 JSON trees)
 python scripts/count_gt_vs_naive.py
 
-# Dedup research generations (each writes to reports/dedup_research_vN/)
-python scripts/dedup_research.py       # v1: grid search (corrected, visibility, graph, cluster)
-python scripts/dedup_research_v2.py    # v2: visibility + adaptive ridge + ensemble
-python scripts/dedup_research_v3.py    # v3: thresholds from _confirmedLinks
-python scripts/dedup_research_v4.py    # v4: pixel-aware HSV + Mahalanobis + Hungarian
-python scripts/dedup_research_v5.py    # v5: adaptive density-corrected
-python scripts/dedup_v5_focused.py     # v5 focused variant
-python scripts/dedup_research_v6.py    # v6: regime selector (96.49%)
-python scripts/dedup_research_v7.py    # v7: stacking + density family
-python scripts/dedup_research_v8.py    # v8: entropy + per-side distribution
-python scripts/dedup_research_v9.py    # v9: narrow regime overrides on v6 (CURRENT BEST 98.68%)
-
-# Multi-dimensional benchmark + method reports
-python scripts/benchmark_multidim.py         # 4-dim evaluation: accuracy, speed, robustness, domain
-python scripts/generate_method_reports.py    # per-method breakdown reports → reports/methods/
-
-# PRIMARY benchmark — full 953-tree Brand-New-Dataset-YOLO (canonical, 2026-05-10)
+# PRIMARY benchmark — full 953-tree Brand-New-Dataset-YOLO (canonical)
 python scripts/dedup_brand_new_953.py       # → reports/dedup_brand_new_953/
 
-# Legacy cross-dataset benchmarks (228/478/727/882, fresh re-run 2026-05-08)
-# Kept for historical reference — Brand-New-Dataset-YOLO supersedes these
-# Results in reports/benchmark_228/, benchmark_478/, benchmark_727/, benchmark_882/
+# Multi-dimensional benchmark + per-method reports
+python scripts/benchmark_multidim.py        # 4-dim evaluation: accuracy, speed, robustness, domain → reports/benchmark_multidim/
+python scripts/generate_method_reports.py   # per-method breakdown → reports/methods/
 
-# Legacy inference scripts (228 JSON + 725 TXT, no longer canonical)
-python scripts/dedup_all_953.py             # all 16 methods on all 953 trees (legacy mix)
-python scripts/dedup_all_trees_final.py     # all methods on 953 trees (legacy)
-python scripts/dedup_nonjson_compare.py     # non-JSON validation (legacy, no missing JSON anymore)
+# E2E / ML track (separate from heuristic — see CLAUDE-TRAINING.md)
+python scripts/build_counting_features.py
+python scripts/run_counting_rf.py
+python scripts/run_counting_svm.py
+python scripts/run_e2e_pipeline.py          # unified harness; per-track wrappers: run_e2e_{m01,rf,svm,inference}.py
+python scripts/generate_training_summary.py
+python scripts/export_gt_parquet.py
 ```
+
+**Runtime-library scripts (not benchmarks; imported by the primary):** `scripts/dedup_all_953.py` and `scripts/dedup_research_v5..v9.py` define method bodies that `dedup_brand_new_953.py` re-uses via `import dedup_all_953 as base` → which in turn imports `dedup_research_v6..v9`. `algorithms/M18_entropy_stack.py` also wraps `dedup_research_v8`. Do **not** call these scripts as top-level commands; they only matter as imports.
+
+**Archived 2026-05-14 → `archive/_to_review/`:** all `dedup_research_v1..v4.py`, `dedup_v5_focused.py`, `dedup_all_trees_final.py`, `dedup_nonjson_compare.py`, the four legacy benchmark report folders (`benchmark_228/478/727/882/`), the v2/v3/v4/v6/v7/v8/v9 dedup_research report folders, and one-shot migrators (`migrate_*.py`, `fix_image_filename_bug.py`, `regen_tree_id.py`, `cleanup_repo.py`, `build_brand_new_dataset.py`, `generate_hf_metadata.py`, `flatten_dataset.py`, `find_first_5.py`, `generate_sample_viz.py`). Restore by `Move-Item archive\_to_review\scripts\<file> scripts\<file>`.
 
 ## Current Best (as of 2026-05-10)
 
@@ -204,54 +191,46 @@ Verified dedup ratio ≈ 0.55 (best methods reduce naive 18,544 detections to ~1
 ## Repository Layout
 
 ```
-Brand-New-Dataset-YOLO/  953 trees COMPLETE (canonical, created 2026-05-09)
-  data.yaml              YOLO config (4 classes B1–B4)
-  images/{train,val,test}/  source images
-  labels/{train,val,test}/  YOLO TXT labels
-  json/                     953 JSON GT files (1 per tree_name) — PRIMARY GT
-json_05 Mei 2026/      882 JSON GT files (legacy, superseded by Brand-New-Dataset-YOLO)
-json/                  228 JSON files (legacy subset, used by older scripts)
-05 Mei 2026/           Raw export from tools_sawit/ app
-archive/               Snapshot archives (read-only, do not modify)
-  json_22 April 2026/  228-tree snapshot (= json/ root copy)
-  json_28 April 2026/  478-tree snapshot
-  json_30 April 2026/  727-tree snapshot (legacy benchmark)
-  05 Mei 2026 raw/     raw export before dedup
-tools_sawit/           Web app (vanilla JS) used to produce JSON GT.
-                       Schema v2: filename = tree_name.json, varietas derived
-                       per-tree from name prefix. See tools_sawit/README.md.
-dataset/
-  data.yaml            YOLO config (path: /workspace/dataset)
-  images/{train,val,test}/
-  labels/{train,val,test}/
-algorithms/            standalone algo modules — each exports predict(detections, params) -> dict
-  __init__.py          ranked performance table (read this for algo selection)
-  M01_selector_b2b3.py current production (953 best, 86.67%)
-  M12_selector_overrides.py best on 228 — imports M17_selector_regime + 3 specialists
-  M17_selector_regime.py    regime backbone + load_params() (reads reports/dedup_research_v5/...)
-  M<NN>_*.py            one algo = one file, all deterministic, no training
-scripts/               see "Running Scripts" — count_*, dedup_*, benchmark_*, generate_*
-  dedup_brand_new_953.py  PRIMARY benchmark — runs all 16 methods on Brand-New-Dataset-YOLO
-  dedup_all_953.py        legacy: 228 JSON + 725 TXT (no longer needed, kept for repro)
-  build_brand_new_dataset.py  builds Brand-New-Dataset-YOLO/ from 05 Mei 2026/ source
-reports/<script>/      every script writes its outputs here
-reports/dedup_brand_new_953/ Acc±1 on full 953 canonical (PRIMARY BENCHMARK)
-reports/benchmark_228/       Acc±1 on 228-tree archive (legacy, dev set)
-reports/benchmark_478/       Acc±1 on 478-tree archive (legacy)
-reports/benchmark_727/       Acc±1 on 727-tree archive (legacy)
-reports/benchmark_882/       Acc±1 on 882-tree (legacy, superseded by 953)
-reports/benchmark_multidim/  multi-dim benchmark (accuracy, speed, robustness, domain)
-reports/methods/             per-method breakdown reports with traceability
-contract-work/         validation contracts, v4 analysis, dry-run + algorithmic-advancement reports
-RESEARCH.md            primary research doc — read Section 0 first
-README.md              project overview + method evolution narrative + cross-dataset table
-report_05Mei2026.md    882-tree benchmark results (per-method full breakdown)
-AGENTS.md              agent configuration
-CLAUDE-TRAINING.md     onboarding untuk Claude di RunPod/Vast.ai
-                       (detection + counting ML pipeline — scope terpisah dari dedup)
-baseline-run/          vanilla detection training logs (y26n/s/m) + future ablations
-Tested-Brand-New-Dataset-YOLO/  detection training dataset (mirror of HF
-                                ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO)
+Brand-New-Dataset-YOLO/        953 trees COMPLETE (canonical, 2026-05-09)
+  data.yaml                    YOLO config (4 classes B1–B4)
+  images/{train,val,test}/     source images
+  labels/{train,val,test}/     YOLO TXT labels
+  json/                        953 JSON GT files — PRIMARY GT
+Tested-Brand-New-Dataset-YOLO/ same content as Brand-New-Dataset-YOLO/, but
+                               packaged as train/val/test split + split_manifest.csv;
+                               consumed by E2E pipeline (scripts/run_e2e_*.py).
+dataset/                       Live label dir read by scripts/count_all_trees.py
+                               (only labels/ is touched; images/ legacy mirror).
+json/                          228 legacy JSON, kept as input for
+                               scripts/count_all_trees.py + count_gt_vs_naive.py.
+algorithms/                    one Mxx_*.py per method, all deterministic.
+  __init__.py                  ranked performance table (read for algo selection)
+  M01_selector_b2b3.py         current production (86.67% on 953)
+  M17_selector_regime.py       regime backbone + load_params()
+                               (reads reports/dedup_research_v5/method_comparison_v5.csv)
+  M18_entropy_stack.py         wraps scripts/dedup_research_v8.v8_entropy_stacking
+scripts/
+  dedup_brand_new_953.py       PRIMARY benchmark (953 trees)
+  dedup_all_953.py             runtime library — imported by primary, not a CLI entry
+  dedup_research_v5..v9.py     runtime library — method bodies imported by dedup_all_953
+  count_*.py, benchmark_*.py, generate_*.py, build_counting_features.py,
+  run_counting_*.py, run_e2e_*.py, export_gt_parquet.py
+reports/                       per-script outputs.
+  dedup_brand_new_953/         PRIMARY benchmark output
+  dedup_research_v5/           still live (params source for M17)
+  benchmark_multidim/, methods/, counting_*/, e2e_*/, full_gt_count/, json_05/, label_audit/
+baseline-run/                  YOLO training logs + weights + SUMMARY.md
+predictions/                   YOLO inference outputs per detector variant
+archive/                       read-only history.
+  reports_pre_rename_2026-05-10/  pre-rename CSV snapshot (M-naming migration)
+  _to_review/                  staged-for-removal items from 2026-05-14 cleanup;
+                               see archive/_to_review/README.md
+RESEARCH.md                    primary research doc — read Section 0 first
+README.md                      project overview + method evolution narrative
+report_10Mei2026.md            953-tree benchmark (M01 champion analysis)
+AGENTS.md                      thin pointer → CLAUDE.md
+CLAUDE-TRAINING.md             ML training onboarding (RunPod / Vast.ai)
+NAMING.md                      Mxx naming-convention table
 ```
 
 ## algorithms/ Package
