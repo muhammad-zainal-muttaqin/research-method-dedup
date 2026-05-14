@@ -14,7 +14,7 @@ Pipeline ini menghitung jumlah tandan unik per pohon kelapa sawit dari foto yang
 
 | Track | Metode | Macro MAE | Macro Acc ±1 | Keterangan |
 |:---|:---|---:|---:|:---|
-| A. Heuristik | [M01_selector_b2b3](algorithms/M01_selector_b2b3.py) | [0.398](reports/dedup_brand_new_953/accuracy_953.csv) | [**86.67%**](reports/dedup_brand_new_953/accuracy_953.csv) | ✅ Produksi (valid per [RULES.txt](exp_12%20may%202026/RULES.txt)) |
+| A. Heuristik | [M01_selector_b2b3](algorithms/M01_selector_b2b3.py) | [0.398](reports/dedup_brand_new_953/accuracy_953.csv) | [**86.67%**](reports/dedup_brand_new_953/accuracy_953.csv) | ✅ Produksi (valid per [RULES.txt](archive/_to_review/exp_12%20may%202026/RULES.txt)) |
 | B. Deteksi | [YOLO26n (lokal)](ml-track/baseline-run/weights/y26n_vanilla_local_args.yaml) | — | mAP50 = [**0.521**](ml-track/baseline-run/weights/y26n_vanilla_local_results.csv) | ✅ Detektor terbaik lokal |
 | C. ML Counting (fitur GT) | [SVM RBF](reports/counting_svm/metrics.json) | [**0.318**](reports/counting_svm/metrics.json) | [**96.1%**](reports/counting_svm/metrics.json) | ✅ ML terbaik dengan fitur sempurna |
 | D. End-to-End | [y26m → SVM](reports/e2e_y26m_vanilla_local_svm/metrics.json) | [1.118](reports/e2e_y26m_vanilla_local_svm/metrics.json) | [**71.6%**](reports/e2e_y26m_vanilla_local_svm/metrics.json) | ⚠️ Terbaik E2E, masih di bawah heuristik |
@@ -39,7 +39,7 @@ Namun, pipeline ujung-ke-ujung (Track D) hanya mencapai Macro Acc±1 = [**71.6%*
 
 Temuan penting: seluruh [15 kombinasi E2E](ml-track/baseline-run/SUMMARY.md) (5 detektor × 3 algoritma penghitung) menghasilkan Macro Acc±1 dalam rentang **64–72%**, tanpa perbedaan signifikan antar algoritma penghitung. Hal ini membuktikan bahwa bottleneck terletak pada kualitas detektor, bukan pada algoritma penghitungan.
 
-> ❌ M60 dan M53 mencapai 90.24%, tetapi keduanya **tidak valid** per [`exp_12 may 2026/RULES.txt`](exp_12%20may%202026/RULES.txt) karena menggunakan tabel divisor yang diturunkan dari statistik training split (kalibrasi domain-spesifik), bukan dari prinsip geometri murni, sehingga tidak dapat digeneralisasi ke kebun lain.
+> ❌ M60 dan M53 mencapai 90.24%, tetapi keduanya **tidak valid** per [`archive/_to_review/exp_12 may 2026/RULES.txt`](archive/_to_review/exp_12%20may%202026/RULES.txt) karena menggunakan tabel divisor yang diturunkan dari statistik training split (kalibrasi domain-spesifik), bukan dari prinsip geometri murni, sehingga tidak dapat digeneralisasi ke kebun lain.
 
 ---
 
@@ -58,7 +58,7 @@ Metode heuristik bekerja langsung pada deteksi bounding box per sisi tanpa memer
 
 Tabel lengkap 29 metode tersedia di [`reports/dedup_brand_new_953/accuracy_953.csv`](reports/dedup_brand_new_953/accuracy_953.csv).
 
-> ❌ M60 dan M53 dinyatakan tidak valid per [`exp_12 may 2026/RULES.txt`](exp_12%20may%202026/RULES.txt) karena keduanya menggunakan tabel divisor yang diturunkan dari statistik training split. Kedua metode tersebut disimpan hanya sebagai referensi historis.
+> ❌ M60 dan M53 dinyatakan tidak valid per [`archive/_to_review/exp_12 may 2026/RULES.txt`](archive/_to_review/exp_12%20may%202026/RULES.txt) karena keduanya menggunakan tabel divisor yang diturunkan dari statistik training split. Kedua metode tersebut disimpan hanya sebagai referensi historis.
 
 ```bash
 python scripts/dedup_brand_new_953.py
@@ -156,11 +156,36 @@ python scripts/run_e2e_pipeline.py \
 
 | Kasus Penggunaan | Rekomendasi |
 |:---|:---|
-| Penghitungan produksi | [**M01_selector_b2b3**](algorithms/M01_selector_b2b3.py) — Macro Acc±1 = [86.67%](reports/dedup_brand_new_953/accuracy_953.csv), valid per [RULES.txt](exp_12%20may%202026/RULES.txt) |
+| Penghitungan produksi | [**M01_selector_b2b3**](algorithms/M01_selector_b2b3.py) — Macro Acc±1 = [86.67%](reports/dedup_brand_new_953/accuracy_953.csv), valid per [RULES.txt](archive/_to_review/exp_12%20may%202026/RULES.txt) |
 | Deteksi saja (akurasi) | [**YOLO26m**](ml-track/baseline-run/weights/y26m_vanilla_local_args.yaml) — mAP50 = [0.509](ml-track/baseline-run/weights/y26m_vanilla_local_results.csv) |
 | Deteksi saja (kecepatan) | [**YOLO26n**](ml-track/baseline-run/weights/y26n_vanilla_local_args.yaml) — mAP50 = [0.521](ml-track/baseline-run/weights/y26n_vanilla_local_results.csv), 0.2 ms/gambar |
 | Baseline riset ML | [**SVM pada fitur GT**](reports/counting_svm/metrics.json) — Macro Acc±1 = [96.1%](reports/counting_svm/metrics.json), Macro MAE = [0.318](reports/counting_svm/metrics.json) |
 | Pipeline E2E terbaik | [**y26m → SVM**](reports/e2e_y26m_vanilla_local_svm/metrics.json) — Macro Acc±1 = [71.6%](reports/e2e_y26m_vanilla_local_svm/metrics.json), masih 15 pp di bawah heuristik |
+
+---
+
+## Reproduksi di Device Baru
+
+Repo ini tracked **10.004 file** termasuk labels, JSON GT, split files, weights `.pt`, dan inference predictions. Yang **tidak** tracked: `Brand-New-Dataset-YOLO/images/` (~2.3 GB, distribusi via HuggingFace).
+
+**Track heuristik (M01..M29) — zero download:**
+```bash
+git clone <repo>
+pip install -r requirements.txt
+python scripts/dedup_brand_new_953.py    # M01 86.67% Macro Acc±1
+```
+Cukup `labels/` + `json/` (sudah ter-track). Tidak butuh images.
+
+**Track E2E ML (inferensi YOLO + counting RF/SVM) — butuh images:**
+```bash
+git clone <repo>
+pip install -r requirements.txt
+pip install huggingface_hub ultralytics scikit-learn
+
+python scripts/setup_dataset.py          # idempotent: skip kalau images sudah ada
+python scripts/run_e2e_pipeline.py --name y26m_vanilla_local \
+    --weights ml-track/baseline-run/weights/y26m_vanilla_local.pt
+```
 
 ---
 
@@ -171,14 +196,8 @@ python scripts/run_e2e_pipeline.py \
 pip install -r requirements.txt
 pip install scikit-learn ultralytics huggingface_hub
 
-# 2. Unduh dataset dari HuggingFace
-python -c "
-from huggingface_hub import snapshot_download
-snapshot_download(
-    'ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO',
-    repo_type='dataset',
-    local_dir='./Brand-New-Dataset-YOLO'
-)"
+# 2. Unduh dataset images dari HuggingFace (idempotent)
+python scripts/setup_dataset.py
 
 # 3. Jalankan semua track
 python scripts/dedup_brand_new_953.py    # Track A: heuristik
@@ -201,10 +220,10 @@ python scripts/run_e2e_pipeline.py \
 ## Tautan
 
 - [`RESEARCH.md`](RESEARCH.md) — Dokumen riset lengkap
-- [`exp_12 may 2026/REPORT.md`](exp_12%20may%202026/REPORT.md) — Analisis mendalam M60
+- [`archive/_to_review/exp_12 may 2026/REPORT.md`](archive/_to_review/exp_12%20may%202026/REPORT.md) — Analisis mendalam M60 (diarsipkan 2026-05-14)
 - [`ml-track/baseline-run/SUMMARY.md`](ml-track/baseline-run/SUMMARY.md) — Ringkasan hasil ML (matriks E2E lengkap 15 kombinasi)
 - [`ml-track/CLAUDE-TRAINING.md`](ml-track/CLAUDE-TRAINING.md) — Panduan eksperimen ML di RunPod/Vast.ai
-- [`exp_13 May 2026/PROGRESS.md`](exp_13%20May%202026/PROGRESS.md) — Log progres training
+- [`archive/_to_review/exp_13 May 2026/PROGRESS.md`](archive/_to_review/exp_13%20May%202026/PROGRESS.md) — Log progres training (diarsipkan 2026-05-14)
 - [Dataset HuggingFace](https://huggingface.co/datasets/ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO)
 
 ---

@@ -22,7 +22,7 @@
 2. **Bottleneck E2E ada di detektor, bukan algoritma penghitung** — SVM, RF, dan M01 semua menghasilkan 64–72% dengan input YOLO yang sama; perbedaan antar algoritma tidak signifikan.
 3. **mAP tidak berbanding lurus dengan performa E2E** — y26s-noaug (mAP50=0.465) menghasilkan E2E SVM 70.5%, hampir sama dengan y26m (mAP50=0.509, E2E SVM 71.6%).
 4. **COCO pretraining tidak wajib** — y26s dari scratch (0.511) ≈ y26s pretrained (0.506).
-5. **M60 dan M53 tidak valid** per `exp_12 may 2026/RULES.txt` — menggunakan tabel divisor berbasis GT; disimpan hanya sebagai referensi historis.
+5. **M60 dan M53 tidak valid** per `archive/_to_review/exp_12 may 2026/RULES.txt` — menggunakan tabel divisor berbasis GT; disimpan hanya sebagai referensi historis.
 
 ### Referensi Cepat
 

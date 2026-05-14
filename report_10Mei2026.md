@@ -5,7 +5,7 @@
 > "hybrid_vis_corr" / "geometric_mean_blend" sudah diganti otomatis.
 > Lihat [`NAMING.md`](NAMING.md) untuk tabel pemetaan lengkap.
 
-Iterasi 1–13 pada folder [`exp_10 May 2026/`](exp%2010%20May%202026/) berakhir
+Iterasi 1–13 pada folder [`exp_10 May 2026/`](archive/_to_review/exp_10%20May%202026/) berakhir
 pada algoritma **`M01_selector_b2b3`** sebagai metode terbaik baru untuk
 benchmark 953 pohon Brand-New-Dataset-YOLO.
 
@@ -72,7 +72,7 @@ Berdasarkan `reports/dedup_brand_new_953/accuracy_953.csv` (run terbaru, 2026-05
 | `trim5` | 85,94% | 0,3956 | 86,35% | 83,15% | 87,43% |
 | `class_specialist` | 85,94% | 0,3959 | 86,68% | 82,02% | 87,43% |
 
-Sumber: [`exp_10 May 2026/iter11_results.csv`](exp%2010%20May%202026/iter11_results.csv).
+Sumber: [`exp_10 May 2026/iter11_results.csv`](archive/_to_review/exp_10%20May%202026/iter11_results.csv).
 
 ---
 
@@ -108,7 +108,7 @@ Implementasi lengkap di [`algorithms/M01_selector_b2b3.py`](algorithms/M01_selec
 
 ## Mengapa target Acc±1 ≥ 90% / MAE < 0,2 tidak dicapai
 
-Pembuktian dari [`exp_10 May 2026/iter13_FINAL_HONEST_STOP.md`](exp%2010%20May%202026/iter13_FINAL_HONEST_STOP.md):
+Pembuktian dari [`exp_10 May 2026/iter13_FINAL_HONEST_STOP.md`](archive/_to_review/exp_10%20May%202026/iter13_FINAL_HONEST_STOP.md):
 
 **MAE per-kelas pada `M01_selector_b2b3`:**
 
@@ -148,7 +148,7 @@ dalam constraint riset (no training, no embedding) tanpa overfit.
 | 12 | Total-first reformulation | zero-improvement |
 | 13 | MAE breakdown + stop | mathematical proof, loop dihentikan |
 
-Detail tiap iterasi di [`exp_10 May 2026/iter*_report.md`](exp%2010%20May%202026/).
+Detail tiap iterasi di [`exp_10 May 2026/iter*_report.md`](archive/_to_review/exp_10%20May%202026/).
 
 ---
 
