@@ -44,7 +44,7 @@ python scripts/export_gt_parquet.py
 
 **Runtime-library scripts (not benchmarks; imported by the primary):** `scripts/dedup_all_953.py` and `scripts/dedup_research_v5..v9.py` define method bodies that `dedup_brand_new_953.py` re-uses via `import dedup_all_953 as base` → which in turn imports `dedup_research_v6..v9`. `algorithms/M18_entropy_stack.py` also wraps `dedup_research_v8`. Do **not** call these scripts as top-level commands; they only matter as imports.
 
-**Archived 2026-05-14 → `archive/_to_review/`:** all `dedup_research_v1..v4.py`, `dedup_v5_focused.py`, `dedup_all_trees_final.py`, `dedup_nonjson_compare.py`, the four legacy benchmark report folders (`benchmark_228/478/727/882/`), the v2/v3/v4/v6/v7/v8/v9 dedup_research report folders, and one-shot migrators (`migrate_*.py`, `fix_image_filename_bug.py`, `regen_tree_id.py`, `cleanup_repo.py`, `build_brand_new_dataset.py`, `generate_hf_metadata.py`, `flatten_dataset.py`, `find_first_5.py`, `generate_sample_viz.py`). Restore by `Move-Item archive\_to_review\scripts\<file> scripts\<file>`.
+**Archived 2026-05-14 → `archive/_to_review/`:** `dedup_research_v2..v4.py`, `dedup_v5_focused.py`, `dedup_all_trees_final.py`, `dedup_nonjson_compare.py`, the four legacy benchmark report folders (`benchmark_228/478/727/882/`), the v2/v3/v4/v6/v7/v8/v9 dedup_research report folders, and one-shot migrators (`migrate_*.py`, `fix_image_filename_bug.py`, `regen_tree_id.py`, `cleanup_repo.py`, `build_brand_new_dataset.py`, `generate_hf_metadata.py`, `flatten_dataset.py`, `find_first_5.py`, `generate_sample_viz.py`). Restore by `Move-Item archive\_to_review\scripts\<file> scripts\<file>`.
 
 ## Current Best (as of 2026-05-10)
 
@@ -119,7 +119,7 @@ Fresh benchmark re-run (2026-05-08) on all 4 archive snapshots. Earlier "primary
 
 ### Cross-Dataset Regression (Acc ±1, fresh re-run 2026-05-10)
 
-Sources: `reports/benchmark_228/`, `reports/benchmark_478/`, `reports/benchmark_727/`, `reports/benchmark_882/`, `reports/dedup_brand_new_953/`.
+Sources: `archive/_to_review/reports/benchmark_228/`, `archive/_to_review/reports/benchmark_478/`, `archive/_to_review/reports/benchmark_727/`, `archive/_to_review/reports/benchmark_882/`, `reports/dedup_brand_new_953/`.
 
 | Method | 228 | 478 | 727 | 882 | **953** | Delta 228→953 |
 |---|---:|---:|---:|---:|---:|---:|

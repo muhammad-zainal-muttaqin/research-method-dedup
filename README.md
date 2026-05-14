@@ -125,9 +125,9 @@ Setiap detektor diuji dengan tiga algoritma penghitungan: SVM (RBF, GridSearchCV
 | [y26n vanilla](reports/e2e_y26n_vanilla_local_svm/metrics.json) | 0.521 | SVM | 1.145 | 70.0% | 90.5% | 68.4% | 56.8% | 64.2% | 0.0% |
 | [y26n vanilla](reports/e2e_y26n_vanilla_local_rf/metrics.json) | 0.521 | RF | 1.218 | 68.2% | 90.5% | 68.4% | 54.7% | 58.9% | 0.0% |
 | [y26n vanilla](reports/e2e_y26n_vanilla_local_m01/metrics.json) | 0.521 | M01 | 1.337 | 67.1% | 87.4% | 65.3% | 51.6% | 64.2% | 2.1% |
-| [y26s vanilla](reports/e2e_svm/metrics.json) | 0.506 | SVM | 1.163 | 68.9% | 93.7% | 68.4% | 48.4% | 65.3% | 0.0% |
-| [y26s vanilla](reports/e2e_rf/metrics.json) | 0.506 | RF | 1.216 | 66.6% | 96.8% | 68.4% | 48.4% | 52.6% | 1.1% |
-| [y26s vanilla](reports/e2e_m01/metrics.json) | 0.506 | M01 | 1.403 | 65.5% | 89.5% | 66.3% | 38.9% | 67.4% | 2.1% |
+| [y26s vanilla](reports/e2e_y26s_vanilla_local_svm/metrics.json) | 0.506 | SVM | 1.163 | 68.9% | 93.7% | 68.4% | 48.4% | 65.3% | 0.0% |
+| [y26s vanilla](reports/e2e_y26s_vanilla_local_rf/metrics.json) | 0.506 | RF | 1.216 | 66.6% | 96.8% | 68.4% | 48.4% | 52.6% | 1.1% |
+| [y26s vanilla](reports/e2e_y26s_vanilla_local_m01/metrics.json) | 0.506 | M01 | 1.403 | 65.5% | 89.5% | 66.3% | 38.9% | 67.4% | 2.1% |
 | [y26s scratch](reports/e2e_y26s_nopretrained_svm/metrics.json) | 0.511 | SVM | 1.145 | 68.9% | 90.5% | 68.4% | 51.6% | 65.3% | 2.1% |
 | [y26s scratch](reports/e2e_y26s_nopretrained_rf/metrics.json) | 0.511 | RF | 1.229 | 67.9% | 93.7% | 65.3% | 55.8% | 56.8% | 1.1% |
 | [y26s scratch](reports/e2e_y26s_nopretrained_m01/metrics.json) | 0.511 | M01 | 1.266 | 69.2% | 91.6% | 63.2% | 52.6% | 69.5% | 2.1% |

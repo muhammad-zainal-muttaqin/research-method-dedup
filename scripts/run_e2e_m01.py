@@ -1,7 +1,7 @@
 """
 Experiment E2E-M01 — y26s → M01_selector_b2b3 heuristic counting.
-Requires: ml-track/predictions/y26s_inference/*.json (run run_e2e_inference.py first)
-Output: reports/e2e_m01/
+Requires: ml-track/predictions/y26s_vanilla_local_inference/*.json (run run_e2e_inference.py first)
+Output: reports/e2e_y26s_vanilla_local_m01/
 """
 import os, sys, json, glob, csv
 import numpy as np
@@ -11,10 +11,10 @@ sys.path.insert(0, REPO)
 
 from algorithms.M01_selector_b2b3 import predict as m01_predict
 
-INFER_DIR = os.path.join(REPO, "ml-track", "predictions", "y26s_inference")
+INFER_DIR = os.path.join(REPO, "ml-track", "predictions", "y26s_vanilla_local_inference")
 GT_JSON_DIR = os.path.join(REPO, "Brand-New-Dataset-YOLO", "json")
 MANIFEST = os.path.join(REPO, "Brand-New-Dataset-YOLO", "split_manifest.csv")
-REPORT_DIR = os.path.join(REPO, "reports", "e2e_m01")
+REPORT_DIR = os.path.join(REPO, "reports", "e2e_y26s_vanilla_local_m01")
 os.makedirs(REPORT_DIR, exist_ok=True)
 
 CLASSES = ["B1", "B2", "B3", "B4"]

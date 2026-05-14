@@ -1,7 +1,7 @@
 """
 Experiment #8 — End-to-end y26s → SVM counting.
-Requires: ml-track/predictions/y26s_inference/*.json (run run_e2e_inference.py first)
-Output: reports/e2e_svm/
+Requires: ml-track/predictions/y26s_vanilla_local_inference/*.json (run run_e2e_inference.py first)
+Output: reports/e2e_y26s_vanilla_local_svm/
 """
 import os, sys, json, glob
 import numpy as np
@@ -16,10 +16,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-INFER_DIR = os.path.join(REPO, "ml-track", "predictions", "y26s_inference")
+INFER_DIR = os.path.join(REPO, "ml-track", "predictions", "y26s_vanilla_local_inference")
 GT_JSON_DIR = os.path.join(REPO, "Brand-New-Dataset-YOLO", "json")
 MANIFEST = os.path.join(REPO, "Brand-New-Dataset-YOLO", "split_manifest.csv")
-REPORT_DIR = os.path.join(REPO, "reports", "e2e_svm")
+REPORT_DIR = os.path.join(REPO, "reports", "e2e_y26s_vanilla_local_svm")
 os.makedirs(REPORT_DIR, exist_ok=True)
 
 

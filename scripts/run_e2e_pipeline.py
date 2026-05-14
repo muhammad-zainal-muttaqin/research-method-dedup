@@ -320,7 +320,7 @@ def main():
     print(f"Weights: {weights}")
     print(f"{'='*60}")
 
-    infer_dir = REPO / "predictions" / f"{args.name}_inference"
+    infer_dir = REPO / "ml-track" / "predictions" / f"{args.name}_inference"
 
     if not args.skip_inference:
         print("\n[Step 1] Running inference...")
@@ -341,7 +341,7 @@ def main():
     print("\n[Step 4] Running M01 heuristic...")
     run_m01(args.name, infer_dir, REPO / "reports" / f"e2e_{args.name}_m01")
 
-    print(f"\n✓ Done: {args.name}")
+    print(f"\nDone: {args.name}")
 
 
 if __name__ == "__main__":

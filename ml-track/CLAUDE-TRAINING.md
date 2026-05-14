@@ -361,7 +361,7 @@ model = YOLO("runs/detect/sawit-ulm/vanilla-train/y26s/weights/best.pt")
 # Output: JSON dengan schema mirror GT
 ```
 
-Output: `ml-track/predictions/y26s_inference/<tree_name>.json`.
+Output: `ml-track/predictions/y26s_vanilla_local_inference/<tree_name>.json`.
 
 ### Step 2: Feature engineering dari prediksi detector
 

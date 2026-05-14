@@ -27,8 +27,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-JSON_DIR = Path(r"D:\Work\Assisten Dosen\research-method-dedup\json")
-OUT_DIR = Path(r"D:\Work\Assisten Dosen\research-method-dedup\reports\dedup_research_v7")
+BASE = Path(__file__).resolve().parent.parent
+JSON_DIR = BASE / "Brand-New-Dataset-YOLO" / "json"
+OUT_DIR = BASE / "reports" / "dedup_research_v7"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 NAMES = ["B1", "B2", "B3", "B4"]

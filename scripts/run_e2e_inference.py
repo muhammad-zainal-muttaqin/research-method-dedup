@@ -1,6 +1,6 @@
 """
 Step 1 untuk Exp #8/#9: jalankan y26s inference pada semua tree images.
-Output: ml-track/predictions/y26s_inference/<tree_name>.json (mirror schema GT)
+Output: ml-track/predictions/y26s_vanilla_local_inference/<tree_name>.json (mirror schema GT)
 
 Usage: python scripts/run_e2e_inference.py --weights <path/to/best.pt>
 """
@@ -12,7 +12,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATASET_ROOT = os.path.join(REPO, "Brand-New-Dataset-YOLO")
 IMG_ROOT = os.path.join(DATASET_ROOT, "images")
 JSON_DIR = os.path.join(DATASET_ROOT, "json")
-OUT_DIR = os.path.join(REPO, "ml-track", "predictions", "y26s_inference")
+OUT_DIR = os.path.join(REPO, "ml-track", "predictions", "y26s_vanilla_local_inference")
 CLASSES = ["B1", "B2", "B3", "B4"]
 CLASS_MAP = {0: "B1", 1: "B2", 2: "B3", 3: "B4"}
 
@@ -91,7 +91,7 @@ def run_inference(weights_path):
         tree_json = {
             "tree_name": tree_name,
             "split": split,
-            "source": "y26s_inference",
+            "source": "y26s_vanilla_local_inference",
             "weights": weights_path,
             "images": images_data,
         }
