@@ -16,7 +16,7 @@ Pipeline ini menghitung jumlah tandan unik per pohon kelapa sawit dari foto 4–
 | B. Deteksi | [YOLO26n vanilla](training/weights/y26n_vanilla_local_results.csv) | — | mAP50 = **0.521** | ✅ Tercepat & terbaik |
 | C. ML Counting (fitur GT) | [Linear Regression](reports/counting_lr/metrics.json) | **0.287** | **96.8%** | ✅ Terbaik (mengalahkan SVM/RF) |
 | D. E2E per-pohon | [y26m → SVM](reports/e2e_y26m_vanilla_local_svm/metrics.json) | **1.097** | **71.6%** | ✅ Best E2E |
-| E. E2E per-gambar *(baru)* | [y26m vanilla](reports/e2e_per_image_y26m_vanilla_local/metrics.json) | **0.605** | **87.5%** | ✅ Permintaan dosen |
+| E. E2E per-gambar *(baru)* | [y26m vanilla](reports/e2e_per_image_y26m_vanilla_local/metrics.json) | **0.605** | **87.5%** | ✅ Jalur Baru |
 
 ---
 
@@ -120,7 +120,7 @@ python scripts/run_e2e_pipeline.py --name y26m_vanilla_local \
 
 ---
 
-## Track E: E2E per-Gambar *(Baru — Permintaan Dosen)*
+## Track E: E2E per-Gambar *(Baru)*
 
 Evaluasi disederhanakan: YOLO deteksi per gambar → hitung deteksi langsung → bandingkan dengan GT per gambar (anotasi per sisi dari JSON). Tidak ada agregasi multi-sisi.
 
