@@ -15,7 +15,7 @@ Pipeline ini menghitung jumlah tandan unik per pohon kelapa sawit dari foto yang
 | Track | Metode | Macro MAE | Macro Acc ±1 | Keterangan |
 |:---|:---|---:|---:|:---|
 | A. Heuristik | [M01_selector_b2b3](algorithms/M01_selector_b2b3.py) | [0.398](reports/dedup_brand_new_953/accuracy_953.csv) | [**86.67%**](reports/dedup_brand_new_953/accuracy_953.csv) | ✅ Produksi (valid per [RULES.txt](exp_12%20may%202026/RULES.txt)) |
-| B. Deteksi | [YOLO26n (lokal)](baseline-run/weights/y26n_vanilla_local_args.yaml) | — | mAP50 = [**0.521**](baseline-run/weights/y26n_vanilla_local_results.csv) | ✅ Detektor terbaik lokal |
+| B. Deteksi | [YOLO26n (lokal)](ml-track/baseline-run/weights/y26n_vanilla_local_args.yaml) | — | mAP50 = [**0.521**](ml-track/baseline-run/weights/y26n_vanilla_local_results.csv) | ✅ Detektor terbaik lokal |
 | C. ML Counting (fitur GT) | [SVM RBF](reports/counting_svm/metrics.json) | [**0.318**](reports/counting_svm/metrics.json) | [**96.1%**](reports/counting_svm/metrics.json) | ✅ ML terbaik dengan fitur sempurna |
 | D. End-to-End | [y26m → SVM](reports/e2e_y26m_vanilla_local_svm/metrics.json) | [1.118](reports/e2e_y26m_vanilla_local_svm/metrics.json) | [**71.6%**](reports/e2e_y26m_vanilla_local_svm/metrics.json) | ⚠️ Terbaik E2E, masih di bawah heuristik |
 
@@ -28,7 +28,7 @@ Pipeline ini menghitung jumlah tandan unik per pohon kelapa sawit dari foto yang
 | Macro Acc ±1 tertinggi — end-to-end | [**71.6%**](reports/e2e_y26m_vanilla_local_svm/metrics.json) | [y26m → SVM](reports/e2e_y26m_vanilla_local_svm/metrics.json) |
 | Macro MAE terendah — ML (fitur GT) | [**0.318**](reports/counting_svm/metrics.json) | [SVM RBF](reports/counting_svm/metrics.json) |
 | Macro MAE terendah — heuristik valid | [**0.398**](reports/dedup_brand_new_953/accuracy_953.csv) | [M01_selector_b2b3](algorithms/M01_selector_b2b3.py) |
-| mAP50 terbaik (lokal, batch=16) | [**0.521**](baseline-run/weights/y26n_vanilla_local_results.csv) | [YOLO26n](baseline-run/weights/y26n_vanilla_local_args.yaml) |
+| mAP50 terbaik (lokal, batch=16) | [**0.521**](ml-track/baseline-run/weights/y26n_vanilla_local_results.csv) | [YOLO26n](ml-track/baseline-run/weights/y26n_vanilla_local_args.yaml) |
 | Tercepat | **0.005 ms/pohon** | M15_divide_global |
 
 ### Temuan Utama
@@ -37,7 +37,7 @@ Pipeline ML dengan fitur GT (Track C) mengungguli heuristik terbaik M01: SVM men
 
 Namun, pipeline ujung-ke-ujung (Track D) hanya mencapai Macro Acc±1 = [**71.6%**](reports/e2e_y26m_vanilla_local_svm/metrics.json) pada kombinasi terbaik (y26m → SVM), karena propagasi galat detektor YOLO merusak nilai `naive_sum`, `max_per_side`, dan `mean_per_side` sebelum masuk ke algoritma penghitung — sehingga model menerima input yang tidak akurat.
 
-Temuan penting: seluruh [15 kombinasi E2E](baseline-run/SUMMARY.md) (5 detektor × 3 algoritma penghitung) menghasilkan Macro Acc±1 dalam rentang **64–72%**, tanpa perbedaan signifikan antar algoritma penghitung. Hal ini membuktikan bahwa bottleneck terletak pada kualitas detektor, bukan pada algoritma penghitungan.
+Temuan penting: seluruh [15 kombinasi E2E](ml-track/baseline-run/SUMMARY.md) (5 detektor × 3 algoritma penghitung) menghasilkan Macro Acc±1 dalam rentang **64–72%**, tanpa perbedaan signifikan antar algoritma penghitung. Hal ini membuktikan bahwa bottleneck terletak pada kualitas detektor, bukan pada algoritma penghitungan.
 
 > ❌ M60 dan M53 mencapai 90.24%, tetapi keduanya **tidak valid** per [`exp_12 may 2026/RULES.txt`](exp_12%20may%202026/RULES.txt) karena menggunakan tabel divisor yang diturunkan dari statistik training split (kalibrasi domain-spesifik), bukan dari prinsip geometri murni, sehingga tidak dapat digeneralisasi ke kebun lain.
 
@@ -74,25 +74,25 @@ Seluruh eksperimen deteksi dijalankan secara lokal dengan konfigurasi yang konsi
 
 | Model | mAP50 | mAP50-95 | Kecepatan | Parameter | Bukti |
 |:---|---:|---:|---:|---:|:---|
-| [**YOLO26n**](baseline-run/weights/y26n_vanilla_local_args.yaml) | [**0.521**](baseline-run/weights/y26n_vanilla_local_results.csv) | **0.237** | **0.2 ms** | 2.4 M | [log](baseline-run/y26n_vanilla_local_b16.txt) · [cm](baseline-run/weights/y26n_vanilla_local/confusion_matrix_normalized.png) |
-| [YOLO26s](baseline-run/weights/y26s_vanilla_local_args.yaml) | [0.506](baseline-run/weights/y26s_vanilla_local_results.csv) | 0.235 | 0.5 ms | 9.5 M | [log](baseline-run/y26s_vanilla_local.txt) · [cm](baseline-run/weights/y26s_vanilla_local/confusion_matrix_normalized.png) |
-| [YOLO26m](baseline-run/weights/y26m_vanilla_local_args.yaml) | [0.509](baseline-run/weights/y26m_vanilla_local_results.csv) | 0.231 | 0.8 ms | 20.4 M | [log](baseline-run/y26m_vanilla_local_retrain.txt) · [cm](baseline-run/weights/y26m_vanilla_local/confusion_matrix_normalized.png) |
+| [**YOLO26n**](ml-track/baseline-run/weights/y26n_vanilla_local_args.yaml) | [**0.521**](ml-track/baseline-run/weights/y26n_vanilla_local_results.csv) | **0.237** | **0.2 ms** | 2.4 M | [log](ml-track/baseline-run/y26n_vanilla_local_b16.txt) · [cm](ml-track/baseline-run/weights/y26n_vanilla_local/confusion_matrix_normalized.png) |
+| [YOLO26s](ml-track/baseline-run/weights/y26s_vanilla_local_args.yaml) | [0.506](ml-track/baseline-run/weights/y26s_vanilla_local_results.csv) | 0.235 | 0.5 ms | 9.5 M | [log](ml-track/baseline-run/y26s_vanilla_local.txt) · [cm](ml-track/baseline-run/weights/y26s_vanilla_local/confusion_matrix_normalized.png) |
+| [YOLO26m](ml-track/baseline-run/weights/y26m_vanilla_local_args.yaml) | [0.509](ml-track/baseline-run/weights/y26m_vanilla_local_results.csv) | 0.231 | 0.8 ms | 20.4 M | [log](ml-track/baseline-run/y26m_vanilla_local_retrain.txt) · [cm](ml-track/baseline-run/weights/y26m_vanilla_local/confusion_matrix_normalized.png) |
 
 ### Ablasi Konfigurasi (YOLO26s sebagai basis)
 
 | Eksperimen | Best Epoch | mAP50 | mAP50-95 | Catatan |
 |:---|---:|---:|---:|:---|
-| [y26m vanilla (lokal)](baseline-run/weights/y26m_vanilla_local_args.yaml) | [33](baseline-run/weights/y26m_vanilla_local_results.csv) | [0.509](baseline-run/weights/y26m_vanilla_local_results.csv) | 0.231 | [log](baseline-run/y26m_vanilla_local_retrain.txt) · [cm](baseline-run/weights/y26m_vanilla_local/confusion_matrix_normalized.png) · Gap kecil dari RunPod (0.528) karena perbedaan environment |
-| [y26s vanilla (lokal)](baseline-run/weights/y26s_vanilla_local_args.yaml) | [21](baseline-run/weights/y26s_vanilla_local_results.csv) | [0.506](baseline-run/weights/y26s_vanilla_local_results.csv) | 0.234 | [log](baseline-run/y26s_vanilla_local.txt) · [cm](baseline-run/weights/y26s_vanilla_local/confusion_matrix_normalized.png) · Digunakan sebagai baseline E2E |
-| [y26s tanpa pretrained](baseline-run/weights/y26s_nopretrained_args.yaml) | [57](baseline-run/weights/y26s_nopretrained_results.csv) | [**0.511**](baseline-run/weights/y26s_nopretrained_results.csv) | 0.231 | [log](baseline-run/y26s_nopretrained.txt) · [cm](baseline-run/weights/y26s_nopretrained/confusion_matrix_normalized.png) · Scratch = pretrained; COCO pretraining tidak wajib |
-| [y26s tanpa augmentasi](baseline-run/weights/y26s_noaug_args.yaml) | [6](baseline-run/weights/y26s_noaug_results.csv) | [0.465](baseline-run/weights/y26s_noaug_results.csv) | 0.216 | [log](baseline-run/y26s_noaug.txt) · [cm](baseline-run/weights/y26s_noaug/confusion_matrix_normalized.png) · Overfit, early stop pada epoch 56 |
+| [y26m vanilla (lokal)](ml-track/baseline-run/weights/y26m_vanilla_local_args.yaml) | [33](ml-track/baseline-run/weights/y26m_vanilla_local_results.csv) | [0.509](ml-track/baseline-run/weights/y26m_vanilla_local_results.csv) | 0.231 | [log](ml-track/baseline-run/y26m_vanilla_local_retrain.txt) · [cm](ml-track/baseline-run/weights/y26m_vanilla_local/confusion_matrix_normalized.png) · Gap kecil dari RunPod (0.528) karena perbedaan environment |
+| [y26s vanilla (lokal)](ml-track/baseline-run/weights/y26s_vanilla_local_args.yaml) | [21](ml-track/baseline-run/weights/y26s_vanilla_local_results.csv) | [0.506](ml-track/baseline-run/weights/y26s_vanilla_local_results.csv) | 0.234 | [log](ml-track/baseline-run/y26s_vanilla_local.txt) · [cm](ml-track/baseline-run/weights/y26s_vanilla_local/confusion_matrix_normalized.png) · Digunakan sebagai baseline E2E |
+| [y26s tanpa pretrained](ml-track/baseline-run/weights/y26s_nopretrained_args.yaml) | [57](ml-track/baseline-run/weights/y26s_nopretrained_results.csv) | [**0.511**](ml-track/baseline-run/weights/y26s_nopretrained_results.csv) | 0.231 | [log](ml-track/baseline-run/y26s_nopretrained.txt) · [cm](ml-track/baseline-run/weights/y26s_nopretrained/confusion_matrix_normalized.png) · Scratch = pretrained; COCO pretraining tidak wajib |
+| [y26s tanpa augmentasi](ml-track/baseline-run/weights/y26s_noaug_args.yaml) | [6](ml-track/baseline-run/weights/y26s_noaug_results.csv) | [0.465](ml-track/baseline-run/weights/y26s_noaug_results.csv) | 0.216 | [log](ml-track/baseline-run/y26s_noaug.txt) · [cm](ml-track/baseline-run/weights/y26s_noaug/confusion_matrix_normalized.png) · Overfit, early stop pada epoch 56 |
 
-**Insight:** [YOLO26n](baseline-run/weights/y26n_vanilla_local_args.yaml) menjadi pilihan terbaik untuk produksi — mAP50 tertinggi ([0.521](baseline-run/weights/y26n_vanilla_local_results.csv)) dengan kecepatan 4× lebih cepat dari y26m (0.2 ms vs 0.8 ms). Augmentasi bersifat esensial: tanpa augmentasi, mAP50 turun ke [0.465](baseline-run/weights/y26s_noaug_results.csv) dan model overfit pada epoch ke-6.
+**Insight:** [YOLO26n](ml-track/baseline-run/weights/y26n_vanilla_local_args.yaml) menjadi pilihan terbaik untuk produksi — mAP50 tertinggi ([0.521](ml-track/baseline-run/weights/y26n_vanilla_local_results.csv)) dengan kecepatan 4× lebih cepat dari y26m (0.2 ms vs 0.8 ms). Augmentasi bersifat esensial: tanpa augmentasi, mAP50 turun ke [0.465](ml-track/baseline-run/weights/y26s_noaug_results.csv) dan model overfit pada epoch ke-6.
 
 ```bash
 python -c "
 from ultralytics import YOLO
-YOLO('yolo26n.pt').train(data='local_data.yaml', epochs=100, batch=16, imgsz=640, seed=42)
+YOLO('yolo26n.pt').train(data='ml-track/local_data.yaml', epochs=100, batch=16, imgsz=640, seed=42)
 "
 ```
 
@@ -139,15 +139,15 @@ Setiap detektor diuji dengan tiga algoritma penghitungan: SVM (RBF, GridSearchCV
 | [y26m vanilla](reports/e2e_y26m_vanilla_local_m01/metrics.json) | 0.509 | M01 | 1.400 | 64.5% | 90.5% | 56.8% | 40.0% | 70.5% | 0.0% |
 | [**M01 heuristik (fitur GT — target)**](reports/dedup_brand_new_953/accuracy_953.csv) | — | — | [**0.398**](reports/dedup_brand_new_953/accuracy_953.csv) | [**86.7%**](reports/dedup_brand_new_953/accuracy_953.csv) | — | — | — | — | 26.3% |
 
-**Bottleneck:** Seluruh [15 kombinasi](baseline-run/SUMMARY.md) detektor × penghitung menghasilkan Macro Acc±1 dalam rentang sempit **64–72%**, jauh di bawah M01 berbasis GT ([86.7%](reports/dedup_brand_new_953/accuracy_953.csv)). Pilihan algoritma penghitung (SVM, RF, atau M01) tidak mengubah kesimpulan secara signifikan — bottleneck sejati adalah propagasi galat YOLO ke nilai `naive_sum`, `max_per_side`, dan `mean_per_side`. Sebagai pembanding, SVM dengan fitur GT mencapai [96.1%](reports/counting_svm/metrics.json) (Track C) menggunakan arsitektur fitur yang identik.
+**Bottleneck:** Seluruh [15 kombinasi](ml-track/baseline-run/SUMMARY.md) detektor × penghitung menghasilkan Macro Acc±1 dalam rentang sempit **64–72%**, jauh di bawah M01 berbasis GT ([86.7%](reports/dedup_brand_new_953/accuracy_953.csv)). Pilihan algoritma penghitung (SVM, RF, atau M01) tidak mengubah kesimpulan secara signifikan — bottleneck sejati adalah propagasi galat YOLO ke nilai `naive_sum`, `max_per_side`, dan `mean_per_side`. Sebagai pembanding, SVM dengan fitur GT mencapai [96.1%](reports/counting_svm/metrics.json) (Track C) menggunakan arsitektur fitur yang identik.
 
-**Temuan tak terduga:** y26s-noaug (mAP50=[0.465](baseline-run/weights/y26s_noaug_results.csv), detektor terlemah) menghasilkan [SVM 70.5%](reports/e2e_y26s_noaug_svm/metrics.json), hanya 1.1 pp di bawah y26m (mAP50=[0.509](baseline-run/weights/y26m_vanilla_local_results.csv), [SVM 71.6%](reports/e2e_y26m_vanilla_local_svm/metrics.json)). Hal ini mengindikasikan bahwa distribusi galat detektor — bukan besarnya mAP — yang menentukan kualitas fitur 13-dim untuk penghitungan.
+**Temuan tak terduga:** y26s-noaug (mAP50=[0.465](ml-track/baseline-run/weights/y26s_noaug_results.csv), detektor terlemah) menghasilkan [SVM 70.5%](reports/e2e_y26s_noaug_svm/metrics.json), hanya 1.1 pp di bawah y26m (mAP50=[0.509](ml-track/baseline-run/weights/y26m_vanilla_local_results.csv), [SVM 71.6%](reports/e2e_y26m_vanilla_local_svm/metrics.json)). Hal ini mengindikasikan bahwa distribusi galat detektor — bukan besarnya mAP — yang menentukan kualitas fitur 13-dim untuk penghitungan.
 
 ```bash
 # Jalankan pipeline E2E untuk satu detektor (inferensi + SVM + RF + M01):
 python scripts/run_e2e_pipeline.py \
     --name y26m_vanilla_local \
-    --weights baseline-run/weights/y26m_vanilla_local.pt
+    --weights ml-track/baseline-run/weights/y26m_vanilla_local.pt
 ```
 
 ---
@@ -157,8 +157,8 @@ python scripts/run_e2e_pipeline.py \
 | Kasus Penggunaan | Rekomendasi |
 |:---|:---|
 | Penghitungan produksi | [**M01_selector_b2b3**](algorithms/M01_selector_b2b3.py) — Macro Acc±1 = [86.67%](reports/dedup_brand_new_953/accuracy_953.csv), valid per [RULES.txt](exp_12%20may%202026/RULES.txt) |
-| Deteksi saja (akurasi) | [**YOLO26m**](baseline-run/weights/y26m_vanilla_local_args.yaml) — mAP50 = [0.509](baseline-run/weights/y26m_vanilla_local_results.csv) |
-| Deteksi saja (kecepatan) | [**YOLO26n**](baseline-run/weights/y26n_vanilla_local_args.yaml) — mAP50 = [0.521](baseline-run/weights/y26n_vanilla_local_results.csv), 0.2 ms/gambar |
+| Deteksi saja (akurasi) | [**YOLO26m**](ml-track/baseline-run/weights/y26m_vanilla_local_args.yaml) — mAP50 = [0.509](ml-track/baseline-run/weights/y26m_vanilla_local_results.csv) |
+| Deteksi saja (kecepatan) | [**YOLO26n**](ml-track/baseline-run/weights/y26n_vanilla_local_args.yaml) — mAP50 = [0.521](ml-track/baseline-run/weights/y26n_vanilla_local_results.csv), 0.2 ms/gambar |
 | Baseline riset ML | [**SVM pada fitur GT**](reports/counting_svm/metrics.json) — Macro Acc±1 = [96.1%](reports/counting_svm/metrics.json), Macro MAE = [0.318](reports/counting_svm/metrics.json) |
 | Pipeline E2E terbaik | [**y26m → SVM**](reports/e2e_y26m_vanilla_local_svm/metrics.json) — Macro Acc±1 = [71.6%](reports/e2e_y26m_vanilla_local_svm/metrics.json), masih 15 pp di bawah heuristik |
 
@@ -177,7 +177,7 @@ from huggingface_hub import snapshot_download
 snapshot_download(
     'ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO',
     repo_type='dataset',
-    local_dir='./Tested-Brand-New-Dataset-YOLO'
+    local_dir='./Brand-New-Dataset-YOLO'
 )"
 
 # 3. Jalankan semua track
@@ -187,13 +187,13 @@ python scripts/run_counting_rf.py        # Track C: RF dari fitur GT
 
 # Track B: training detektor
 python -c "from ultralytics import YOLO; YOLO('yolo26n.pt').train(
-    data='local_data.yaml', epochs=100, batch=16, imgsz=640, seed=42,
+    data='ml-track/local_data.yaml', epochs=100, batch=16, imgsz=640, seed=42,
     project='/workspace/runs/detect', name='y26n_vanilla_local')"
 
 # Track D: pipeline E2E (inferensi + SVM + RF + M01 sekaligus)
 python scripts/run_e2e_pipeline.py \
     --name y26n_vanilla_local \
-    --weights baseline-run/weights/y26n_vanilla_local.pt
+    --weights ml-track/baseline-run/weights/y26n_vanilla_local.pt
 ```
 
 ---
@@ -202,8 +202,8 @@ python scripts/run_e2e_pipeline.py \
 
 - [`RESEARCH.md`](RESEARCH.md) — Dokumen riset lengkap
 - [`exp_12 may 2026/REPORT.md`](exp_12%20may%202026/REPORT.md) — Analisis mendalam M60
-- [`baseline-run/SUMMARY.md`](baseline-run/SUMMARY.md) — Ringkasan hasil ML (matriks E2E lengkap 15 kombinasi)
-- [`CLAUDE-TRAINING.md`](CLAUDE-TRAINING.md) — Panduan eksperimen ML di RunPod/Vast.ai
+- [`ml-track/baseline-run/SUMMARY.md`](ml-track/baseline-run/SUMMARY.md) — Ringkasan hasil ML (matriks E2E lengkap 15 kombinasi)
+- [`ml-track/CLAUDE-TRAINING.md`](ml-track/CLAUDE-TRAINING.md) — Panduan eksperimen ML di RunPod/Vast.ai
 - [`exp_13 May 2026/PROGRESS.md`](exp_13%20May%202026/PROGRESS.md) — Log progres training
 - [Dataset HuggingFace](https://huggingface.co/datasets/ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO)
 

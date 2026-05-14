@@ -1,13 +1,13 @@
 """
-Generate baseline-run/SUMMARY.md setelah semua 9 eksperimen selesai.
-Membaca: baseline-run/*.txt, reports/*/metrics.json, /workspace/runs/detect/*/results.csv
+Generate ml-track/baseline-run/SUMMARY.md setelah semua 9 eksperimen selesai.
+Membaca: ml-track/baseline-run/*.txt, reports/*/metrics.json, /workspace/runs/detect/*/results.csv
 """
 import os, json, glob, re
 import pandas as pd
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RUNS_DIR = "/workspace/runs/detect"
-BASELINE = os.path.join(REPO, "baseline-run")
+BASELINE = os.path.join(REPO, "ml-track", "baseline-run")
 REPORTS = os.path.join(REPO, "reports")
 CLASSES = ["B1", "B2", "B3", "B4"]
 
@@ -115,8 +115,8 @@ def main():
     lines.append("\n## 4. Narasi & Kesimpulan\n")
     lines.append("### Detection Winner\n")
     lines.append("- Vanilla y26m terbaik mAP50 (0.528), tapi y26n hampir setara dengan 4× lebih cepat.\n")
-    lines.append("- Ablasi no-pretrained: lihat baseline-run/y26s_nopretrained.txt untuk hasil aktual.\n")
-    lines.append("- Ablasi no-aug: lihat baseline-run/y26s_noaug.txt.\n\n")
+    lines.append("- Ablasi no-pretrained: lihat ml-track/baseline-run/y26s_nopretrained.txt untuk hasil aktual.\n")
+    lines.append("- Ablasi no-aug: lihat ml-track/baseline-run/y26s_noaug.txt.\n\n")
     lines.append("### Counting Winner\n")
     lines.append("- SVM (Macro class-MAE 0.3184) mengungguli RF (0.3526) pada GT features.\n")
     lines.append("- B3 adalah kelas tersulit (MAE tertinggi, Acc±1 terendah) — konsisten dengan heuristik.\n\n")

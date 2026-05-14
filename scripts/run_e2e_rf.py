@@ -1,6 +1,6 @@
 """
 Experiment #9 — End-to-end y26s → Random Forest counting.
-Requires: predictions/y26s_inference/*.json (run run_e2e_inference.py first)
+Requires: ml-track/predictions/y26s_inference/*.json (run run_e2e_inference.py first)
 Output: reports/e2e_rf/
 """
 import os, sys, json, glob
@@ -12,9 +12,9 @@ from build_counting_features import extract_features_from_json, load_split_manif
 from sklearn.ensemble import RandomForestRegressor
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-INFER_DIR = os.path.join(REPO, "predictions", "y26s_inference")
-GT_JSON_DIR = os.path.join(REPO, "Tested-Brand-New-Dataset-YOLO", "json")
-MANIFEST = os.path.join(REPO, "Tested-Brand-New-Dataset-YOLO", "split_manifest.csv")
+INFER_DIR = os.path.join(REPO, "ml-track", "predictions", "y26s_inference")
+GT_JSON_DIR = os.path.join(REPO, "Brand-New-Dataset-YOLO", "json")
+MANIFEST = os.path.join(REPO, "Brand-New-Dataset-YOLO", "split_manifest.csv")
 REPORT_DIR = os.path.join(REPO, "reports", "e2e_rf")
 os.makedirs(REPORT_DIR, exist_ok=True)
 

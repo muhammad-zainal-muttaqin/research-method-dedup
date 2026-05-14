@@ -3,13 +3,13 @@ Unified E2E pipeline: inference + SVM + RF + M01 untuk satu detektor.
 
 Usage:
   python scripts/run_e2e_pipeline.py --name y26n_vanilla_local \
-      --weights baseline-run/weights/y26n_vanilla_local.pt
+      --weights ml-track/baseline-run/weights/y26n_vanilla_local.pt
 
 Output:
-  predictions/{name}_inference/   <- YOLO inference JSONs
-  reports/e2e_{name}_svm/         <- SVM metrics
-  reports/e2e_{name}_rf/          <- RF metrics
-  reports/e2e_{name}_m01/         <- M01 heuristic metrics
+  ml-track/predictions/{name}_inference/   <- YOLO inference JSONs
+  reports/e2e_{name}_svm/                  <- SVM metrics
+  reports/e2e_{name}_rf/                   <- RF metrics
+  reports/e2e_{name}_m01/                  <- M01 heuristic metrics
 """
 import os, sys, json, glob, csv, argparse
 from pathlib import Path
@@ -19,11 +19,26 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-IMG_ROOT = REPO / "Tested-Brand-New-Dataset-YOLO" / "images"
-GT_JSON_DIR = REPO / "Tested-Brand-New-Dataset-YOLO" / "json"
-MANIFEST = REPO / "Tested-Brand-New-Dataset-YOLO" / "split_manifest.csv"
+DATASET_ROOT = REPO / "Brand-New-Dataset-YOLO"
+IMG_ROOT = DATASET_ROOT / "images"
+GT_JSON_DIR = DATASET_ROOT / "json"
+MANIFEST = DATASET_ROOT / "split_manifest.csv"
 CLASSES = ["B1", "B2", "B3", "B4"]
 CLASS_MAP = {0: "B1", 1: "B2", 2: "B3", 3: "B4"}
+
+
+def _load_split_map():
+    """Build {filename.jpg: split} from train.txt/val.txt/test.txt."""
+    split_map = {}
+    for sp in ("train", "val", "test"):
+        list_file = DATASET_ROOT / f"{sp}.txt"
+        if not list_file.is_file():
+            continue
+        for line in list_file.read_text(encoding="utf-8").splitlines():
+            name = Path(line.strip()).name
+            if name:
+                split_map[name] = sp
+    return split_map
 
 sys.path.insert(0, str(REPO / "scripts"))
 sys.path.insert(0, str(REPO))
@@ -78,23 +93,21 @@ def compute_metrics_svm_rf(y_true, y_pred, tree_ids):
 
 def run_inference(name, weights_path):
     from ultralytics import YOLO
-    out_dir = REPO / "predictions" / f"{name}_inference"
+    out_dir = REPO / "ml-track" / "predictions" / f"{name}_inference"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     trees = defaultdict(list)
-    for split in ["train", "val", "test"]:
-        split_dir = IMG_ROOT / split
-        if not split_dir.is_dir():
-            continue
-        for img_path in sorted(split_dir.glob("*.jpg")):
-            parts = img_path.stem.rsplit("_", 1)
-            if len(parts) == 2 and parts[1].isdigit():
-                tree_name, side_num = parts[0], parts[1]
-                side_label = f"sisi_{side_num}"
-            else:
-                tree_name = img_path.stem
-                side_label = "sisi_1"
-            trees[tree_name].append((split, side_label, img_path))
+    split_map = _load_split_map()
+    for img_path in sorted(IMG_ROOT.glob("*.jpg")):
+        split = split_map.get(img_path.name, "unknown")
+        parts = img_path.stem.rsplit("_", 1)
+        if len(parts) == 2 and parts[1].isdigit():
+            tree_name, side_num = parts[0], parts[1]
+            side_label = f"sisi_{side_num}"
+        else:
+            tree_name = img_path.stem
+            side_label = "sisi_1"
+        trees[tree_name].append((split, side_label, img_path))
 
     existing = {p.stem for p in out_dir.glob("*.json")}
     remaining = [t for t in sorted(trees) if t not in existing]

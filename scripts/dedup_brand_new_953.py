@@ -44,7 +44,7 @@ def load_brand_new_trees() -> Dict[str, dict]:
     """Load all 953 trees from Brand-New-Dataset-YOLO/json/."""
     trees = {}
     for jp in sorted(JSON_DIR.glob("*.json")):
-        data = json.loads(jp.read_text(encoding="utf-8"))
+        data = json.loads(jp.read_text(encoding="utf-8-sig"))
         tree_id = data.get("tree_name", data.get("tree_id", jp.stem))
         gt = {c: data["summary"]["by_class"].get(c, 0) for c in NAMES}
         dets = []

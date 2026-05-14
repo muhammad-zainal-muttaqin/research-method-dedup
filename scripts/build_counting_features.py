@@ -6,8 +6,8 @@ import json, csv, os, glob
 import numpy as np
 
 CLASSES = ["B1", "B2", "B3", "B4"]
-JSON_DIR = os.path.join(os.path.dirname(__file__), "..", "Tested-Brand-New-Dataset-YOLO", "json")
-MANIFEST = os.path.join(os.path.dirname(__file__), "..", "Tested-Brand-New-Dataset-YOLO", "split_manifest.csv")
+JSON_DIR = os.path.join(os.path.dirname(__file__), "..", "Brand-New-Dataset-YOLO", "json")
+MANIFEST = os.path.join(os.path.dirname(__file__), "..", "Brand-New-Dataset-YOLO", "split_manifest.csv")
 
 
 def load_split_manifest(manifest_path=MANIFEST):

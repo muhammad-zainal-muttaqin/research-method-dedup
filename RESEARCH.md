@@ -29,8 +29,8 @@
 - Hasil lengkap heuristik: `reports/dedup_brand_new_953/accuracy_953.csv`
 - Hasil ML: `reports/counting_svm/`, `reports/counting_rf/`
 - Hasil E2E: `reports/e2e_{name}_{method}/metrics.json`
-- Bobot model: `baseline-run/weights/*.pt`
-- Panduan replikasi: `README.md`, `CLAUDE-TRAINING.md`
+- Bobot model: `ml-track/baseline-run/weights/*.pt`
+- Panduan replikasi: `README.md`, `ml-track/CLAUDE-TRAINING.md`
 
 ---
 

@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Constraint:** **100% algorithmic / heuristic only.** No training, embeddings, backprop, or learned matchers. All methods must be deterministic and parameter-free (no gradient computation).
 
-**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. **Canonical JSON GT: `Brand-New-Dataset-YOLO/json/` = 953 trees (COMPLETE).** Earlier snapshots (228 / 478 / 727 / 882) live under `archive/_to_review/` and are read-only history. `json/` (228) and `dataset/labels/` are kept at root only as live inputs for `scripts/count_all_trees.py` and `scripts/count_gt_vs_naive.py`. `Tested-Brand-New-Dataset-YOLO/` is kept at root as the split (train/val/test + `split_manifest.csv`) consumed by the E2E pipeline (`scripts/run_e2e_*.py`).
+**Dataset:** DAMIMAS (854) + LONSUM (99) = **953 trees**. **Single canonical source: `Brand-New-Dataset-YOLO/`** (953 trees COMPLETE). Layout: flat `images/` + `labels/`, `json/` (GT), `train.txt`/`val.txt`/`test.txt` (split membership), `split_manifest.csv` (per-tree split + stratification keys). All consumers — heuristic dedup, E2E pipeline, GT counting — read from this single root. Earlier snapshots (228/478/727/882) and previous duplicate roots (`json/`, `dataset/`, `Tested-Brand-New-Dataset-YOLO/`) live under `archive/_to_review/` as read-only history.
 
 Mostly 4 sides/tree, 45 have 8. Images 960×1280 JPEG. Classes ordinal B1→B4. **Core hard problem: B2↔B3 visually ambiguous** (irreducible per JSON-01 audit, label noise = 0%).
 
@@ -26,9 +26,6 @@ Run all scripts from workspace root. Outputs go to `reports/<script>/`.
 # GT counting all 953 trees (no GPU, ~1 min)
 python scripts/count_all_trees.py
 
-# JSON-05 + JSON-01 audit (228 JSON trees)
-python scripts/count_gt_vs_naive.py
-
 # PRIMARY benchmark — full 953-tree Brand-New-Dataset-YOLO (canonical)
 python scripts/dedup_brand_new_953.py       # → reports/dedup_brand_new_953/
 
@@ -36,7 +33,7 @@ python scripts/dedup_brand_new_953.py       # → reports/dedup_brand_new_953/
 python scripts/benchmark_multidim.py        # 4-dim evaluation: accuracy, speed, robustness, domain → reports/benchmark_multidim/
 python scripts/generate_method_reports.py   # per-method breakdown → reports/methods/
 
-# E2E / ML track (separate from heuristic — see CLAUDE-TRAINING.md)
+# E2E / ML track (separate from heuristic — see ml-track/CLAUDE-TRAINING.md)
 python scripts/build_counting_features.py
 python scripts/run_counting_rf.py
 python scripts/run_counting_svm.py
@@ -191,18 +188,13 @@ Verified dedup ratio ≈ 0.55 (best methods reduce naive 18,544 detections to ~1
 ## Repository Layout
 
 ```
-Brand-New-Dataset-YOLO/        953 trees COMPLETE (canonical, 2026-05-09)
+Brand-New-Dataset-YOLO/        953 trees COMPLETE (canonical, single source)
   data.yaml                    YOLO config (4 classes B1–B4)
-  images/{train,val,test}/     source images
-  labels/{train,val,test}/     YOLO TXT labels
+  images/                      flat images (3993 .jpg)
+  labels/                      flat YOLO TXT labels (3992 .txt)
   json/                        953 JSON GT files — PRIMARY GT
-Tested-Brand-New-Dataset-YOLO/ same content as Brand-New-Dataset-YOLO/, but
-                               packaged as train/val/test split + split_manifest.csv;
-                               consumed by E2E pipeline (scripts/run_e2e_*.py).
-dataset/                       Live label dir read by scripts/count_all_trees.py
-                               (only labels/ is touched; images/ legacy mirror).
-json/                          228 legacy JSON, kept as input for
-                               scripts/count_all_trees.py + count_gt_vs_naive.py.
+  train.txt / val.txt / test.txt   split membership (images/<name>.jpg per line)
+  split_manifest.csv           tree_id → split + stratification keys
 algorithms/                    one Mxx_*.py per method, all deterministic.
   __init__.py                  ranked performance table (read for algo selection)
   M01_selector_b2b3.py         current production (86.67% on 953)
@@ -219,8 +211,12 @@ reports/                       per-script outputs.
   dedup_brand_new_953/         PRIMARY benchmark output
   dedup_research_v5/           still live (params source for M17)
   benchmark_multidim/, methods/, counting_*/, e2e_*/, full_gt_count/, json_05/, label_audit/
-baseline-run/                  YOLO training logs + weights + SUMMARY.md
-predictions/                   YOLO inference outputs per detector variant
+ml-track/                      E2E ML training & inference artefak (Phase 2 cleanup, 2026-05-14).
+  baseline-run/                YOLO training logs + weights + SUMMARY.md
+    weights/                   5 renamed best.pt (y26n/s/m + ablations)
+  predictions/                 YOLO inference outputs per detector variant
+  CLAUDE-TRAINING.md           ML training onboarding (RunPod / Vast.ai)
+  local_data.yaml              YOLO config consumed by ultralytics
 archive/                       read-only history.
   reports_pre_rename_2026-05-10/  pre-rename CSV snapshot (M-naming migration)
   _to_review/                  staged-for-removal items from 2026-05-14 cleanup;
@@ -229,7 +225,6 @@ RESEARCH.md                    primary research doc — read Section 0 first
 README.md                      project overview + method evolution narrative
 report_10Mei2026.md            953-tree benchmark (M01 champion analysis)
 AGENTS.md                      thin pointer → CLAUDE.md
-CLAUDE-TRAINING.md             ML training onboarding (RunPod / Vast.ai)
 NAMING.md                      Mxx naming-convention table
 ```
 

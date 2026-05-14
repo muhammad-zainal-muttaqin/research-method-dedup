@@ -20,42 +20,58 @@ import csv
 from pathlib import Path
 from collections import defaultdict, Counter
 
-BASE      = Path(__file__).resolve().parent.parent
-LABEL_DIR = BASE / "dataset" / "labels"
-JSON_DIR  = BASE / "json"
-OUT_DIR   = BASE / "reports" / "full_gt_count"
-NAMES     = ["B1", "B2", "B3", "B4"]
-CLASS_MAP = {0: "B1", 1: "B2", 2: "B3", 3: "B4"}
+BASE         = Path(__file__).resolve().parent.parent
+DATASET_ROOT = BASE / "Brand-New-Dataset-YOLO"
+LABEL_DIR    = DATASET_ROOT / "labels"
+JSON_DIR     = DATASET_ROOT / "json"
+OUT_DIR      = BASE / "reports" / "full_gt_count"
+NAMES        = ["B1", "B2", "B3", "B4"]
+CLASS_MAP    = {0: "B1", 1: "B2", 2: "B3", 3: "B4"}
 
 OUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _load_split_map():
+    """Build {label_stem: split} dari train.txt/val.txt/test.txt."""
+    split_map = {}
+    for sp in ("train", "val", "test"):
+        list_file = DATASET_ROOT / f"{sp}.txt"
+        if not list_file.is_file():
+            continue
+        for line in list_file.read_text(encoding="utf-8").splitlines():
+            stem = Path(line.strip()).stem
+            if stem:
+                split_map[stem] = sp
+    return split_map
 
 
 # ── 1. Bangun index semua pohon dari label TXT ────────────────────────────────
 
 # tree_id → {split, sides: set, files: {side_no: Path}}
 trees = defaultdict(lambda: {"split": None, "sides": set(), "files": {}})
+split_map = _load_split_map()
 
-for split in ("train", "val", "test"):
-    for f in sorted((LABEL_DIR / split).glob("*.txt")):
-        stem = f.stem  # e.g. DAMIMAS_A21B_0001_1
-        parts = stem.rsplit("_", 1)
-        if len(parts) != 2:
-            continue
-        tree_id, side_str = parts
-        try:
-            side_no = int(side_str)
-        except ValueError:
-            continue
-        trees[tree_id]["split"] = split
-        trees[tree_id]["sides"].add(side_no)
-        trees[tree_id]["files"][side_no] = f
+for f in sorted(LABEL_DIR.glob("*.txt")):
+    stem = f.stem  # e.g. DAMIMAS_A21B_0001_1
+    parts = stem.rsplit("_", 1)
+    if len(parts) != 2:
+        continue
+    tree_id, side_str = parts
+    try:
+        side_no = int(side_str)
+    except ValueError:
+        continue
+    split = split_map.get(stem, "unknown")
+    trees[tree_id]["split"] = split
+    trees[tree_id]["sides"].add(side_no)
+    trees[tree_id]["files"][side_no] = f
 
 
 # ── 2. Bangun index JSON (tree_name → data) ───────────────────────────────────
 
 json_index = {}
 for jp in sorted(JSON_DIR.glob("*.json")):
-    data = json.loads(jp.read_text(encoding="utf-8"))
+    data = json.loads(jp.read_text(encoding="utf-8-sig"))
     name = data.get("tree_name", data.get("tree_id", jp.stem))
     json_index[name] = data
 

@@ -13,8 +13,8 @@
 | Domain LONSUM | 99 |
 | Pohon 4-sisi | 908 |
 | Pohon 8-sisi | 45 |
-| Pohon dengan JSON (dedup akurat) | **228** |
-| Pohon tanpa JSON (naive sum) | **725** |
+| Pohon dengan JSON (dedup akurat) | **953** |
+| Pohon tanpa JSON (naive sum) | **0** |
 
 ---
 
@@ -23,25 +23,25 @@
 > Pohon ber-JSON: hitungan **unik/dedup** (akurat).
 > Pohon non-JSON: hitungan **naif** (tanpa dedup — estimasi overcounting ~79%).
 
-| Kelas | JSON-Dedup (228 pohon) | Naive-Sum (725 pohon) | Total |
+| Kelas | JSON-Dedup (953 pohon) | Naive-Sum (0 pohon) | Total |
 |-------|---:|---:|---:|
-| B1 | 291 | 1,618 | 1,909 |
-| B2 | 532 | 2,974 | 3,506 |
-| B3 | 1,144 | 6,417 | 7,561 |
-| B4 | 499 | 2,656 | 3,155 |
-| **TOTAL** | **2,466** | **13,665** | **16,131** |
+| B1 | 937 | 0 | 937 |
+| B2 | 1,780 | 0 | 1,780 |
+| B3 | 5,013 | 0 | 5,013 |
+| B4 | 2,009 | 0 | 2,009 |
+| **TOTAL** | **9,739** | **0** | **9,739** |
 
 ### Estimasi True Count untuk Pohon Non-JSON
 Berdasarkan hasil JSON-05 (overcounting rate 78.8%), estimasi tandan unik sesungguhnya
-untuk 725 pohon non-JSON:
+untuk 0 pohon non-JSON:
 
 | Kelas | Naive Count | Est. Unique (÷1.788) |
 |-------|---:|---:|
-| B1 | 1,618 | 904 |
-| B2 | 2,974 | 1,663 |
-| B3 | 6,417 | 3,588 |
-| B4 | 2,656 | 1,485 |
-| **TOTAL** | **13,665** | **7,642** |
+| B1 | 0 | 0 |
+| B2 | 0 | 0 |
+| B3 | 0 | 0 |
+| B4 | 0 | 0 |
+| **TOTAL** | **0** | **0** |
 
 ---
 
@@ -51,65 +51,65 @@ untuk 725 pohon non-JSON:
 
 | Kelas | Count | % |
 |-------|------:|---:|
-| B1 | 1,892 | 12.5% |
-| B2 | 3,354 | 22.2% |
-| B3 | 6,882 | 45.5% |
-| B4 | 2,981 | 19.7% |
-| **Total** | **15,109** | 100% |
+| B1 | 929 | 10.2% |
+| B2 | 1,701 | 18.6% |
+| B3 | 4,608 | 50.4% |
+| B4 | 1,906 | 20.8% |
+| **Total** | **9,144** | 100% |
 
-- Pohon ber-JSON: 228 | Non-JSON: 626
+- Pohon ber-JSON: 854 | Non-JSON: 0
 
 ### LONSUM (99 pohon)
 
 | Kelas | Count | % |
 |-------|------:|---:|
-| B1 | 17 | 1.7% |
-| B2 | 152 | 14.9% |
-| B3 | 679 | 66.4% |
-| B4 | 174 | 17.0% |
-| **Total** | **1,022** | 100% |
+| B1 | 8 | 1.3% |
+| B2 | 79 | 13.3% |
+| B3 | 405 | 68.1% |
+| B4 | 103 | 17.3% |
+| **Total** | **595** | 100% |
 
-- Pohon ber-JSON: 0 | Non-JSON: 99
+- Pohon ber-JSON: 99 | Non-JSON: 0
 
 ---
 
 ## 4. Breakdown per Split
 
-### Split: TRAIN (666 pohon)
+### Split: TRAIN (607 pohon)
 
 | Kelas | Count |
 |-------|------:|
-| B1 | 1,358 |
-| B2 | 2,476 |
-| B3 | 5,333 |
-| B4 | 2,149 |
-| **Total** | **11,316** |
+| B1 | 648 |
+| B2 | 1,158 |
+| B3 | 3,188 |
+| B4 | 1,231 |
+| **Total** | **6,225** |
 
-- Pohon ber-JSON: 161 | Non-JSON: 505
+- Pohon ber-JSON: 607 | Non-JSON: 0
 
-### Split: VAL (144 pohon)
-
-| Kelas | Count |
-|-------|------:|
-| B1 | 285 |
-| B2 | 566 |
-| B3 | 1,131 |
-| B4 | 482 |
-| **Total** | **2,464** |
-
-- Pohon ber-JSON: 32 | Non-JSON: 112
-
-### Split: TEST (143 pohon)
+### Split: VAL (179 pohon)
 
 | Kelas | Count |
 |-------|------:|
-| B1 | 266 |
-| B2 | 464 |
-| B3 | 1,097 |
-| B4 | 524 |
-| **Total** | **2,351** |
+| B1 | 129 |
+| B2 | 339 |
+| B3 | 937 |
+| B4 | 402 |
+| **Total** | **1,807** |
 
-- Pohon ber-JSON: 35 | Non-JSON: 108
+- Pohon ber-JSON: 179 | Non-JSON: 0
+
+### Split: TEST (167 pohon)
+
+| Kelas | Count |
+|-------|------:|
+| B1 | 160 |
+| B2 | 283 |
+| B3 | 888 |
+| B4 | 376 |
+| **Total** | **1,707** |
+
+- Pohon ber-JSON: 167 | Non-JSON: 0
 
 ---
 

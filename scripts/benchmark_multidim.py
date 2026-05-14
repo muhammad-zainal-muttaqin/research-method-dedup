@@ -46,7 +46,7 @@ import os
 
 BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
-JSON_DIR = Path(os.environ.get("JSON_DIR", str(BASE / "json")))
+JSON_DIR = Path(os.environ.get("JSON_DIR", str(BASE / "Brand-New-Dataset-YOLO" / "json")))
 if not JSON_DIR.is_absolute():
     JSON_DIR = BASE / JSON_DIR
 OUT_DIR = Path(os.environ.get("OUT_DIR", str(BASE / "reports" / "benchmark_multidim")))

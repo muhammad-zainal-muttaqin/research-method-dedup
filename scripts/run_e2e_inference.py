@@ -1,6 +1,6 @@
 """
 Step 1 untuk Exp #8/#9: jalankan y26s inference pada semua tree images.
-Output: predictions/y26s_inference/<tree_name>.json (mirror schema GT)
+Output: ml-track/predictions/y26s_inference/<tree_name>.json (mirror schema GT)
 
 Usage: python scripts/run_e2e_inference.py --weights <path/to/best.pt>
 """
@@ -9,31 +9,46 @@ from pathlib import Path
 from collections import defaultdict
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-IMG_ROOT = os.path.join(REPO, "Tested-Brand-New-Dataset-YOLO", "images")
-JSON_DIR = os.path.join(REPO, "Tested-Brand-New-Dataset-YOLO", "json")
-OUT_DIR = os.path.join(REPO, "predictions", "y26s_inference")
+DATASET_ROOT = os.path.join(REPO, "Brand-New-Dataset-YOLO")
+IMG_ROOT = os.path.join(DATASET_ROOT, "images")
+JSON_DIR = os.path.join(DATASET_ROOT, "json")
+OUT_DIR = os.path.join(REPO, "ml-track", "predictions", "y26s_inference")
 CLASSES = ["B1", "B2", "B3", "B4"]
 CLASS_MAP = {0: "B1", 1: "B2", 2: "B3", 3: "B4"}
+
+
+def _load_split_map():
+    """Build {filename.jpg: split} from train.txt/val.txt/test.txt."""
+    split_map = {}
+    for sp in ("train", "val", "test"):
+        list_file = os.path.join(DATASET_ROOT, f"{sp}.txt")
+        if not os.path.isfile(list_file):
+            continue
+        with open(list_file, encoding="utf-8") as f:
+            for line in f:
+                fname = os.path.basename(line.strip())
+                if fname:
+                    split_map[fname] = sp
+    return split_map
 
 
 def get_tree_images():
     """Returns dict: tree_name -> list of (split, side_label, img_path)"""
     trees = defaultdict(list)
-    for split in ["train", "val", "test"]:
-        split_dir = os.path.join(IMG_ROOT, split)
-        if not os.path.isdir(split_dir):
-            continue
-        for img_path in sorted(glob.glob(os.path.join(split_dir, "*.jpg"))):
-            fname = os.path.splitext(os.path.basename(img_path))[0]
-            # filename format: TREENAME_N  e.g. DAMIMAS_A21B_0001_1
-            parts = fname.rsplit("_", 1)
-            if len(parts) == 2 and parts[1].isdigit():
-                tree_name, side_num = parts[0], parts[1]
-                side_label = f"sisi_{side_num}"
-            else:
-                tree_name = fname
-                side_label = "sisi_1"
-            trees[tree_name].append((split, side_label, img_path))
+    split_map = _load_split_map()
+    for img_path in sorted(glob.glob(os.path.join(IMG_ROOT, "*.jpg"))):
+        basename = os.path.basename(img_path)
+        fname = os.path.splitext(basename)[0]
+        split = split_map.get(basename, "unknown")
+        # filename format: TREENAME_N  e.g. DAMIMAS_A21B_0001_1
+        parts = fname.rsplit("_", 1)
+        if len(parts) == 2 and parts[1].isdigit():
+            tree_name, side_num = parts[0], parts[1]
+            side_label = f"sisi_{side_num}"
+        else:
+            tree_name = fname
+            side_label = "sisi_1"
+        trees[tree_name].append((split, side_label, img_path))
     return trees
 
 

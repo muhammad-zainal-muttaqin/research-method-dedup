@@ -19,8 +19,8 @@ import pandas as pd
 warnings.filterwarnings("ignore")
 
 BASE = Path(__file__).resolve().parent.parent
-JSON_DIR = BASE / "json"
-LABEL_DIRS = [BASE / "dataset" / "labels" / s for s in ["train", "val", "test"]]
+JSON_DIR = BASE / "Brand-New-Dataset-YOLO" / "json"
+LABEL_DIRS = [BASE / "Brand-New-Dataset-YOLO" / "labels"]
 OUT_DIR = BASE / "reports" / "dedup_all_953"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 

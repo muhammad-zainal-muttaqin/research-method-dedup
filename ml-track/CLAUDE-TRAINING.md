@@ -7,17 +7,17 @@
 
 ## 0. State Sekarang (2026-05-13) — SEMUA SELESAI
 
-Seluruh eksperimen deteksi, counting, dan E2E telah selesai. Semua model dilatih secara lokal dengan konfigurasi konsisten: `batch=16`, `imgsz=640`, `epochs=100`, `patience=50`, `seed=42`. Semua bobot tersimpan di `baseline-run/weights/`.
+Seluruh eksperimen deteksi, counting, dan E2E telah selesai. Semua model dilatih secara lokal dengan konfigurasi konsisten: `batch=16`, `imgsz=640`, `epochs=100`, `patience=50`, `seed=42`. Semua bobot tersimpan di `ml-track/baseline-run/weights/`.
 
 ### Hasil Deteksi (lokal, batch=16, test set)
 
 | # | Model | Best Epoch | mAP50 | mAP50-95 | best.pt |
 |---:|---|---:|---:|---:|---|
-| 1 | **y26n vanilla** | 38 | **0.521** | 0.237 | `baseline-run/weights/y26n_vanilla_local.pt` |
-| 2 | y26s vanilla | 21 | 0.506 | 0.235 | `baseline-run/weights/y26s_vanilla_local.pt` |
-| 3 | y26m vanilla | 33 | 0.509 | 0.231 | `baseline-run/weights/y26m_vanilla_local.pt` |
-| 4 | y26s no-pretrained | 57 | 0.511 | 0.231 | `baseline-run/weights/y26s_nopretrained.pt` |
-| 5 | y26s no-augmentation | 6 | 0.465 | 0.216 | `baseline-run/weights/y26s_noaug.pt` |
+| 1 | **y26n vanilla** | 38 | **0.521** | 0.237 | `ml-track/baseline-run/weights/y26n_vanilla_local.pt` |
+| 2 | y26s vanilla | 21 | 0.506 | 0.235 | `ml-track/baseline-run/weights/y26s_vanilla_local.pt` |
+| 3 | y26m vanilla | 33 | 0.509 | 0.231 | `ml-track/baseline-run/weights/y26m_vanilla_local.pt` |
+| 4 | y26s no-pretrained | 57 | 0.511 | 0.231 | `ml-track/baseline-run/weights/y26s_nopretrained.pt` |
+| 5 | y26s no-augmentation | 6 | 0.465 | 0.216 | `ml-track/baseline-run/weights/y26s_noaug.pt` |
 
 ### Hasil Counting — Fitur GT (test set, n=95)
 
@@ -75,19 +75,19 @@ pip install scikit-learn huggingface_hub
 # Pull dataset dari HF (tidak commit ke git, terlalu besar)
 huggingface-cli login                       # masukkan token, jangan hardcode
 huggingface-cli download ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO \
-  --repo-type dataset --local-dir ./Tested-Brand-New-Dataset-YOLO
+  --repo-type dataset --local-dir ./Brand-New-Dataset-YOLO
 ```
 
 **Verifikasi:**
-- `Tested-Brand-New-Dataset-YOLO/data.yaml` exist
-- `Tested-Brand-New-Dataset-YOLO/json/` berisi 953 file
-- `Tested-Brand-New-Dataset-YOLO/labels/{train,val,test}/` berisi 3164 / 416 / 412 TXT
+- `Brand-New-Dataset-YOLO/data.yaml` exist
+- `Brand-New-Dataset-YOLO/json/` berisi 953 file
+- `Brand-New-Dataset-YOLO/labels/` berisi 3992 TXT flat (split membership lewat `train.txt`/`val.txt`/`test.txt`)
 
 ---
 
 ## 2. Vanilla Hyperparameter (referensi konsistensi)
 
-Salin dari `baseline-run/vanilla_y26s.txt` baris 1-112. Highlight:
+Salin dari `ml-track/baseline-run/vanilla_y26s.txt` baris 1-112. Highlight:
 
 ```yaml
 optimizer: auto
@@ -129,16 +129,16 @@ Gunakan setting ini untuk eksperimen #4 dan #5, hanya ubah variabel ablasi.
 yolo detect train \
   model=yolo26s.yaml \
   pretrained=False \
-  data=Tested-Brand-New-Dataset-YOLO/data.yaml \
+  data=Brand-New-Dataset-YOLO/data.yaml \
   epochs=100 batch=16 imgsz=640 patience=50 \
   optimizer=auto seed=42 deterministic=True \
-  project=baseline-run name=y26s_nopretrained
+  project=ml-track/baseline-run name=y26s_nopretrained
 ```
 
 Catatan: `model=yolo26s.yaml` (bukan `.pt`) → build from scratch.
 **Ekspektasi:** mAP50 turun 5-15 pp ke 0.35-0.45. Buktikan pretrained penting di dataset kecil.
 
-Simpan log: `baseline-run/y26s_nopretrained.txt`.
+Simpan log: `ml-track/baseline-run/y26s_nopretrained.txt`.
 
 ---
 
@@ -149,7 +149,7 @@ Simpan log: `baseline-run/y26s_nopretrained.txt`.
 ```bash
 yolo detect train \
   model=yolo26s.pt pretrained=True \
-  data=Tested-Brand-New-Dataset-YOLO/data.yaml \
+  data=Brand-New-Dataset-YOLO/data.yaml \
   epochs=100 batch=16 imgsz=640 patience=50 \
   hsv_h=0 hsv_s=0 hsv_v=0 \
   degrees=0 translate=0 scale=0 shear=0 perspective=0 \
@@ -157,12 +157,12 @@ yolo detect train \
   mosaic=0 mixup=0 cutmix=0 copy_paste=0 erasing=0 \
   auto_augment=None close_mosaic=0 \
   optimizer=auto seed=42 deterministic=True \
-  project=baseline-run name=y26s_noaug
+  project=ml-track/baseline-run name=y26s_noaug
 ```
 
 **Ekspektasi:** overfit train, val mAP50 turun ke 0.40-0.48.
 
-Simpan log: `baseline-run/y26s_noaug.txt`.
+Simpan log: `ml-track/baseline-run/y26s_noaug.txt`.
 
 ---
 
@@ -170,10 +170,10 @@ Simpan log: `baseline-run/y26s_noaug.txt`.
 
 ### Input
 
-- Source: `Tested-Brand-New-Dataset-YOLO/json/*.json` (953 tree files)
+- Source: `Brand-New-Dataset-YOLO/json/*.json` (953 tree files)
 - Schema: `images.sisi_N.annotations[]` — list of detections per side
 - Target: `summary.by_class.{B1,B2,B3,B4}` — 4-dim integer vector
-- Split: `Tested-Brand-New-Dataset-YOLO/split_manifest.csv`
+- Split: `Brand-New-Dataset-YOLO/split_manifest.csv`
 
 ### Feature Engineering (per tree, 13 dim)
 
@@ -255,7 +255,7 @@ model = YOLO("runs/detect/sawit-ulm/vanilla-train/y26s/weights/best.pt")
 # Output: JSON dengan schema mirror GT
 ```
 
-Output: `predictions/y26s_inference/<tree_name>.json`.
+Output: `ml-track/predictions/y26s_inference/<tree_name>.json`.
 
 ### Step 2: Feature engineering dari prediksi detector
 
@@ -283,7 +283,7 @@ Setiap eksperimen WAJIB simpan:
 
 | Artifact | Lokasi |
 |---|---|
-| Training log | `baseline-run/<exp_name>.txt` |
+| Training log | `ml-track/baseline-run/<exp_name>.txt` |
 | Weights | `runs/detect/.../<exp_name>/weights/best.pt` |
 | Training curve | `runs/.../results.csv` |
 | Confusion matrix | `runs/.../confusion_matrix_normalized.png` |
@@ -294,7 +294,7 @@ Setiap eksperimen WAJIB simpan:
 
 ## 8. Final Reporting
 
-Setelah 9 eksperimen done, generate `baseline-run/SUMMARY.md`:
+Setelah 9 eksperimen done, generate `ml-track/baseline-run/SUMMARY.md`:
 
 1. Tabel komparasi 5 detection: n, s, m, no-pretrained, no-aug
 2. Tabel komparasi 2 counting: SVM, RF

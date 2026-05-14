@@ -78,8 +78,8 @@ def load_params() -> dict:
     import pandas as pd
     comp = pd.read_csv(_V5_REPORT).set_index("method")
     return {
-        "vis_alpha": float(comp.loc["best_visibility_grid", "alpha"]),
-        "vis_sigma": float(comp.loc["best_visibility_grid", "sigma"]),
+        "vis_alpha": float(comp.loc["M20_weight_visibility_grid", "alpha"]),
+        "vis_sigma": float(comp.loc["M20_weight_visibility_grid", "sigma"]),
         "class_alpha_B1B4": float(comp.loc["best_class_aware_grid", "alpha_B1B4"]),
         "class_alpha_B2B3": float(comp.loc["best_class_aware_grid", "alpha_B2B3"]),
         "class_sigma_B1B4": float(comp.loc["best_class_aware_grid", "sigma_B1B4"]),

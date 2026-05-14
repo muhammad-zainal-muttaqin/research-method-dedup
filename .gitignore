@@ -1,30 +1,23 @@
-dataset/
-__pycache__/
-*.pyc
+# OS / editor cruft
 .DS_Store
 __MACOSX/
 Thumbs.db
 desktop.ini
 
-# tools_sawit dev sandbox
-tools_sawit/_test_fixtures/
-tools_sawit/_test_output/
-tools_sawit/debug.log
+# Python build artefak
+__pycache__/
+*.pyc
 
-# large raw export folders (too many files for git)
-05 Mei 2026/
+# Historical / archive (never commit)
 archive/
 
-# new YOLO dataset: track labels/json/yaml only, not images
+# Brand-New-Dataset-YOLO: track labels/json/yaml only, not images (heavy, distributed via HF)
 Brand-New-Dataset-YOLO/images/
 
-# intermediate backup folders (zipped to archive.zip)
+# Backup folders (zipped to archive)
 *.backup_*/
 
-# consolidated zip snapshot at repo root
-archive.zip
-
-# scratch / temp scripts at repo root
+# Scratch / temp scripts at repo root
 /_tmp_*.py
 /_chk*.py
 /_dedup_*.py
@@ -32,22 +25,16 @@ archive.zip
 /_search_*.py
 /_verify_*.py
 
-# training detection dataset (mirror of HF ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO)
-# clone fresh dari HF di RunPod, jangan commit
-Tested-Brand-New-Dataset-YOLO/
-
-# zip backups (heavy)
+# Zip backups (heavy) + Ultralytics training output
 *.zip
-
-# Ultralytics training output (weights, plots, results.csv per run)
 runs/
 
-# YOLO weight files — commit baseline-run/weights/*.pt explicitly
+# YOLO weight files — commit ml-track/baseline-run/weights/*.pt explicitly
 *.pt
-!baseline-run/weights/*.pt
+!ml-track/baseline-run/weights/*.pt
 *.engine
 *.onnx
 
-# HF token + secrets
+# Secrets
 .env
 *.token
