@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "tree_id": "DAMIMAS_A21B_0361",
   "tree_name": "DAMIMAS_A21B_0361",
   "split": "train",
@@ -8,7 +8,44 @@
     "varietas": "DAMIMAS",
     "session_id": "20260509-DAMIMAS-361",
     "number": 361,
-    "generated_at": "2026-05-09T13:52:59.346Z"
+    "generated_at": "2026-05-09T13:52:59.346Z",
+    "fix_log": [
+      {
+        "date": "2026-05-16",
+        "action": "auto_heal_visibility_drop_offender",
+        "rule": "largest_bbox=home, drop nodes at sides with dist>1",
+        "dropped_links": [
+          "lnk-1",
+          "lnk-4"
+        ],
+        "actions": [
+          {
+            "bunch_id": 1,
+            "class": "B1",
+            "home_side": "sisi_1",
+            "offending": [
+              "sisi_3"
+            ],
+            "isolated_nodes": [
+              "s3/b0"
+            ]
+          },
+          {
+            "bunch_id": 4,
+            "class": "B3",
+            "home_side": "sisi_1",
+            "offending": [
+              "sisi_3"
+            ],
+            "isolated_nodes": [
+              "s3/b1"
+            ]
+          }
+        ],
+        "bunches_before": 13,
+        "bunches_after": 15
+      }
+    ]
   },
   "images": {
     "sisi_1": {
@@ -469,7 +506,7 @@
       "bunch_id": 1,
       "class": "B1",
       "class_mismatch": false,
-      "appearance_count": 4,
+      "appearance_count": 3,
       "appearances": [
         {
           "side": "sisi_1",
@@ -493,18 +530,6 @@
             439,
             446,
             581
-          ]
-        },
-        {
-          "side": "sisi_3",
-          "side_index": 2,
-          "box_index": 0,
-          "class_name": "B1",
-          "bbox_pixel": [
-            592,
-            516,
-            700,
-            596
           ]
         },
         {
@@ -589,7 +614,7 @@
       "bunch_id": 4,
       "class": "B3",
       "class_mismatch": false,
-      "appearance_count": 4,
+      "appearance_count": 3,
       "appearances": [
         {
           "side": "sisi_1",
@@ -613,18 +638,6 @@
             337,
             383,
             433
-          ]
-        },
-        {
-          "side": "sisi_3",
-          "side_index": 2,
-          "box_index": 1,
-          "class_name": "B3",
-          "bbox_pixel": [
-            537,
-            447,
-            587,
-            514
           ]
         },
         {
@@ -787,6 +800,46 @@
     },
     {
       "bunch_id": 11,
+      "class": "B1",
+      "class_mismatch": false,
+      "appearance_count": 1,
+      "appearances": [
+        {
+          "side": "sisi_3",
+          "side_index": 2,
+          "box_index": 0,
+          "class_name": "B1",
+          "bbox_pixel": [
+            592,
+            516,
+            700,
+            596
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 12,
+      "class": "B3",
+      "class_mismatch": false,
+      "appearance_count": 1,
+      "appearances": [
+        {
+          "side": "sisi_3",
+          "side_index": 2,
+          "box_index": 1,
+          "class_name": "B3",
+          "bbox_pixel": [
+            537,
+            447,
+            587,
+            514
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 13,
       "class": "B3",
       "class_mismatch": false,
       "appearance_count": 1,
@@ -806,7 +859,7 @@
       ]
     },
     {
-      "bunch_id": 12,
+      "bunch_id": 14,
       "class": "B3",
       "class_mismatch": false,
       "appearance_count": 2,
@@ -838,7 +891,7 @@
       ]
     },
     {
-      "bunch_id": 13,
+      "bunch_id": 15,
       "class": "B4",
       "class_mismatch": false,
       "appearance_count": 1,
@@ -867,13 +920,6 @@
       "bboxIdB": "b1"
     },
     {
-      "linkId": "lnk-1",
-      "sideA": 1,
-      "bboxIdA": "b1",
-      "sideB": 2,
-      "bboxIdB": "b1"
-    },
-    {
       "linkId": "lnk-2",
       "sideA": 3,
       "bboxIdA": "b1",
@@ -885,13 +931,6 @@
       "sideA": 0,
       "bboxIdA": "b0",
       "sideB": 1,
-      "bboxIdB": "b0"
-    },
-    {
-      "linkId": "lnk-4",
-      "sideA": 1,
-      "bboxIdA": "b0",
-      "sideB": 2,
       "bboxIdB": "b0"
     },
     {
@@ -938,13 +977,13 @@
     }
   ],
   "summary": {
-    "total_unique_bunches": 13,
+    "total_unique_bunches": 15,
     "total_detections": 24,
-    "duplicates_linked": 11,
+    "duplicates_linked": 9,
     "by_class": {
-      "B1": 1,
+      "B1": 2,
       "B2": 1,
-      "B3": 6,
+      "B3": 7,
       "B4": 5,
       "other": 0
     },

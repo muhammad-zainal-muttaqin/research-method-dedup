@@ -64,7 +64,7 @@ SPEED_REPS = 30  # ulang tiap pohon N kali untuk estimasi stabil
 def load_tree_data() -> List[Tuple[str, List[Dict], Dict[str, int], str]]:
     trees = []
     for jp in sorted(JSON_DIR.glob("*.json")):
-        data = json.loads(jp.read_text(encoding="utf-8"))
+        data = json.loads(jp.read_text(encoding="utf-8-sig"))
         tree_id = data.get("tree_name", data.get("tree_id", jp.stem))
         gt = data["summary"]["by_class"]
         gt_counts = {c: gt.get(c, 0) for c in NAMES}

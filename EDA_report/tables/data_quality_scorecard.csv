@@ -1,0 +1,7 @@
+metric,value,threshold
+image_exists_all,1.0,1.0
+label_exists_all,1.0,1.0
+json_label_count_exact_match_rate,1.0,0.999
+json_bbox_field_exact_match_rate,1.0,1.0
+json_summary_side_exact_match_rate,1.0,1.0
+link_graph_cycle_rank_gt0_rate,0.0,0.0

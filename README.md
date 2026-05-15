@@ -14,7 +14,7 @@ Pipeline ini menghitung jumlah tandan unik per pohon kelapa sawit dari foto yang
 
 | Track | Metode | Macro MAE | Macro Acc ±1 | Keterangan |
 |:---|:---|---:|---:|:---|
-| A. Heuristik | [M01_selector_b2b3](algorithms/M01_selector_b2b3.py) | [0.398](reports/dedup_brand_new_953/accuracy_953.csv) | [**86.67%**](reports/dedup_brand_new_953/accuracy_953.csv) | ✅ Produksi (valid per [RULES.txt](archive/_to_review/exp_12%20may%202026/RULES.txt)) |
+| A. Heuristik | [M01_selector_b2b3](algorithms/M01_selector_b2b3.py) | [0.375](reports/dedup_brand_new_953/accuracy_953.csv) | [**87.62%**](reports/dedup_brand_new_953/accuracy_953.csv) | ✅ Produksi (valid per [RULES.txt](archive/_to_review/exp_12%20may%202026/RULES.txt)) — post GT-fix 2026-05-16 |
 | B. Deteksi | [YOLO26n (lokal)](ml-track/baseline-run/weights/y26n_vanilla_local_args.yaml) | — | mAP50 = [**0.521**](ml-track/baseline-run/weights/y26n_vanilla_local_results.csv) | ✅ Detektor terbaik lokal |
 | C. ML Counting (fitur GT) | [SVM RBF](reports/counting_svm/metrics.json) | [**0.318**](reports/counting_svm/metrics.json) | [**96.1%**](reports/counting_svm/metrics.json) | ✅ ML terbaik dengan fitur sempurna |
 | D. End-to-End | [y26m → SVM](reports/e2e_y26m_vanilla_local_svm/metrics.json) | [1.118](reports/e2e_y26m_vanilla_local_svm/metrics.json) | [**71.6%**](reports/e2e_y26m_vanilla_local_svm/metrics.json) | ⚠️ Terbaik E2E, masih di bawah heuristik |
@@ -24,10 +24,10 @@ Pipeline ini menghitung jumlah tandan unik per pohon kelapa sawit dari foto yang
 | Metrik | Nilai | Metode |
 |:---|---:|:---|
 | Macro Acc ±1 tertinggi — ML (fitur GT) | [**96.1%**](reports/counting_svm/metrics.json) | [SVM RBF](reports/counting_svm/metrics.json) |
-| Macro Acc ±1 tertinggi — heuristik valid | [**86.67%**](reports/dedup_brand_new_953/accuracy_953.csv) | [M01_selector_b2b3](algorithms/M01_selector_b2b3.py) |
+| Macro Acc ±1 tertinggi — heuristik valid | [**87.62%**](reports/dedup_brand_new_953/accuracy_953.csv) | [M01_selector_b2b3](algorithms/M01_selector_b2b3.py) |
 | Macro Acc ±1 tertinggi — end-to-end | [**71.6%**](reports/e2e_y26m_vanilla_local_svm/metrics.json) | [y26m → SVM](reports/e2e_y26m_vanilla_local_svm/metrics.json) |
 | Macro MAE terendah — ML (fitur GT) | [**0.318**](reports/counting_svm/metrics.json) | [SVM RBF](reports/counting_svm/metrics.json) |
-| Macro MAE terendah — heuristik valid | [**0.398**](reports/dedup_brand_new_953/accuracy_953.csv) | [M01_selector_b2b3](algorithms/M01_selector_b2b3.py) |
+| Macro MAE terendah — heuristik valid | [**0.368**](reports/dedup_brand_new_953/accuracy_953.csv) | [M07_weight_coverage](algorithms/M07_weight_coverage.py) |
 | mAP50 terbaik (lokal, batch=16) | [**0.521**](ml-track/baseline-run/weights/y26n_vanilla_local_results.csv) | [YOLO26n](ml-track/baseline-run/weights/y26n_vanilla_local_args.yaml) |
 | Tercepat | **0.005 ms/pohon** | M15_divide_global |
 
@@ -47,14 +47,17 @@ Temuan penting: seluruh [15 kombinasi E2E](ml-track/baseline-run/SUMMARY.md) (5 
 
 Metode heuristik bekerja langsung pada deteksi bounding box per sisi tanpa memerlukan proses pelatihan apa pun.
 
+Tabel post GT-fix 2026-05-16 (semua metode naik ~0.8–1.6 pp setelah cleanup 48 trees GT — 8 wrap-around + 9 8-side over-link + 31 4-side auto-heal):
+
 | Peringkat | Metode | Macro Acc ±1 | Macro MAE | Profil Tepat | Valid? |
 |:---:|:---|---:|---:|---:|:---:|
 | — | M60_blind_strict | 90.24% | 0.302 | — | ❌ |
 | — | M53_three_band_override | 90.24% | 0.304 | — | ❌ |
-| 1 | [**M01_selector_b2b3**](algorithms/M01_selector_b2b3.py) | [**86.67%**](reports/dedup_brand_new_953/accuracy_953.csv) | [**0.398**](reports/dedup_brand_new_953/accuracy_953.csv) | 26.3% | ✅ |
-| 2 | M05_blend_vis_divide | 86.04% | 0.408 | 25.3% | ✅ |
-| 3 | M06_weight_visibility | 85.94% | 0.396 | 25.3% | ✅ |
-| 4 | M15_divide_global | 84.37% | 0.416 | 23.3% | ✅ |
+| 1 | [**M01_selector_b2b3**](algorithms/M01_selector_b2b3.py) | [**87.62%**](reports/dedup_brand_new_953/accuracy_953.csv) | [0.375](reports/dedup_brand_new_953/accuracy_953.csv) | 27.1% | ✅ |
+| 2 | M05_blend_vis_divide | 86.99% | 0.388 | 26.0% | ✅ |
+| 3 | M06_weight_visibility | 86.88% | 0.371 | 26.0% | ✅ |
+| 4 | [M07_weight_coverage](algorithms/M07_weight_coverage.py) | 86.88% | [**0.368**](reports/dedup_brand_new_953/accuracy_953.csv) | 26.6% | ✅ |
+| 5 | M15_divide_global | 85.94% | 0.391 | 23.5% | ✅ |
 
 Tabel lengkap 29 metode tersedia di [`reports/dedup_brand_new_953/accuracy_953.csv`](reports/dedup_brand_new_953/accuracy_953.csv).
 
@@ -161,6 +164,39 @@ python scripts/run_e2e_pipeline.py \
 | Deteksi saja (kecepatan) | [**YOLO26n**](ml-track/baseline-run/weights/y26n_vanilla_local_args.yaml) — mAP50 = [0.521](ml-track/baseline-run/weights/y26n_vanilla_local_results.csv), 0.2 ms/gambar |
 | Baseline riset ML | [**SVM pada fitur GT**](reports/counting_svm/metrics.json) — Macro Acc±1 = [96.1%](reports/counting_svm/metrics.json), Macro MAE = [0.318](reports/counting_svm/metrics.json) |
 | Pipeline E2E terbaik | [**y26m → SVM**](reports/e2e_y26m_vanilla_local_svm/metrics.json) — Macro Acc±1 = [71.6%](reports/e2e_y26m_vanilla_local_svm/metrics.json), masih 15 pp di bawah heuristik |
+
+---
+
+## Validasi Ground Truth
+
+GT JSON di `Brand-New-Dataset-YOLO/json/` harus memenuhi dua invariant struktural:
+
+1. **Same-side uniqueness** — satu bunch tidak boleh muncul ≥ 2× di `side_index` yang sama (kamera satu sisi maksimal lihat bunch sekali). Detector: [`scripts/audit_same_side_dup.py`](scripts/audit_same_side_dup.py).
+2. **Geometric adjacency (visibility cone)** — bunch hanya bisa terlihat dari sisi yg adjacent dgn home (rule update 2026-05-16 setelah validasi visual RA):
+   - **4-sisi:** max distance = 1 (≤ 3 sisi visible). Mustahil di sisi opposite (distance 2).
+     Contoh: home=`sisi_1` → visible {`sisi_4`, `sisi_1`, `sisi_2`}; mustahil `sisi_3`.
+   - **8-sisi:** max distance = 3 (≤ 6 sisi visible — bunch besar/prominent). Mustahil ≥ 7 sisi.
+     Normal: 5 sisi (distance ≤ 2). Edge case bunch besar: 6 sisi (distance ≤ 3).
+
+   Detector: [`scripts/audit_impossible_visibility.py`](scripts/audit_impossible_visibility.py).
+
+**Status audit (2026-05-16):**
+
+| Audit | Trees affected | Bunches affected | Status |
+|:---|---:|---:|:---|
+| Same-side dup | 8 | 18 | ✅ FIXED (8 wrap-around trees per laporan RA) |
+| Geometric violation (4-sisi 4/4) | 31 | 42 | ✅ AUTO-HEALED via [`scripts/heal_4side_visibility.py`](scripts/heal_4side_visibility.py) |
+| Geometric violation (8-sisi) | 9 | 14 | ✅ CLEARED (4 manual fix + rule relaxation 2026-05-16) |
+| Geometric warning | 469 | 802 | ℹ️ borderline (full visibility reach, accepted) |
+
+**Status final:** 0 GT violations across all checks. Net +~62 unique bunches across ~48 trees. Backups: `archive/json_pre_wrap_fix_2026-05-15/`, `archive/json_pre_visibility_fix_2026-05-16/`, `archive/json_pre_visibility_heal_4side_2026-05-16/`.
+
+Wrap-around fix detail (8 trees): backup di `archive/json_pre_wrap_fix_2026-05-15/`, runner di [`scripts/fix_wrap_around_links.py`](scripts/fix_wrap_around_links.py).
+
+```bash
+python scripts/audit_same_side_dup.py
+python scripts/audit_impossible_visibility.py
+```
 
 ---
 

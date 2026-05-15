@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "tree_id": "DAMIMAS_A21B_0352",
   "tree_name": "DAMIMAS_A21B_0352",
   "split": "train",
@@ -8,7 +8,33 @@
     "varietas": "DAMIMAS",
     "session_id": "20260509-DAMIMAS-352",
     "number": 352,
-    "generated_at": "2026-05-09T13:52:40.641Z"
+    "generated_at": "2026-05-09T13:52:40.641Z",
+    "fix_log": [
+      {
+        "date": "2026-05-16",
+        "action": "auto_heal_visibility_drop_offender",
+        "rule": "largest_bbox=home, drop nodes at sides with dist>1",
+        "dropped_links": [
+          "lnk-0",
+          "lnk-1"
+        ],
+        "actions": [
+          {
+            "bunch_id": 1,
+            "class": "B1",
+            "home_side": "sisi_4",
+            "offending": [
+              "sisi_2"
+            ],
+            "isolated_nodes": [
+              "s2/b0"
+            ]
+          }
+        ],
+        "bunches_before": 12,
+        "bunches_after": 14
+      }
+    ]
   },
   "images": {
     "sisi_1": {
@@ -486,7 +512,7 @@
       "bunch_id": 1,
       "class": "B1",
       "class_mismatch": false,
-      "appearance_count": 4,
+      "appearance_count": 1,
       "appearances": [
         {
           "side": "sisi_1",
@@ -498,42 +524,6 @@
             567,
             362,
             670
-          ]
-        },
-        {
-          "side": "sisi_2",
-          "side_index": 1,
-          "box_index": 0,
-          "class_name": "B1",
-          "bbox_pixel": [
-            456,
-            534,
-            575,
-            662
-          ]
-        },
-        {
-          "side": "sisi_3",
-          "side_index": 2,
-          "box_index": 0,
-          "class_name": "B1",
-          "bbox_pixel": [
-            395,
-            480,
-            492,
-            585
-          ]
-        },
-        {
-          "side": "sisi_4",
-          "side_index": 3,
-          "box_index": 0,
-          "class_name": "B1",
-          "bbox_pixel": [
-            496,
-            453,
-            639,
-            608
           ]
         }
       ]
@@ -736,6 +726,26 @@
     },
     {
       "bunch_id": 7,
+      "class": "B1",
+      "class_mismatch": false,
+      "appearance_count": 1,
+      "appearances": [
+        {
+          "side": "sisi_2",
+          "side_index": 1,
+          "box_index": 0,
+          "class_name": "B1",
+          "bbox_pixel": [
+            456,
+            534,
+            575,
+            662
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 8,
       "class": "B2",
       "class_mismatch": false,
       "appearance_count": 1,
@@ -755,7 +765,7 @@
       ]
     },
     {
-      "bunch_id": 8,
+      "bunch_id": 9,
       "class": "B4",
       "class_mismatch": false,
       "appearance_count": 1,
@@ -775,7 +785,7 @@
       ]
     },
     {
-      "bunch_id": 9,
+      "bunch_id": 10,
       "class": "B3",
       "class_mismatch": false,
       "appearance_count": 2,
@@ -807,7 +817,39 @@
       ]
     },
     {
-      "bunch_id": 10,
+      "bunch_id": 11,
+      "class": "B1",
+      "class_mismatch": false,
+      "appearance_count": 2,
+      "appearances": [
+        {
+          "side": "sisi_3",
+          "side_index": 2,
+          "box_index": 0,
+          "class_name": "B1",
+          "bbox_pixel": [
+            395,
+            480,
+            492,
+            585
+          ]
+        },
+        {
+          "side": "sisi_4",
+          "side_index": 3,
+          "box_index": 0,
+          "class_name": "B1",
+          "bbox_pixel": [
+            496,
+            453,
+            639,
+            608
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 12,
       "class": "B3",
       "class_mismatch": false,
       "appearance_count": 2,
@@ -839,7 +881,7 @@
       ]
     },
     {
-      "bunch_id": 11,
+      "bunch_id": 13,
       "class": "B4",
       "class_mismatch": false,
       "appearance_count": 1,
@@ -859,7 +901,7 @@
       ]
     },
     {
-      "bunch_id": 12,
+      "bunch_id": 14,
       "class": "B4",
       "class_mismatch": false,
       "appearance_count": 1,
@@ -880,20 +922,6 @@
     }
   ],
   "_confirmedLinks": [
-    {
-      "linkId": "lnk-0",
-      "sideA": 0,
-      "bboxIdA": "b0",
-      "sideB": 1,
-      "bboxIdB": "b0"
-    },
-    {
-      "linkId": "lnk-1",
-      "sideA": 1,
-      "bboxIdA": "b0",
-      "sideB": 2,
-      "bboxIdB": "b0"
-    },
     {
       "linkId": "lnk-2",
       "sideA": 2,
@@ -973,11 +1001,11 @@
     }
   ],
   "summary": {
-    "total_unique_bunches": 12,
+    "total_unique_bunches": 14,
     "total_detections": 25,
-    "duplicates_linked": 13,
+    "duplicates_linked": 11,
     "by_class": {
-      "B1": 1,
+      "B1": 3,
       "B2": 1,
       "B3": 6,
       "B4": 4,

@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "tree_id": "DAMIMAS_A21B_0360",
   "tree_name": "DAMIMAS_A21B_0360",
   "split": "train",
@@ -8,7 +8,33 @@
     "varietas": "DAMIMAS",
     "session_id": "20260509-DAMIMAS-360",
     "number": 360,
-    "generated_at": "2026-05-09T13:52:57.313Z"
+    "generated_at": "2026-05-09T13:52:57.313Z",
+    "fix_log": [
+      {
+        "date": "2026-05-16",
+        "action": "auto_heal_visibility_drop_offender",
+        "rule": "largest_bbox=home, drop nodes at sides with dist>1",
+        "dropped_links": [
+          "lnk-3",
+          "lnk-4"
+        ],
+        "actions": [
+          {
+            "bunch_id": 4,
+            "class": "B2",
+            "home_side": "sisi_1",
+            "offending": [
+              "sisi_3"
+            ],
+            "isolated_nodes": [
+              "s3/b0"
+            ]
+          }
+        ],
+        "bunches_before": 15,
+        "bunches_after": 17
+      }
+    ]
   },
   "images": {
     "sisi_1": {
@@ -667,7 +693,7 @@
       "bunch_id": 4,
       "class": "B2",
       "class_mismatch": false,
-      "appearance_count": 4,
+      "appearance_count": 2,
       "appearances": [
         {
           "side": "sisi_1",
@@ -679,30 +705,6 @@
             457,
             743,
             586
-          ]
-        },
-        {
-          "side": "sisi_2",
-          "side_index": 1,
-          "box_index": 3,
-          "class_name": "B2",
-          "bbox_pixel": [
-            181,
-            346,
-            304,
-            480
-          ]
-        },
-        {
-          "side": "sisi_3",
-          "side_index": 2,
-          "box_index": 0,
-          "class_name": "B2",
-          "bbox_pixel": [
-            325,
-            428,
-            427,
-            534
           ]
         },
         {
@@ -873,6 +875,26 @@
     },
     {
       "bunch_id": 9,
+      "class": "B2",
+      "class_mismatch": false,
+      "appearance_count": 1,
+      "appearances": [
+        {
+          "side": "sisi_2",
+          "side_index": 1,
+          "box_index": 3,
+          "class_name": "B2",
+          "bbox_pixel": [
+            181,
+            346,
+            304,
+            480
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 10,
       "class": "B3",
       "class_mismatch": false,
       "appearance_count": 3,
@@ -916,7 +938,7 @@
       ]
     },
     {
-      "bunch_id": 10,
+      "bunch_id": 11,
       "class": "B4",
       "class_mismatch": false,
       "appearance_count": 2,
@@ -948,7 +970,7 @@
       ]
     },
     {
-      "bunch_id": 11,
+      "bunch_id": 12,
       "class": "B4",
       "class_mismatch": false,
       "appearance_count": 1,
@@ -968,7 +990,7 @@
       ]
     },
     {
-      "bunch_id": 12,
+      "bunch_id": 13,
       "class": "B4",
       "class_mismatch": false,
       "appearance_count": 1,
@@ -988,7 +1010,27 @@
       ]
     },
     {
-      "bunch_id": 13,
+      "bunch_id": 14,
+      "class": "B2",
+      "class_mismatch": false,
+      "appearance_count": 1,
+      "appearances": [
+        {
+          "side": "sisi_3",
+          "side_index": 2,
+          "box_index": 0,
+          "class_name": "B2",
+          "bbox_pixel": [
+            325,
+            428,
+            427,
+            534
+          ]
+        }
+      ]
+    },
+    {
+      "bunch_id": 15,
       "class": "B3",
       "class_mismatch": false,
       "appearance_count": 1,
@@ -1008,7 +1050,7 @@
       ]
     },
     {
-      "bunch_id": 14,
+      "bunch_id": 16,
       "class": "B3",
       "class_mismatch": false,
       "appearance_count": 1,
@@ -1028,7 +1070,7 @@
       ]
     },
     {
-      "bunch_id": 15,
+      "bunch_id": 17,
       "class": "B4",
       "class_mismatch": false,
       "appearance_count": 1,
@@ -1069,20 +1111,6 @@
       "bboxIdA": "b2",
       "sideB": 1,
       "bboxIdB": "b7"
-    },
-    {
-      "linkId": "lnk-3",
-      "sideA": 1,
-      "bboxIdA": "b3",
-      "sideB": 2,
-      "bboxIdB": "b0"
-    },
-    {
-      "linkId": "lnk-4",
-      "sideA": 2,
-      "bboxIdA": "b0",
-      "sideB": 3,
-      "bboxIdB": "b1"
     },
     {
       "linkId": "lnk-5",
@@ -1156,12 +1184,12 @@
     }
   ],
   "summary": {
-    "total_unique_bunches": 15,
+    "total_unique_bunches": 17,
     "total_detections": 30,
-    "duplicates_linked": 15,
+    "duplicates_linked": 13,
     "by_class": {
       "B1": 3,
-      "B2": 2,
+      "B2": 4,
       "B3": 4,
       "B4": 6,
       "other": 0

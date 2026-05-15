@@ -33,6 +33,13 @@ python scripts/dedup_brand_new_953.py       # → reports/dedup_brand_new_953/
 python scripts/benchmark_multidim.py        # 4-dim evaluation: accuracy, speed, robustness, domain → reports/benchmark_multidim/
 python scripts/generate_method_reports.py   # per-method breakdown → reports/methods/
 
+# GT validation audits (read-only)
+python scripts/audit_same_side_dup.py          # bunch dgn 2+ appearance same side → reports/audit_same_side_dup/
+python scripts/audit_impossible_visibility.py  # bunch melanggar geometric adjacency → reports/audit_impossible_visibility/
+
+# Targeted GT fix (5 simple wrap-around trees, hardcoded)
+python scripts/fix_wrap_around_links.py        # also: --dry-run, --only <tree_id>
+
 # E2E / ML track (separate from heuristic — see ml-track/CLAUDE-TRAINING.md)
 python scripts/build_counting_features.py
 python scripts/run_counting_rf.py
@@ -46,56 +53,58 @@ python scripts/export_gt_parquet.py
 
 **Archived 2026-05-14 → `archive/_to_review/`:** `dedup_research_v2..v4.py`, `dedup_v5_focused.py`, `dedup_all_trees_final.py`, `dedup_nonjson_compare.py`, the four legacy benchmark report folders (`benchmark_228/478/727/882/`), the v2/v3/v4/v6/v7/v8/v9 dedup_research report folders, and one-shot migrators (`migrate_*.py`, `fix_image_filename_bug.py`, `regen_tree_id.py`, `cleanup_repo.py`, `build_brand_new_dataset.py`, `generate_hf_metadata.py`, `flatten_dataset.py`, `find_first_5.py`, `generate_sample_viz.py`). Restore by `Move-Item archive\_to_review\scripts\<file> scripts\<file>`.
 
-## Current Best (as of 2026-05-10)
+## Current Best (as of 2026-05-16)
 
 **PRIMARY BENCHMARK: 953-tree Brand-New-Dataset-YOLO** (canonical, full GT). Earlier 228/478/727/882 numbers are historical only.
 
+**GT corrected 2026-05-15/16:** 8 wrap-around link bugs fixed + 9 over-link 8-side trees fixed (manual + rule relaxation max_dist 2→3) + 31 4-side trees auto-healed via `scripts/heal_4side_visibility.py` (largest-bbox=home heuristic). Net +~62 unique bunches across ~48 trees. All methods gained ~0.8–1.6 pp Acc±1 vs pre-fix baseline.
+
 **Naming convention (effective 2026-05-10):** all methods use `M<NN>_<family>_<descriptor>`. See `NAMING.md` for full mapping table from old names. IDs are stable — assigned once, never re-shuffled.
 
-### Acc ±1 on 953 Brand-New-Dataset-YOLO trees (PRIMARY)
+### Acc ±1 on 953 Brand-New-Dataset-YOLO trees (PRIMARY, post-GT-fix 2026-05-16)
 
 Note: on balanced 4-class dataset, Macro class-MAE ≡ flat MAE numerically. Full per-class MAE / bias / Total-count MAE breakdown in `README.md` benchmark table or `reports/dedup_brand_new_953/accuracy_953.csv`.
 
 | Rank | Method | Acc ±1 | Macro class-MAE | Total-count MAE | Total ±1 | Exact profile | n_fail |
 |---:|---|---:|---:|---:|---:|---:|---:|
-| 1 | `M01_selector_b2b3` | **86.67%** | **0.3982** | 1.4145 | 74.08% | 26.34% | 127 |
-| 2 | `M02_selector_trifurc` | 86.67% | 0.3987 | 1.4145 | 74.08% | 26.34% | 127 |
-| 3 | `M03_blend_geometric` | 86.15% | 0.3961 | 1.4061 | 74.50% | 26.86% | 132 |
-| 4 | `M04_blend_floor_clamped` | 86.04% | 0.4050 | 1.4103 | 74.19% | 25.81% | 133 |
-| 5 | `M05_blend_vis_divide` | 86.04% | 0.4077 | 1.4145 | 73.98% | 25.29% | 133 |
-| 6 | `M06_weight_visibility` | 85.94% | 0.3956 | 1.3641 | 73.56% | 25.29% | 134 |
-| 7 | `M07_weight_coverage` | 85.94% | 0.3930 | 1.3599 | 73.77% | 25.81% | 134 |
-| 8 | `M08_divide_density_vis` | 85.94% | 0.4024 | 1.3914 | 73.56% | 25.39% | 134 |
-| 9 | `M09_median_strong5` | 85.73% | 0.4006 | 1.4638 | 72.51% | 27.39% | 136 |
-| 10 | `M10_entropy_divide` | 84.78% | 0.4507 | 1.6348 | 66.32% | 23.92% | 145 |
-| 11 | `M11_median_b2` | 84.78% | 0.4294 | 1.5603 | 69.78% | 23.08% | 145 |
-| 12 | `M12_selector_overrides` | 84.68% | 0.4410 | 1.6044 | 68.21% | 22.35% | 146 |
-| 13 | `M13_stack_bracket` | 84.58% | 0.4284 | 1.5729 | 68.52% | 25.39% | 147 |
-| 14 | `M14_stack_density` | 84.58% | 0.4347 | 1.5939 | 67.89% | 23.92% | 147 |
-| 15 | `M15_divide_global` | 84.37% | 0.4158 | 1.4596 | 68.52% | 23.29% | 149 |
-| 16 | `M16_boost_b2b4` | 84.37% | 0.4111 | 1.4911 | 71.98% | 26.86% | 149 |
-| 17 | `M17_selector_regime` | 84.26% | 0.4436 | 1.6149 | 67.89% | 21.93% | 150 |
-| 18 | `M18_entropy_stack` | 84.78% | 0.4507 | 1.6348 | 66.32% | 23.92% | 145 |
-| 19 | `M19_divide_adaptive` | 82.58% | 0.4599 | 1.6905 | 65.58% | 21.51% | 166 |
-| 20 | `M20_weight_visibility_grid` | 80.80% | 0.4596 | 1.5656 | 65.90% | 19.73% | 183 |
-| 21 | `M23_agree_side` | 80.80% | 0.4273 | 1.5603 | 65.37% | 22.35% | 183 |
-| 22 | `M27_weight_visibility_adaptive` | 80.27% | 0.4790 | 1.6474 | 64.01% | 18.57% | 188 |
-| 23 | `M24_weight_class_aware` | 70.93% | 0.5456 | 1.8111 | 58.45% | 12.38% | 277 |
-| 24 | `M22_anchor_floor50` | 69.99% | 0.4525 | 1.5540 | 60.55% | 16.89% | 286 |
-| 25 | `M25_consensus_multi` | 25.29% | 0.9121 | 3.6401 | 16.79% | 5.46% | 712 |
-| 26 | `M26_median_per_side` | 25.29% | 0.9121 | 3.6401 | 16.79% | 5.46% | 712 |
-| 27 | `M28_baseline_match_strict` | 5.98% | 1.8114 | 7.0147 | 5.04% | 2.41% | 896 |
-| 28 | `M29_baseline_naive_sum` | 3.99% | 2.2804 | 9.1217 | 2.83% | 1.89% | 915 |
-| 29 | `M21_ordinal_b3` | 0.73% | 3.5842 | 14.3368 | 0.00% | 0.00% | 946 |
+| 1 | `M01_selector_b2b3` | **87.62%** | 0.3746 | 1.3305 | 75.13% | 27.07% | 118 |
+| 2 | `M02_selector_trifurc` | 87.62% | 0.3757 | 1.3305 | 75.13% | 27.07% | 118 |
+| 3 | `M03_blend_geometric` | 86.99% | 0.3767 | 1.3410 | 75.24% | 27.60% | 124 |
+| 4 | `M04_blend_floor_clamped` | 86.99% | 0.3848 | 1.3421 | 74.92% | 26.55% | 124 |
+| 5 | `M05_blend_vis_divide` | 86.99% | 0.3875 | 1.3463 | 74.71% | 26.02% | 124 |
+| 6 | `M06_weight_visibility` | 86.88% | 0.3709 | 1.2802 | 74.19% | 26.02% | 125 |
+| 7 | `M07_weight_coverage` | 86.88% | **0.3683** | **1.2760** | 74.40% | 26.55% | 125 |
+| 8 | `M08_divide_density_vis` | 86.88% | 0.3801 | 1.3169 | 74.19% | 26.13% | 125 |
+| 9 | `M09_median_strong5` | 86.67% | 0.3825 | 1.3956 | 73.87% | 27.91% | 127 |
+| 10 | `M11_median_b2` | 85.94% | 0.4137 | 1.4995 | 71.56% | 23.50% | 134 |
+| 11 | `M12_selector_overrides` | 85.94% | 0.4247 | 1.5435 | 70.09% | 22.88% | 134 |
+| 12 | `M15_divide_global` | 85.94% | 0.3909 | 1.3641 | 70.30% | 23.50% | 134 |
+| 13 | `M10_entropy_divide` | 85.83% | 0.4328 | 1.5677 | 67.89% | 24.55% | 135 |
+| 14 | `M18_entropy_stack` | 85.83% | 0.4328 | 1.5677 | 67.89% | 24.55% | 135 |
+| 15 | `M13_stack_bracket` | 85.62% | 0.4103 | 1.5068 | 70.09% | 25.81% | 137 |
+| 16 | `M17_selector_regime` | 85.62% | 0.4273 | 1.5540 | 69.88% | 22.35% | 137 |
+| 17 | `M14_stack_density` | 85.62% | 0.4166 | 1.5278 | 69.46% | 24.34% | 137 |
+| 18 | `M16_boost_b2b4` | 85.41% | 0.3932 | 1.4239 | 73.56% | 27.28% | 139 |
+| 19 | `M19_divide_adaptive` | 83.95% | 0.4441 | 1.6296 | 67.58% | 21.83% | 153 |
+| 20 | `M20_weight_visibility_grid` | 82.27% | 0.4336 | 1.4722 | 67.79% | 20.15% | 169 |
+| 21 | `M27_weight_visibility_adaptive` | 81.43% | 0.4544 | 1.5551 | 65.58% | 19.10% | 177 |
+| 22 | `M23_agree_side` | 81.11% | 0.4069 | 1.4953 | 65.90% | 22.77% | 180 |
+| 23 | `M24_weight_class_aware` | 72.40% | 0.5220 | 1.7209 | 60.55% | 12.91% | 263 |
+| 24 | `M22_anchor_floor50` | 69.78% | 0.4281 | 1.4732 | 60.23% | 16.89% | 288 |
+| 25 | `M25_consensus_multi` | 23.19% | 0.9037 | 3.6149 | 14.90% | 4.30% | 732 |
+| 26 | `M26_median_per_side` | 23.19% | 0.9037 | 3.6149 | 14.90% | 4.30% | 732 |
+| 27 | `M28_baseline_match_strict` | 5.14% | 1.8059 | 6.9906 | 4.41% | 1.99% | 904 |
+| 28 | `M29_baseline_naive_sum` | 3.78% | 2.2867 | 9.1469 | 2.52% | 1.36% | 917 |
+| 29 | `M21_ordinal_b3` | 0.73% | 3.5769 | 14.3075 | 0.00% | 0.00% | 946 |
 
 Source: `reports/dedup_brand_new_953/accuracy_953.csv`.
 
-**Surprising findings:**
-- **`M01_selector_b2b3` (#1, 2026-05-10)** — selector trifurc + B2↔B3 split correction. +0.63 pp over `M05_blend_vis_divide`, −2.32% MAE. Validated train/val/test held-out, no overfit. Code: `algorithms/M01_selector_b2b3.py`. Report: `report_10Mei2026.md`.
-- **`M05_blend_vis_divide`** — previous champion; simple weighted avg of visibility + adaptive divide
-- **`M12_selector_overrides` regresses to 84.68%** — confirms severe overfit on 228 dev set (97.37%)
-- **Simple visibility family dominates** (top 4 all visibility variants)
-- **Strict matching (`M28_baseline_match_strict`, `M29_baseline_naive_sum`) catastrophically fails** at scale
+**Surprising findings (post-GT-fix 2026-05-16):**
+- **`M01_selector_b2b3` (#1)** — 87.62%, +0.95 pp vs pre-fix. Champion stable.
+- **`M07_weight_coverage` lowest Macro MAE** (0.3683) and Total-count MAE (1.2760) — different optimum dari Acc±1 ranking.
+- **All top methods improved 0.8–1.6 pp** after GT cleanup (62 violations + 8 wrap-around fixed).
+- **`M12_selector_overrides` jumps to 85.94%** but still regress vs 228 (97.37%) — overfit confirmed.
+- **Strict matching (`M28`, `M29`) tetap catastrophically fail** at scale.
 
 ### Historical 228-tree dev set (for reference only)
 
@@ -121,35 +130,36 @@ Fresh benchmark re-run (2026-05-08) on all 4 archive snapshots. Earlier "primary
 
 Sources: `archive/_to_review/reports/benchmark_228/`, `archive/_to_review/reports/benchmark_478/`, `archive/_to_review/reports/benchmark_727/`, `archive/_to_review/reports/benchmark_882/`, `reports/dedup_brand_new_953/`.
 
-| Method | 228 | 478 | 727 | 882 | **953** | Delta 228→953 |
+| Method | 228 | 478 | 727 | 882 | **953** (post-GT-fix) | Delta 228→953 |
 |---|---:|---:|---:|---:|---:|---:|
-| `M12_selector_overrides` | 97.37% | 92.68% | 89.27% | 88.78% | 84.68% | −12.69 pp |
-| `M11_median_b2` | 96.05% | 92.68% | 89.00% | 88.78% | 84.78% | −11.27 pp |
-| `M17_selector_regime` | 96.05% | 91.84% | 88.86% | 88.55% | 84.26% | −11.79 pp |
-| `M10_entropy_divide` | 94.30% | 91.63% | 88.86% | 88.78% | 84.78% | −9.52 pp |
-| `M13_stack_bracket` | 94.30% | 91.84% | 88.45% | 88.44% | 84.58% | −9.72 pp |
-| `M19_divide_adaptive` | 93.86% | 89.96% | 86.11% | 86.28% | 82.58% | −11.28 pp |
-| `M06_weight_visibility` | 92.54% | 90.38% | 89.41% | 89.34% | **85.94%** | **−6.60 pp** |
-| `M15_divide_global` | 90.79% | 89.12% | 87.90% | 88.21% | 84.37% | **−6.42 pp** |
-| `M01_selector_b2b3` | — | — | — | — | **86.67%** | — (new top, 2026-05-10) |
-| `M02_selector_trifurc` | — | — | — | — | 86.67% | — (iter11) |
-| `M03_blend_geometric` | — | — | — | — | 86.15% | — (iter11) |
-| `M04_blend_floor_clamped` | — | — | — | — | 86.04% | — (iter11) |
-| `M05_blend_vis_divide` | — | — | — | — | 86.04% | — (prev champion) |
+| `M12_selector_overrides` | 97.37% | 92.68% | 89.27% | 88.78% | 85.94% | −11.43 pp |
+| `M11_median_b2` | 96.05% | 92.68% | 89.00% | 88.78% | 85.94% | −10.11 pp |
+| `M17_selector_regime` | 96.05% | 91.84% | 88.86% | 88.55% | 85.62% | −10.43 pp |
+| `M10_entropy_divide` | 94.30% | 91.63% | 88.86% | 88.78% | 85.83% | −8.47 pp |
+| `M13_stack_bracket` | 94.30% | 91.84% | 88.45% | 88.44% | 85.62% | −8.68 pp |
+| `M19_divide_adaptive` | 93.86% | 89.96% | 86.11% | 86.28% | 83.95% | −9.91 pp |
+| `M06_weight_visibility` | 92.54% | 90.38% | 89.41% | 89.34% | **86.88%** | **−5.66 pp** |
+| `M15_divide_global` | 90.79% | 89.12% | 87.90% | 88.21% | 85.94% | **−4.85 pp** |
+| `M01_selector_b2b3` | — | — | — | — | **87.62%** | — (top 2026-05-16) |
+| `M02_selector_trifurc` | — | — | — | — | 87.62% | — |
+| `M03_blend_geometric` | — | — | — | — | 86.99% | — |
+| `M04_blend_floor_clamped` | — | — | — | — | 86.99% | — |
+| `M05_blend_vis_divide` | — | — | — | — | 86.99% | — |
 
-**Key regression findings (UPDATED 2026-05-10 with 953-tree results):**
-- `M01_selector_b2b3` **NEW TOP** at 953 (86.67%, Macro class-MAE 0.3982) — selector trifurc + B2↔B3 split correction, validated held-out
-- `M06_weight_visibility` most stable from 228 (−6.60 pp) — simple generalizes best
-- `M15_divide_global` second-most stable (−6.42 pp)
-- `M12_selector_overrides` drops **12.69 pp** at 953 — narrow overrides catastrophically overfit 228 dev set
-- All complex selectors (`M17`, `M13`, `M10`, `M12`) regress 9–13 pp from 228 → 953
-- All methods land 82–86% at 953 trees (no catastrophic drop, but ceiling lower than expected)
+**Key regression findings (UPDATED 2026-05-16 post-GT-fix):**
+- `M01_selector_b2b3` champion at 953 (**87.62%**, Macro class-MAE 0.3746)
+- `M15_divide_global` most stable from 228 (**−4.85 pp**) — simple generalizes best
+- `M06_weight_visibility` second most stable (−5.66 pp)
+- `M12_selector_overrides` drops **11.43 pp** at 953 — narrow overrides still overfit 228 dev set despite GT improvement
+- All complex selectors (`M17`, `M13`, `M10`, `M12`) regress 8–11 pp from 228 → 953
+- All methods land 83–88% at 953 trees post-GT-fix; ceiling lifted ~1 pp universally
 
-**Recommendations (UPDATED 2026-05-10 post-iter11):**
-- **Production / full 953-tree dataset** → `M01_selector_b2b3` (86.67%, Macro class-MAE 0.3982) — current top, validated held-out, no overfit
-- **Simplest fallback** → `M05_blend_vis_divide` (86.04%) — single-line weighted blend
+**Recommendations (UPDATED 2026-05-16 post-GT-fix):**
+- **Production / full 953-tree dataset** → `M01_selector_b2b3` (87.62%, Macro class-MAE 0.3746) — current top
+- **Lowest Macro MAE** → `M07_weight_coverage` (0.3683, 86.88% Acc±1) — alternative if MAE preferred over Acc±1
+- **Simplest fallback** → `M05_blend_vis_divide` (86.99%) — single-line weighted blend
 - **Historical 228-tree set** → `M12_selector_overrides` (97.37%) — overfits, dev-set only
-- **No missing JSON anymore** — Brand-New-Dataset-YOLO is complete
+- **GT clean** — 0 violations across all audits (same-side dup + geometric visibility)
 
 **M12 logic (regime overrides on top of M17_selector_regime):**
 1. default → `M17_selector_regime`
@@ -176,14 +186,17 @@ Generation labels (v1..v9, iter11) are historical research milestones; productio
 | v9 (M12) | `M12_selector_overrides` | **97.37%** (228) / 84.68% (953) | narrow overrides on M17 — best on 228, severely overfits at scale |
 | **— production (2026-05-10)** | `M05_blend_vis_divide` | **86.04%** (953) | weighted vis + adaptive divide — wins on full canonical |
 | **— iter11 (2026-05-10)** | `M01_selector_b2b3` | **86.67%** (953) | selector trifurc + B2↔B3 split correction — new top, validated held-out |
+| **— GT-fix (2026-05-16)** | `M01_selector_b2b3` | **87.62%** (953) | same M01, but GT cleaned (8 wrap-around + 9 8-side over-link + 31 4-side healed) — universal +0.8–1.6 pp lift |
 
 **Key takeaway:** strict matching (Hungarian, graph, cluster) **fails** on noisy TXT labels (<20% accuracy). Adaptive statistical correction + regime-routing wins on small dev sets but **overfits**. At full 953-tree scale, simpler methods (`M05_blend_vis_divide`, `M06_weight_visibility`) generalize best. B2↔B3 ambiguity is the irreducible ceiling, not label noise.
 
-## Dataset Status (2026-05-10)
+## Dataset Status (2026-05-16)
 
 `Brand-New-Dataset-YOLO/` is the **complete, canonical 953-tree dataset**. All previously-missing 71 trees now have JSON GT. The "Missing JSON Pipeline" workflow is retired — use Brand-New-Dataset-YOLO for everything.
 
-Verified dedup ratio ≈ 0.55 (best methods reduce naive 18,544 detections to ~10,055 unique bunches across 953 trees). See `reports/dedup_brand_new_953/totals.csv`.
+**GT total per class** (post-fix 2026-05-16): B1=954, B2=1,791, B3=5,067, B4=2,011, **TOTAL=9,823 unique bunches** dari 18,544 raw detections (ratio ≈ 0.53). See `reports/full_gt_count/`.
+
+**GT validation status:** 0 violations across both audits (same-side dup + geometric visibility). 48 trees fixed total: 8 wrap-around + 9 8-side over-link + 31 4-side auto-heal. Backups di `archive/json_pre_*_2026-05-1{5,6}/`.
 
 ## Repository Layout
 
@@ -244,15 +257,55 @@ Algo ranked by 953-tree Acc±1 (see `algorithms/__init__.py` and `NAMING.md` for
 
 ```json
 {
+  "version": 3,
   "tree_id": "20260422-DAMIMAS-001",
   "split": "train",
-  "images": {"sisi_1": {"annotations": [{"class_name": "B3", "bbox_yolo": [...], "box_index": 0}]}},
-  "bunches": [{"bunch_id": 1, "class": "B3", "appearance_count": 2, "appearances": [...]}],
-  "summary": {"total_unique_bunches": 8, "by_class": {"B1": 1, "B2": 2, "B3": 5, "B4": 0}}
+  "metadata": {"date": "...", "varietas": "DAMIMAS", "fix_log": [...]},
+  "images": {"sisi_1": {"side_index": 0, "bbox_count": 3, "annotations": [{"class_name": "B3", "bbox_yolo": [...], "box_index": 0}]}},
+  "bunches": [{"bunch_id": 1, "class": "B3", "class_mismatch": false, "appearance_count": 2, "appearances": [{"side": "sisi_1", "side_index": 0, "box_index": 0, "class_name": "B3", "bbox_pixel": [...]}]}],
+  "_confirmedLinks": [{"linkId": "lnk-0", "sideA": 0, "bboxIdA": "b0", "sideB": 1, "bboxIdB": "b0"}],
+  "summary": {"total_unique_bunches": 8, "total_detections": 14, "duplicates_linked": 6, "by_class": {"B1": 1, "B2": 2, "B3": 5, "B4": 0, "other": 0}, "by_side": {...}}
 }
 ```
 
-`summary.by_class` is the dedup ground truth.
+`summary.by_class` is the dedup ground truth. `bunches` derived from `_confirmedLinks` via UnionFind connected components (boxes linked across sides = same physical bunch).
+
+**`_confirmedLinks` semantics:** annotator pairs bboxes across adjacent sides; `bboxIdA` / `bboxIdB` use `b<box_index>` notation referring to position in `images.sisi_X.annotations[]`. Wrong link = bunch ke-merged dgn extra box → over-link bug; missing link = bunch ke-split → under-link bug.
+
+## Ground-truth Validation Rules
+
+Two structural invariants every JSON GT must satisfy. Run the audit scripts to detect violations.
+
+### 1. Same-side uniqueness
+
+A bunch cannot appear ≥ 2 times in the same `side_index`. Camera at one side captures each physical bunch at most once. Violation = annotator over-linked across sides → connected-components pulled an extra box into the bunch.
+
+Detector: `scripts/audit_same_side_dup.py` → `reports/audit_same_side_dup/`.
+
+Status (2026-05-15): 0 violations after fixing the 8 wrap-around trees reported by RA (`DAMIMAS_A21B_{0287, 0309, 0320, 0335, 0336, 0359, 0323, 0362}`).
+
+### 2. Geometric adjacency (visibility cone)
+
+A bunch is at one physical location on the tree. Camera at adjacent sides also sees it; camera at far sides cannot. Formal rule (updated 2026-05-16 after RA visual validation):
+
+- **4-side trees:** max circular distance from home = **1**. ≤ 3 sides visible total. Mustahil di sisi opposite (distance 2).
+  - Example: home=`sisi_1` → visible {`sisi_4`, `sisi_1`, `sisi_2`}; mustahil `sisi_3`.
+- **8-side trees:** max circular distance from home = **3**. ≤ 6 sides visible total (large/prominent bunches with wider camera reach). Mustahil ≥ 7 sides.
+  - Normal: home + 4 immediate neighbors (5 sides, distance ≤ 2).
+  - Edge case: large bunches can reach 6 sides (distance ≤ 3).
+  - Example: home=`sisi_3` → can extend to `{sisi_8, sisi_1, sisi_2, sisi_3, sisi_4, sisi_5}`; mustahil `sisi_6`, `sisi_7`.
+
+Validity test per bunch: ada candidate `home ∈ appearance_sides` di mana semua appearance lain dalam `max_dist` hop circular. Tidak ada home valid → violation (mustahil geometri).
+
+Severity:
+- **violation** — no valid home → impossible bunch
+- **warn** — valid but uses full reach (3 sides for 4-side / 6 sides for 8-side, beyond normal 2 / 4)
+
+Detector: `scripts/audit_impossible_visibility.py` → `reports/audit_impossible_visibility/`.
+
+Status (2026-05-16): **0 violations** after auto-heal via `scripts/heal_4side_visibility.py` (heuristic: home = appearance side dgn bbox area terbesar; drop offending side opposite). 31 trees auto-healed, +42 unique bunches added (offending boxes jadi singleton). Backups di `archive/json_pre_visibility_heal_4side_2026-05-16/`.
+
+Earlier history: 62 violations → 53 (after 4 manual 8-side fixes) → 42 (after 8-side rule relaxation max_dist 2→3) → 0 (after 4-side auto-heal).
 
 ## Decision Metric
 

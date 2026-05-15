@@ -2,13 +2,13 @@
   "version": 2,
   "tree_id": "DAMIMAS_A21B_0310",
   "tree_name": "DAMIMAS_A21B_0310",
-  "split": "train",
+  "split": "unknown",
   "metadata": {
-    "date": "2026-05-09",
+    "date": "2026-05-15",
     "varietas": "DAMIMAS",
-    "session_id": "20260509-DAMIMAS-310",
+    "session_id": "20260515-DAMIMAS-310",
     "number": 310,
-    "generated_at": "2026-05-09T13:50:41.950Z"
+    "generated_at": "2026-05-15T14:59:42.973Z"
   },
   "images": {
     "sisi_1": {
