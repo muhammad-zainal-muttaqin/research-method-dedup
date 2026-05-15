@@ -64,10 +64,10 @@ Biological order: **B1 → B2 → B3 → B4** = most ripe to least ripe.
 Each color represents one unique bunch — **same color across panels = same physical bunch seen from different sides**. This cross-view duplication is the core challenge of the dataset.
 
 **4-view tree (standard):**
-![4-view multi-view sample with cross-view bunch pairing](samples/sample_4view_DAMIMAS_A21B_0140.jpg)
+![4-view multi-view sample with cross-view bunch pairing](sample_4view_DAMIMAS_A21B_0140.jpg)
 
 **8-view tree (dense capture):**
-![8-view multi-view sample with cross-view bunch pairing](samples/sample_8view_DAMIMAS_A21B_0834.jpg)
+![8-view multi-view sample with cross-view bunch pairing](sample_8view_DAMIMAS_A21B_0834.jpg)
 
 ## Dataset Structure
 
