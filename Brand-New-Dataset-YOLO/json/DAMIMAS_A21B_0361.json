@@ -8,44 +8,7 @@
     "varietas": "DAMIMAS",
     "session_id": "20260509-DAMIMAS-361",
     "number": 361,
-    "generated_at": "2026-05-09T13:52:59.346Z",
-    "fix_log": [
-      {
-        "date": "2026-05-16",
-        "action": "auto_heal_visibility_drop_offender",
-        "rule": "largest_bbox=home, drop nodes at sides with dist>1",
-        "dropped_links": [
-          "lnk-1",
-          "lnk-4"
-        ],
-        "actions": [
-          {
-            "bunch_id": 1,
-            "class": "B1",
-            "home_side": "sisi_1",
-            "offending": [
-              "sisi_3"
-            ],
-            "isolated_nodes": [
-              "s3/b0"
-            ]
-          },
-          {
-            "bunch_id": 4,
-            "class": "B3",
-            "home_side": "sisi_1",
-            "offending": [
-              "sisi_3"
-            ],
-            "isolated_nodes": [
-              "s3/b1"
-            ]
-          }
-        ],
-        "bunches_before": 13,
-        "bunches_after": 15
-      }
-    ]
+    "generated_at": "2026-05-09T13:52:59.346Z"
   },
   "images": {
     "sisi_1": {

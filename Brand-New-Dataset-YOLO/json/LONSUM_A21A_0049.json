@@ -8,33 +8,7 @@
     "varietas": "LONSUM",
     "session_id": "20260509-DAMIMAS-903",
     "number": 903,
-    "generated_at": "2026-05-09T14:11:47.251Z",
-    "fix_log": [
-      {
-        "date": "2026-05-16",
-        "action": "auto_heal_visibility_drop_offender",
-        "rule": "largest_bbox=home, drop nodes at sides with dist>1",
-        "dropped_links": [
-          "lnk-0",
-          "lnk-2"
-        ],
-        "actions": [
-          {
-            "bunch_id": 1,
-            "class": "B3",
-            "home_side": "sisi_3",
-            "offending": [
-              "sisi_1"
-            ],
-            "isolated_nodes": [
-              "s1/b0"
-            ]
-          }
-        ],
-        "bunches_before": 2,
-        "bunches_after": 4
-      }
-    ]
+    "generated_at": "2026-05-09T14:11:47.251Z"
   },
   "images": {
     "sisi_1": {

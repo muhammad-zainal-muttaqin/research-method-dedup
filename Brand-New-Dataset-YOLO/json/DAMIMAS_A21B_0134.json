@@ -7,44 +7,7 @@
     "date": "2026-04-30",
     "varietas": "DAMIMAS",
     "number": 134,
-    "generated_at": "2026-04-30T04:45:12.212Z",
-    "fix_log": [
-      {
-        "date": "2026-05-16",
-        "action": "auto_heal_visibility_drop_offender",
-        "rule": "largest_bbox=home, drop nodes at sides with dist>1",
-        "dropped_links": [
-          "lnk-3",
-          "lnk-4"
-        ],
-        "actions": [
-          {
-            "bunch_id": 3,
-            "class": "B2",
-            "home_side": "sisi_2",
-            "offending": [
-              "sisi_4"
-            ],
-            "isolated_nodes": [
-              "s4/b3"
-            ]
-          },
-          {
-            "bunch_id": 4,
-            "class": "B3",
-            "home_side": "sisi_4",
-            "offending": [
-              "sisi_2"
-            ],
-            "isolated_nodes": [
-              "s2/b3"
-            ]
-          }
-        ],
-        "bunches_before": 6,
-        "bunches_after": 8
-      }
-    ]
+    "generated_at": "2026-04-30T04:45:12.212Z"
   },
   "images": {
     "sisi_1": {

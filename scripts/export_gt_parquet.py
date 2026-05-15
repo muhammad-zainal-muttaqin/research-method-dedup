@@ -10,7 +10,7 @@ OUT_DIR.mkdir(exist_ok=True)
 
 rows = []
 for f in sorted(JSON_DIR.glob("*.json")):
-    data = json.loads(f.read_text(encoding="utf-8"))
+    data = json.loads(f.read_text(encoding="utf-8-sig"))
     s = data.get("summary", {})
     by_class = s.get("by_class", {})
     meta = data.get("metadata", {})

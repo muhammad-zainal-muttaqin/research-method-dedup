@@ -36,7 +36,7 @@ A multi-view oil palm fruit bunch detection and counting dataset with expert-ann
 | Views per tree | 4 sides (45 trees have 8 sides) |
 | Annotation format | YOLO v8 + JSON ground truth |
 | Classes | 4 maturity levels (B1–B4) |
-| Unique bunches (GT) | 9,739 |
+| Unique bunches (GT) | 9,823 |
 
 
 ## Task Description
