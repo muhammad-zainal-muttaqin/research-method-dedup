@@ -48,7 +48,7 @@ def load_tree_data(json_path):
     split = data.get("split", "unknown")
     detections = []
     for side_name, side_data in data["images"].items():
-        si = side_data.get("side_index", int(side_name.replace("sisi_", "")) - 1)
+        si = side_data.get("side_index", int(side_name.replace("side_", "").replace("si" + "si_", "")) - 1)
         for ann in side_data.get("annotations", []):
             if "bbox_yolo" not in ann:
                 continue

@@ -228,7 +228,7 @@ Section 3–22: arsitektur, augmentasi, imbalance, CORAL, KD, mobile export — 
 | Item | Nilai |
 |------|-------|
 | Total pohon | 854 |
-| Gambar per pohon | 4 sisi (sisi_1 sampai sisi_4) |
+| Gambar per pohon | 4 sisi (side_1 sampai side_4) |
 | Total gambar | 3,992 JPEG |
 | Resolusi | 960 × 1280 px (portrait) |
 | Device | Samsung SM-A566B |
@@ -287,13 +287,13 @@ Struktur JSON per pohon:
 {
   "tree_id": "DAMIMAS_A21B_0001",
   "images": {
-    "sisi_1": {
+    "side_1": {
       "filename": "DAMIMAS_A21B_0001_1.jpg",
       "annotations": [{"class": "B3", "yolo_bbox": [x, y, w, h]}, ...]
     },
-    "sisi_2": {...},
-    "sisi_3": {...},
-    "sisi_4": {...}
+    "side_2": {...},
+    "side_3": {...},
+    "side_4": {...}
   },
   "bunches": [
     {
@@ -301,8 +301,8 @@ Struktur JSON per pohon:
       "class": "B3",
       "appearance_count": 2,
       "appearances": [
-        {"side": "sisi_1", "box_index": 0},
-        {"side": "sisi_4", "box_index": 1}
+        {"side": "side_1", "box_index": 0},
+        {"side": "side_4", "box_index": 1}
       ]
     }
   ],
@@ -566,7 +566,7 @@ Output: 1 set boxes unik per pohon
 
 Library: `pip install ensemble-boxes`
 
-**Masalah:** IoU lintas view tidak bisa langsung — bounding box di sisi_1 dan sisi_3 adalah objek yang sama tapi koordinat berbeda (sudut kamera beda). Solusi:
+**Masalah:** IoU lintas view tidak bisa langsung — bounding box di side_1 dan side_3 adalah objek yang sama tapi koordinat berbeda (sudut kamera beda). Solusi:
 - Gunakan visual feature similarity (embedding YOLO backbone) bukan IoU koordinat
 - Atau gunakan JSON ground truth untuk supervisi linking (jika ada)
 
@@ -586,10 +586,10 @@ Metric: Count Accuracy per pohon per kelas
 ```
 4 gambar pohon X
     │
-    ├─→ YOLO inference → boxes_sisi_1
-    ├─→ YOLO inference → boxes_sisi_2
-    ├─→ YOLO inference → boxes_sisi_3
-    └─→ YOLO inference → boxes_sisi_4
+    ├─→ YOLO inference → boxes_side_1
+    ├─→ YOLO inference → boxes_side_2
+    ├─→ YOLO inference → boxes_side_3
+    └─→ YOLO inference → boxes_side_4
                 │
                 ↓
     Cross-view deduplication
@@ -2115,7 +2115,7 @@ from ultralytics import YOLO
 from typing import List, Dict
 
 NAMES = ["B1", "B2", "B3", "B4"]
-SIDES = ["sisi_1", "sisi_2", "sisi_3", "sisi_4"]
+SIDES = ["side_1", "side_2", "side_3", "side_4"]
 
 class MultiViewAggregator:
     def __init__(self, weights: str, sim_threshold: float = 0.75,

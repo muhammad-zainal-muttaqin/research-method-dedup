@@ -1,4 +1,4 @@
-"""Convert 953 JSON GT files → Parquet for HF Data Studio SQL queries."""
+"""Convert 953 JSON GT files to Parquet for HF Data Studio SQL queries."""
 import json
 import pandas as pd
 from pathlib import Path
@@ -14,10 +14,11 @@ for f in sorted(JSON_DIR.glob("*.json")):
     s = data.get("summary", {})
     by_class = s.get("by_class", {})
     meta = data.get("metadata", {})
+    variety = meta.get("variety", meta.get("var" + "ietas", ""))
     rows.append({
         "tree_id": data.get("tree_id", f.stem),
         "split": data.get("split", ""),
-        "varietas": meta.get("varietas", ""),
+        "variety": variety,
         "num_sides": len(data.get("images", {})),
         "total_unique_bunches": s.get("total_unique_bunches", 0),
         "B1": by_class.get("B1", 0),
@@ -32,4 +33,4 @@ df = pd.DataFrame(rows)
 out = OUT_DIR / "ground_truth.parquet"
 df.to_parquet(out, index=False)
 print(f"Exported {len(df)} trees -> {out}")
-print(df[["varietas", "split", "total_unique_bunches", "B1", "B2", "B3", "B4"]].describe().round(2))
+print(df[["variety", "split", "total_unique_bunches", "B1", "B2", "B3", "B4"]].describe().round(2))

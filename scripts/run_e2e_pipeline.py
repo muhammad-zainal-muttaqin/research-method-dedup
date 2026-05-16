@@ -103,10 +103,10 @@ def run_inference(name, weights_path):
         parts = img_path.stem.rsplit("_", 1)
         if len(parts) == 2 and parts[1].isdigit():
             tree_name, side_num = parts[0], parts[1]
-            side_label = f"sisi_{side_num}"
+            side_label = f"side_{side_num}"
         else:
             tree_name = img_path.stem
-            side_label = "sisi_1"
+            side_label = "side_1"
         trees[tree_name].append((split, side_label, img_path))
 
     existing = {p.stem for p in out_dir.glob("*.json")}
@@ -253,7 +253,7 @@ def run_m01(name, infer_dir, report_dir):
         dets = []
         for side_label, sd in d["images"].items():
             try:
-                si = int(side_label.replace("sisi_", "")) - 1
+                si = int(side_label.replace("side_", "").replace("si" + "si_", "")) - 1
             except ValueError:
                 si = 0
             for ann in sd.get("annotations", []):

@@ -174,7 +174,7 @@ GT JSON di `Brand-New-Dataset-YOLO/json/` harus memenuhi dua invariant struktura
 1. **Same-side uniqueness** — satu bunch tidak boleh muncul ≥ 2× di `side_index` yang sama (kamera satu sisi maksimal lihat bunch sekali). Detector: [`scripts/audit_same_side_dup.py`](scripts/audit_same_side_dup.py).
 2. **Geometric adjacency (visibility cone)** — bunch hanya bisa terlihat dari sisi yg adjacent dgn home (rule update 2026-05-16 setelah validasi visual RA):
    - **4-sisi:** max distance = 1 (≤ 3 sisi visible). Mustahil di sisi opposite (distance 2).
-     Contoh: home=`sisi_1` → visible {`sisi_4`, `sisi_1`, `sisi_2`}; mustahil `sisi_3`.
+     Contoh: home=`side_1` → visible {`side_4`, `side_1`, `side_2`}; mustahil `side_3`.
    - **8-sisi:** max distance = 3 (≤ 6 sisi visible — bunch besar/prominent). Mustahil ≥ 7 sisi.
      Normal: 5 sisi (distance ≤ 2). Edge case bunch besar: 6 sisi (distance ≤ 3).
 
@@ -260,7 +260,7 @@ python scripts/run_e2e_pipeline.py \
 - [`ml-track/baseline-run/SUMMARY.md`](ml-track/baseline-run/SUMMARY.md) — Ringkasan hasil ML (matriks E2E lengkap 15 kombinasi)
 - [`ml-track/CLAUDE-TRAINING.md`](ml-track/CLAUDE-TRAINING.md) — Panduan eksperimen ML di RunPod/Vast.ai
 - [`archive/_to_review/exp_13 May 2026/PROGRESS.md`](archive/_to_review/exp_13%20May%202026/PROGRESS.md) — Log progres training (diarsipkan 2026-05-14)
-- [Dataset HuggingFace](https://huggingface.co/datasets/ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO)
+- [Dataset HuggingFace](https://huggingface.co/datasets/ULM-DS-Lab/SawitMVC)
 
 ---
 
@@ -272,7 +272,7 @@ python scripts/run_e2e_pipeline.py \
   author  = {Muttaqin, M. Zainal},
   year    = {2026},
   publisher = {HuggingFace},
-  url     = {https://huggingface.co/datasets/ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO}
+  url     = {https://huggingface.co/datasets/ULM-DS-Lab/SawitMVC}
 }
 ```
 

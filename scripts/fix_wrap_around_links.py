@@ -1,7 +1,7 @@
 """
 Fix wrap-around link bug pada `_confirmedLinks` di Brand-New-Dataset-YOLO/json/.
 
-Bug source: annotator pilih box_index salah waktu tutup loop sisi_4 → sisi_1.
+Bug source: annotator pilih box_index salah waktu tutup loop side_4 → side_1.
 Akibat: bbox extra (kelas sama) ke-tarik ke bunch yang salah lewat connected
 components → bunch jadi punya 2+ appearance dari same side_index (mustahil).
 
@@ -41,7 +41,7 @@ JSON_DIR    = BASE / "Brand-New-Dataset-YOLO" / "json"
 BACKUP_DIR  = BASE / "archive" / "json_pre_wrap_fix_2026-05-15"
 NAMES       = ["B1", "B2", "B3", "B4"]
 BY_CLASS_KEYS = ["B1", "B2", "B3", "B4", "other"]
-SIDE_KEYS   = ["sisi_1", "sisi_2", "sisi_3", "sisi_4"]
+SIDE_KEYS   = ["side_1", "side_2", "side_3", "side_4"]
 FIX_DATE    = "2026-05-15"
 
 # tree_id -> list of bad linkId yang harus dihapus

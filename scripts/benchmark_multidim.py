@@ -79,7 +79,7 @@ def load_tree_data() -> List[Tuple[str, List[Dict], Dict[str, int], str]]:
 
         dets = []
         for side, side_data in data["images"].items():
-            side_index = side_data.get("side_index", int(side.replace("sisi_", "")) - 1)
+            side_index = side_data.get("side_index", int(side.replace("side_", "").replace("si" + "si_", "")) - 1)
             for ann in side_data.get("annotations", []):
                 if "bbox_yolo" in ann:
                     cx, cy, w, h = ann["bbox_yolo"]

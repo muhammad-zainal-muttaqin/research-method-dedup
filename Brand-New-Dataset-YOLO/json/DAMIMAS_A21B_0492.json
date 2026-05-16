@@ -1,21 +1,21 @@
-{
-  "version": 2,
+﻿{
+  "version": 4,
   "tree_id": "DAMIMAS_A21B_0492",
   "tree_name": "DAMIMAS_A21B_0492",
   "split": "test",
   "metadata": {
     "date": "2026-05-09",
-    "varietas": "DAMIMAS",
     "session_id": "20260509-DAMIMAS-492",
     "number": 492,
-    "generated_at": "2026-05-09T13:57:31.495Z"
+    "generated_at": "2026-05-09T13:57:31.495Z",
+    "variety": "DAMIMAS"
   },
   "images": {
-    "sisi_1": {
+    "side_1": {
       "filename": "DAMIMAS_A21B_0492_1.jpg",
       "label_file": "DAMIMAS_A21B_0492_1.txt",
       "side_index": 0,
-      "side_label": "Sisi 1",
+      "side_label": "Side 1",
       "width": 960,
       "height": 1280,
       "bbox_count": 5,
@@ -107,11 +107,11 @@
         }
       ]
     },
-    "sisi_2": {
+    "side_2": {
       "filename": "DAMIMAS_A21B_0492_2.jpg",
       "label_file": "DAMIMAS_A21B_0492_2.txt",
       "side_index": 1,
-      "side_label": "Sisi 2",
+      "side_label": "Side 2",
       "width": 960,
       "height": 1280,
       "bbox_count": 5,
@@ -203,11 +203,11 @@
         }
       ]
     },
-    "sisi_3": {
+    "side_3": {
       "filename": "DAMIMAS_A21B_0492_3.jpg",
       "label_file": "DAMIMAS_A21B_0492_3.txt",
       "side_index": 2,
-      "side_label": "Sisi 3",
+      "side_label": "Side 3",
       "width": 960,
       "height": 1280,
       "bbox_count": 6,
@@ -316,11 +316,11 @@
         }
       ]
     },
-    "sisi_4": {
+    "side_4": {
       "filename": "DAMIMAS_A21B_0492_4.jpg",
       "label_file": "DAMIMAS_A21B_0492_4.txt",
       "side_index": 3,
-      "side_label": "Sisi 4",
+      "side_label": "Side 4",
       "width": 960,
       "height": 1280,
       "bbox_count": 3,
@@ -387,7 +387,7 @@
       "appearance_count": 2,
       "appearances": [
         {
-          "side": "sisi_1",
+          "side": "side_1",
           "side_index": 0,
           "box_index": 0,
           "class_name": "B1",
@@ -399,7 +399,7 @@
           ]
         },
         {
-          "side": "sisi_4",
+          "side": "side_4",
           "side_index": 3,
           "box_index": 0,
           "class_name": "B1",
@@ -419,7 +419,7 @@
       "appearance_count": 1,
       "appearances": [
         {
-          "side": "sisi_1",
+          "side": "side_1",
           "side_index": 0,
           "box_index": 1,
           "class_name": "B2",
@@ -439,7 +439,7 @@
       "appearance_count": 2,
       "appearances": [
         {
-          "side": "sisi_1",
+          "side": "side_1",
           "side_index": 0,
           "box_index": 2,
           "class_name": "B3",
@@ -451,7 +451,7 @@
           ]
         },
         {
-          "side": "sisi_2",
+          "side": "side_2",
           "side_index": 1,
           "box_index": 3,
           "class_name": "B3",
@@ -471,7 +471,7 @@
       "appearance_count": 1,
       "appearances": [
         {
-          "side": "sisi_1",
+          "side": "side_1",
           "side_index": 0,
           "box_index": 3,
           "class_name": "B4",
@@ -491,7 +491,7 @@
       "appearance_count": 1,
       "appearances": [
         {
-          "side": "sisi_1",
+          "side": "side_1",
           "side_index": 0,
           "box_index": 4,
           "class_name": "B4",
@@ -511,7 +511,7 @@
       "appearance_count": 1,
       "appearances": [
         {
-          "side": "sisi_2",
+          "side": "side_2",
           "side_index": 1,
           "box_index": 0,
           "class_name": "B3",
@@ -531,7 +531,7 @@
       "appearance_count": 2,
       "appearances": [
         {
-          "side": "sisi_2",
+          "side": "side_2",
           "side_index": 1,
           "box_index": 1,
           "class_name": "B2",
@@ -543,7 +543,7 @@
           ]
         },
         {
-          "side": "sisi_3",
+          "side": "side_3",
           "side_index": 2,
           "box_index": 2,
           "class_name": "B2",
@@ -563,7 +563,7 @@
       "appearance_count": 1,
       "appearances": [
         {
-          "side": "sisi_2",
+          "side": "side_2",
           "side_index": 1,
           "box_index": 2,
           "class_name": "B3",
@@ -583,7 +583,7 @@
       "appearance_count": 2,
       "appearances": [
         {
-          "side": "sisi_2",
+          "side": "side_2",
           "side_index": 1,
           "box_index": 4,
           "class_name": "B4",
@@ -595,7 +595,7 @@
           ]
         },
         {
-          "side": "sisi_3",
+          "side": "side_3",
           "side_index": 2,
           "box_index": 4,
           "class_name": "B4",
@@ -615,7 +615,7 @@
       "appearance_count": 1,
       "appearances": [
         {
-          "side": "sisi_3",
+          "side": "side_3",
           "side_index": 2,
           "box_index": 0,
           "class_name": "B1",
@@ -635,7 +635,7 @@
       "appearance_count": 2,
       "appearances": [
         {
-          "side": "sisi_3",
+          "side": "side_3",
           "side_index": 2,
           "box_index": 1,
           "class_name": "B2",
@@ -647,7 +647,7 @@
           ]
         },
         {
-          "side": "sisi_4",
+          "side": "side_4",
           "side_index": 3,
           "box_index": 1,
           "class_name": "B2",
@@ -667,7 +667,7 @@
       "appearance_count": 1,
       "appearances": [
         {
-          "side": "sisi_3",
+          "side": "side_3",
           "side_index": 2,
           "box_index": 3,
           "class_name": "B3",
@@ -687,7 +687,7 @@
       "appearance_count": 2,
       "appearances": [
         {
-          "side": "sisi_3",
+          "side": "side_3",
           "side_index": 2,
           "box_index": 5,
           "class_name": "B4",
@@ -699,7 +699,7 @@
           ]
         },
         {
-          "side": "sisi_4",
+          "side": "side_4",
           "side_index": 3,
           "box_index": 2,
           "class_name": "B4",
@@ -769,10 +769,10 @@
       "other": 0
     },
     "by_side": {
-      "sisi_1": 5,
-      "sisi_2": 5,
-      "sisi_3": 6,
-      "sisi_4": 3
+      "side_1": 5,
+      "side_2": 5,
+      "side_3": 6,
+      "side_4": 3
     }
   }
 }

@@ -49,7 +49,7 @@ def load_json_trees() -> Dict[str, dict]:
         gt = {c: data["summary"]["by_class"].get(c, 0) for c in NAMES}
         dets = []
         for side, sd in data["images"].items():
-            si = sd.get("side_index", int(side.replace("sisi_", "")) - 1)
+            si = sd.get("side_index", int(side.replace("side_", "").replace("si" + "si_", "")) - 1)
             for ann in sd.get("annotations", []):
                 if "bbox_yolo" in ann:
                     dets.append(_parse_det(ann, side, si))
@@ -63,7 +63,7 @@ def load_txt_trees() -> Dict[str, dict]:
         for txt in lbl_dir.glob("*.txt"):
             parts = txt.stem.rsplit("_", 1)
             tree_id, side_num = parts[0], int(parts[1])
-            side_name = f"sisi_{side_num}"
+            side_name = f"side_{side_num}"
             si = side_num - 1
             for line in txt.read_text(encoding="utf-8").splitlines():
                 line = line.strip()

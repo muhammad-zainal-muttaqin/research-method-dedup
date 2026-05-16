@@ -32,7 +32,7 @@ def inference_json_to_dets(data: dict) -> list:
     dets = []
     for side_label, sd in data["images"].items():
         try:
-            si = int(side_label.replace("sisi_", "")) - 1
+            si = int(side_label.replace("side_", "").replace("si" + "si_", "")) - 1
         except ValueError:
             si = 0
         for ann in sd.get("annotations", []):

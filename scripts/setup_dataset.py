@@ -1,16 +1,16 @@
 """
-One-shot dataset setup untuk reproduksi di device baru.
+One-shot dataset setup for reproducing results on a new device.
 
-Unduh Brand-New-Dataset-YOLO/images/ dari HuggingFace (~2.3 GB, 3993 .jpg).
-Labels, JSON GT, split files sudah ter-track di git — hanya images yang
+Download Brand-New-Dataset-YOLO/images/ from Hugging Face (~2.3 GB, 3992 .jpg).
+Labels, JSON GT, and split files are tracked in git — hanya images yang
 gitignored (heavy binary).
 
-Idempotent: kalau images/ sudah lengkap, skip download dan langsung verify.
+Idempotent: if images/ is complete, skip download and verify immediately.
 
-Run dari workspace root:
+Run from the workspace root:
     python scripts/setup_dataset.py
 
-Exit 0 kalau dataset siap pakai. Exit 1 kalau verifikasi gagal.
+Exit 0 when the dataset is ready. Exit 1 when verification fails.
 """
 
 import sys
@@ -23,7 +23,7 @@ LABEL_DIR    = DATASET_ROOT / "labels"
 JSON_DIR     = DATASET_ROOT / "json"
 SPLIT_FILES  = ["train.txt", "val.txt", "test.txt"]
 
-HF_REPO       = "ULM-DS-Lab/OilPalm-MultiView-BunchCount-YOLO"
+HF_REPO       = "ULM-DS-Lab/SawitMVC"
 EXPECTED_IMG  = 3992
 EXPECTED_LBL  = 3992
 EXPECTED_JSON = 953
@@ -58,18 +58,18 @@ def download_from_hf() -> None:
     try:
         from huggingface_hub import snapshot_download
     except ImportError:
-        print("[ERROR] huggingface_hub tidak terinstall.")
-        print("        Jalankan: pip install huggingface_hub")
+        print("[ERROR] huggingface_hub is not installed.")
+        print("        Run: pip install huggingface_hub")
         sys.exit(1)
 
-    print(f"[INFO] Unduh {HF_REPO} -> {DATASET_ROOT} ...")
+    print(f"[INFO] Download {HF_REPO} -> {DATASET_ROOT} ...")
     snapshot_download(
         repo_id=HF_REPO,
         repo_type="dataset",
         local_dir=str(DATASET_ROOT),
         local_dir_use_symlinks=False,
     )
-    print("[INFO] Unduh selesai.")
+    print("[INFO] Download complete.")
 
 
 def main() -> int:
@@ -77,11 +77,11 @@ def main() -> int:
 
     ok, counts = verify_layout()
     if ok:
-        print("[OK] Dataset sudah lengkap, skip download.")
+        print("[OK] Dataset is complete; skipping download.")
         print(f"     images={counts['images']}  labels={counts['labels']}  json={counts['json']}")
         return 0
 
-    print("[INFO] Dataset belum lengkap:")
+    print("[INFO] Dataset is incomplete:")
     for k, v in counts.items():
         print(f"       {k}: {v}")
 
@@ -89,17 +89,17 @@ def main() -> int:
     if img_count < EXPECTED_IMG:
         download_from_hf()
     else:
-        print("[WARN] Images sudah lengkap tapi labels/json/splits kurang.")
-        print("       Cek apakah git repo ter-clone penuh (labels & json ter-track).")
+        print("[WARN] Images are complete but labels/json/splits are missing.")
+        print("       Check whether the git repo was cloned fully; labels and json are tracked.")
 
-    print("[INFO] Verifikasi ulang ...")
+    print("[INFO] Verifying again ...")
     ok, counts = verify_layout()
     if ok:
-        print("[OK] Dataset siap pakai.")
+        print("[OK] Dataset is ready.")
         print(f"     images={counts['images']}  labels={counts['labels']}  json={counts['json']}")
         return 0
 
-    print("[FAIL] Verifikasi gagal setelah download:")
+    print("[FAIL] Verification failed after download:")
     for k, v in counts.items():
         print(f"       {k}: {v}")
     print(f"       Expected images={EXPECTED_IMG} labels={EXPECTED_LBL} json={EXPECTED_JSON}")

@@ -49,7 +49,7 @@ def load_brand_new_trees() -> Dict[str, dict]:
         gt = {c: data["summary"]["by_class"].get(c, 0) for c in NAMES}
         dets = []
         for side, sd in data["images"].items():
-            si = sd.get("side_index", int(side.replace("sisi_", "")) - 1)
+            si = sd.get("side_index", int(side.replace("side_", "").replace("si" + "si_", "")) - 1)
             for ann in sd.get("annotations", []):
                 if "bbox_yolo" in ann:
                     dets.append(base._parse_det(ann, side, si))

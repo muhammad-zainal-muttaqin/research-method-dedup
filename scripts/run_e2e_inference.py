@@ -44,10 +44,10 @@ def get_tree_images():
         parts = fname.rsplit("_", 1)
         if len(parts) == 2 and parts[1].isdigit():
             tree_name, side_num = parts[0], parts[1]
-            side_label = f"sisi_{side_num}"
+            side_label = f"side_{side_num}"
         else:
             tree_name = fname
-            side_label = "sisi_1"
+            side_label = "side_1"
         trees[tree_name].append((split, side_label, img_path))
     return trees
 

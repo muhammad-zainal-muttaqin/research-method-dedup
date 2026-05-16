@@ -34,8 +34,8 @@ from pathlib import Path
 BASE        = Path(__file__).resolve().parent.parent
 JSON_DIR    = BASE / "Brand-New-Dataset-YOLO" / "json"
 BACKUP_DIR  = BASE / "archive" / "json_pre_visibility_heal_4side_2026-05-16"
-SIDE_KEYS_4 = ["sisi_1", "sisi_2", "sisi_3", "sisi_4"]
-SIDE_KEYS_8 = SIDE_KEYS_4 + ["sisi_5", "sisi_6", "sisi_7", "sisi_8"]
+SIDE_KEYS_4 = ["side_1", "side_2", "side_3", "side_4"]
+SIDE_KEYS_8 = SIDE_KEYS_4 + ["side_5", "side_6", "side_7", "side_8"]
 BY_CLASS    = ["B1", "B2", "B3", "B4", "other"]
 FIX_DATE    = "2026-05-16"
 
@@ -132,8 +132,8 @@ def heal_tree(data):
         actions.append({
             "bunch_id":  bunch["bunch_id"],
             "class":     bunch["class"],
-            "home_side": f"sisi_{home+1}",
-            "offending": [f"sisi_{s+1}" for s in offenders],
+            "home_side": f"side_{home+1}",
+            "offending": [f"side_{s+1}" for s in offenders],
             "isolated_nodes": [
                 f"s{off+1}/b{app['box_index']}"
                 for off in offenders

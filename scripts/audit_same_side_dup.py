@@ -67,7 +67,7 @@ for jp in sorted(JSON_DIR.glob("*.json")):
                 "bunch_class": bunch["class"],
                 "n_appearances": bunch["appearance_count"],
                 "dup_side_index": ds,
-                "dup_side":    f"sisi_{ds + 1}",
+                "dup_side":    f"side_{ds + 1}",
                 "box_indices": ",".join(str(b) for b in sorted(box_idxs)),
                 "link_chain":  ",".join(sorted(set(link_chain))),
                 "in_known_bug_report": tree_id in KNOWN_BUGS,

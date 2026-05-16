@@ -8,10 +8,10 @@ Bunch hanya bisa terlihat dari sisi yang ber-adjacent dgn HOME side
 (posisi fisik bunch di pohon). Distance antar sisi = circular hop count.
 
   - Pohon 4-sisi: max circular distance = 1 (≤ 3 sisi visible total)
-    Contoh: home=sisi_1 → visible {sisi_4, sisi_1, sisi_2}, mustahil sisi_3.
+    Contoh: home=side_1 → visible {side_4, side_1, side_2}, mustahil side_3.
   - Pohon 8-sisi: max circular distance = 2 (≤ 5 sisi visible total)
-    Contoh: home=sisi_3 → visible {sisi_1, sisi_2, sisi_3, sisi_4, sisi_5},
-    mustahil sisi_6, sisi_7, sisi_8.
+    Contoh: home=side_3 → visible {side_1, side_2, side_3, side_4, side_5},
+    mustahil side_6, side_7, side_8.
 
 Bunch wajib punya appearance di home side (camera di posisi asal pasti
 melihat). Validity test: cari candidate home di antara appearance sides
@@ -115,7 +115,7 @@ for jp in sorted(JSON_DIR.glob("*.json")):
         if valid_home is None:
             severity = "violation"
             offenders = find_offending_sides(sides, N, cfg["max_dist"])
-            offender_str = ",".join(f"sisi_{s+1}" for s in offenders)
+            offender_str = ",".join(f"side_{s+1}" for s in offenders)
             reason = f"no_valid_home_max_dist_{cfg['max_dist']}"
         elif n > cfg["max_normal_sides"]:
             severity = "warn"
@@ -133,8 +133,8 @@ for jp in sorted(JSON_DIR.glob("*.json")):
             "max_dist_allowed": cfg["max_dist"],
             "max_normal":       cfg["max_normal_sides"],
             "max_possible":     cfg["max_possible_sides"],
-            "valid_home":       f"sisi_{valid_home+1}" if valid_home is not None else "",
-            "appearance_sides": ",".join(f"sisi_{s+1}" for s in sides),
+            "valid_home":       f"side_{valid_home+1}" if valid_home is not None else "",
+            "appearance_sides": ",".join(f"side_{s+1}" for s in sides),
             "offending_sides":  offender_str,
             "reason":           reason,
             "link_chain":       ",".join(sorted(set(find_links_for_bunch(links, bunch["appearances"])))),

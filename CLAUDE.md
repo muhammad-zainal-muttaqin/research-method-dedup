@@ -260,9 +260,9 @@ Algo ranked by 953-tree Acc±1 (see `algorithms/__init__.py` and `NAMING.md` for
   "version": 3,
   "tree_id": "20260422-DAMIMAS-001",
   "split": "train",
-  "metadata": {"date": "...", "varietas": "DAMIMAS", "fix_log": [...]},
-  "images": {"sisi_1": {"side_index": 0, "bbox_count": 3, "annotations": [{"class_name": "B3", "bbox_yolo": [...], "box_index": 0}]}},
-  "bunches": [{"bunch_id": 1, "class": "B3", "class_mismatch": false, "appearance_count": 2, "appearances": [{"side": "sisi_1", "side_index": 0, "box_index": 0, "class_name": "B3", "bbox_pixel": [...]}]}],
+  "metadata": {"date": "...", "variety": "DAMIMAS", "fix_log": [...]},
+  "images": {"side_1": {"side_index": 0, "bbox_count": 3, "annotations": [{"class_name": "B3", "bbox_yolo": [...], "box_index": 0}]}},
+  "bunches": [{"bunch_id": 1, "class": "B3", "class_mismatch": false, "appearance_count": 2, "appearances": [{"side": "side_1", "side_index": 0, "box_index": 0, "class_name": "B3", "bbox_pixel": [...]}]}],
   "_confirmedLinks": [{"linkId": "lnk-0", "sideA": 0, "bboxIdA": "b0", "sideB": 1, "bboxIdB": "b0"}],
   "summary": {"total_unique_bunches": 8, "total_detections": 14, "duplicates_linked": 6, "by_class": {"B1": 1, "B2": 2, "B3": 5, "B4": 0, "other": 0}, "by_side": {...}}
 }
@@ -270,7 +270,7 @@ Algo ranked by 953-tree Acc±1 (see `algorithms/__init__.py` and `NAMING.md` for
 
 `summary.by_class` is the dedup ground truth. `bunches` derived from `_confirmedLinks` via UnionFind connected components (boxes linked across sides = same physical bunch).
 
-**`_confirmedLinks` semantics:** annotator pairs bboxes across adjacent sides; `bboxIdA` / `bboxIdB` use `b<box_index>` notation referring to position in `images.sisi_X.annotations[]`. Wrong link = bunch ke-merged dgn extra box → over-link bug; missing link = bunch ke-split → under-link bug.
+**`_confirmedLinks` semantics:** annotator pairs bboxes across adjacent sides; `bboxIdA` / `bboxIdB` use `b<box_index>` notation referring to position in `images.side_X.annotations[]`. Wrong link = bunch ke-merged dgn extra box → over-link bug; missing link = bunch ke-split → under-link bug.
 
 ## Ground-truth Validation Rules
 
@@ -289,11 +289,11 @@ Status (2026-05-15): 0 violations after fixing the 8 wrap-around trees reported 
 A bunch is at one physical location on the tree. Camera at adjacent sides also sees it; camera at far sides cannot. Formal rule (updated 2026-05-16 after RA visual validation):
 
 - **4-side trees:** max circular distance from home = **1**. ≤ 3 sides visible total. Mustahil di sisi opposite (distance 2).
-  - Example: home=`sisi_1` → visible {`sisi_4`, `sisi_1`, `sisi_2`}; mustahil `sisi_3`.
+  - Example: home=`side_1` → visible {`side_4`, `side_1`, `side_2`}; mustahil `side_3`.
 - **8-side trees:** max circular distance from home = **3**. ≤ 6 sides visible total (large/prominent bunches with wider camera reach). Mustahil ≥ 7 sides.
   - Normal: home + 4 immediate neighbors (5 sides, distance ≤ 2).
   - Edge case: large bunches can reach 6 sides (distance ≤ 3).
-  - Example: home=`sisi_3` → can extend to `{sisi_8, sisi_1, sisi_2, sisi_3, sisi_4, sisi_5}`; mustahil `sisi_6`, `sisi_7`.
+  - Example: home=`side_3` → can extend to `{side_8, side_1, side_2, side_3, side_4, side_5}`; mustahil `side_6`, `side_7`.
 
 Validity test per bunch: ada candidate `home ∈ appearance_sides` di mana semua appearance lain dalam `max_dist` hop circular. Tidak ada home valid → violation (mustahil geometri).
 
