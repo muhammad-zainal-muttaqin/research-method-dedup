@@ -243,32 +243,44 @@ def make_plots(tables: dict[str, pd.DataFrame], label_class_counts: Counter) -> 
     plt.title("Tree-side distribution")
     save_plot("tree_side_distribution.png")
 
-    plt.figure(figsize=(8, 5))
-    vc = bunches["appearance_count"].value_counts().sort_index()
-    plt.bar(vc.index.astype(str), vc.values)
-    for i, y in enumerate(vc.values):
-        pct = 100.0 * y / len(bunches)
-        plt.text(i, y, f"{y:,}\n({pct:.1f}%)", ha="center", va="bottom", fontsize=8)
-    plt.xlabel("Appearance count per unique bunch")
-    plt.ylabel("Number of bunches")
-    plt.title("Appearance-count distribution")
-    save_plot("appearance_count_distribution.png")
+    def _bar_with_pct(series: pd.Series, denom: int, xlabel: str, title: str, fname: str, x_ticks: list | None = None) -> None:
+        if x_ticks is not None:
+            full = pd.Series(0, index=x_ticks, dtype=int)
+            for idx, val in series.items():
+                if idx in full.index:
+                    full.loc[idx] = int(val)
+            series = full
+        plt.figure(figsize=(8, 5))
+        plt.bar(series.index.astype(str), series.values)
+        for i, y in enumerate(series.values):
+            pct = 100.0 * y / denom if denom > 0 else 0.0
+            label = f"{y:,}\n({pct:.1f}%)" if y > 0 else "0"
+            plt.text(i, y, label, ha="center", va="bottom", fontsize=8)
+        plt.xlabel(xlabel)
+        plt.ylabel("Number of bunches")
+        plt.title(title)
+        save_plot(fname)
 
-    plt.figure(figsize=(8, 5))
-    vc = bunches["unique_side_count"].value_counts().sort_index()
-    plt.bar(vc.index.astype(str), vc.values)
-    plt.xlabel("Unique side count per bunch")
-    plt.ylabel("Number of bunches")
-    plt.title("Unique-side-count distribution")
-    save_plot("unique_side_count_distribution.png")
-
-    plt.figure(figsize=(8, 5))
-    dup = bunches["same_side_duplicate_count"].value_counts().sort_index()
-    plt.bar(dup.index.astype(str), dup.values)
-    plt.xlabel("Duplicate appearances within same side (per bunch)")
-    plt.ylabel("Number of bunches")
-    plt.title("Same-side duplicate distribution")
-    save_plot("same_side_duplicate_distribution.png")
+    for n_sides_val in sorted(trees["n_sides"].unique()):
+        sub = bunches[bunches["tree_n_sides"] == n_sides_val]
+        if sub.empty:
+            continue
+        _bar_with_pct(
+            sub["appearance_count"].value_counts().sort_index(),
+            len(sub),
+            "Appearance count per unique bunch",
+            f"Appearance-count distribution ({n_sides_val}-side trees, n_bunches={len(sub):,}). Theoretical max={n_sides_val}.",
+            f"appearance_count_distribution_{n_sides_val}side.png",
+            x_ticks=list(range(1, int(n_sides_val) + 1)),
+        )
+        _bar_with_pct(
+            sub["unique_side_count"].value_counts().sort_index(),
+            len(sub),
+            "Unique side count per bunch",
+            f"Unique-side-count distribution ({n_sides_val}-side trees, n_bunches={len(sub):,}). Theoretical max={n_sides_val}.",
+            f"unique_side_count_distribution_{n_sides_val}side.png",
+            x_ticks=list(range(1, int(n_sides_val) + 1)),
+        )
 
     plt.figure(figsize=(8, 5))
     by_cls = trees[CLASSES].sum()
@@ -317,13 +329,92 @@ def make_plots(tables: dict[str, pd.DataFrame], label_class_counts: Counter) -> 
     plt.title("Unique bunch totals by split")
     save_plot("split_unique_bunch_totals.png")
 
+    tree_nsides_map = trees.set_index("tree_id")["n_sides"].to_dict()
+    sides_with_nsides = sides.assign(tree_n_sides=sides["tree_id"].map(tree_nsides_map))
+
+    for n_sides_val in sorted(trees["n_sides"].unique()):
+        sub = sides_with_nsides[sides_with_nsides["tree_n_sides"] == n_sides_val]
+        if sub.empty:
+            continue
+        n_trees_here = sub["tree_id"].nunique()
+        mean_per_side = sub.groupby("side_index")["bbox_count_from_annotations"].mean().reindex(range(int(n_sides_val)), fill_value=0.0)
+        plt.figure(figsize=(8, 5))
+        bars = plt.bar(mean_per_side.index.astype(str), mean_per_side.values)
+        for rect, v in zip(bars, mean_per_side.values):
+            plt.text(rect.get_x() + rect.get_width() / 2, rect.get_height(), f"{v:.2f}", ha="center", va="bottom", fontsize=8)
+        plt.xlabel("Side index")
+        plt.ylabel("Mean detections per tree")
+        plt.title(f"Mean detections per tree by side index ({n_sides_val}-side trees, n_trees={n_trees_here:,})")
+        save_plot(f"detections_per_tree_by_side_index_{n_sides_val}side.png")
+
     plt.figure(figsize=(8, 5))
-    side_bbox = sides.groupby("side_index")["bbox_count_from_annotations"].sum().sort_index()
-    plt.bar(side_bbox.index.astype(str), side_bbox.values)
-    plt.xlabel("Side index")
-    plt.ylabel("Total detections")
-    plt.title("Total detections by side index")
-    save_plot("detections_by_side_index.png")
+    cls_by_nsides = trees.groupby("n_sides")[CLASSES].sum()
+    x = np.arange(len(CLASSES))
+    width = 0.8 / max(len(cls_by_nsides), 1)
+    for i, (n_sides_val, row) in enumerate(cls_by_nsides.iterrows()):
+        n_trees_here = int((trees["n_sides"] == n_sides_val).sum())
+        per_tree = row.values / max(n_trees_here, 1)
+        plt.bar(x + i * width, per_tree, width, label=f"{n_sides_val}-side (n={n_trees_here:,})")
+    plt.xticks(x + width * (len(cls_by_nsides) - 1) / 2, CLASSES)
+    plt.xlabel("Class")
+    plt.ylabel("Unique bunches per tree (mean)")
+    plt.title("Class mix per tree-type (4-side vs 8-side)")
+    plt.legend()
+    save_plot("class_mix_by_tree_type.png")
+
+    for n_sides_val in sorted(bunches["tree_n_sides"].unique()):
+        sub = bunches[bunches["tree_n_sides"] == n_sides_val]
+        if sub.empty:
+            continue
+        x_ticks = list(range(1, int(n_sides_val) + 1))
+        pivot = sub.groupby(["appearance_count", "class"]).size().unstack("class", fill_value=0)
+        pivot = pivot.reindex(index=x_ticks, fill_value=0)
+        for c in CLASSES:
+            if c not in pivot.columns:
+                pivot[c] = 0
+        pivot = pivot[CLASSES]
+        plt.figure(figsize=(8, 5))
+        bottom = np.zeros(len(pivot))
+        colors = {"B1": "#4C72B0", "B2": "#55A868", "B3": "#C44E52", "B4": "#8172B2"}
+        for c in CLASSES:
+            vals = pivot[c].values
+            plt.bar(pivot.index.astype(str), vals, bottom=bottom, label=c, color=colors[c])
+            bottom = bottom + vals
+        plt.xlabel("Appearance count per unique bunch")
+        plt.ylabel("Number of bunches")
+        plt.title(f"Appearance count by class ({n_sides_val}-side trees, n_bunches={len(sub):,})")
+        plt.legend(title="Class")
+        save_plot(f"appearance_count_by_class_{n_sides_val}side.png")
+
+    plt.figure(figsize=(8, 5))
+    data = [ann[ann["class_name"] == c]["area_norm"].values for c in CLASSES]
+    plt.boxplot(data, tick_labels=CLASSES, showfliers=False)
+    plt.xlabel("Class")
+    plt.ylabel("Normalized bbox area")
+    plt.title("BBox area by class (boxplot, outliers hidden)")
+    save_plot("bbox_area_by_class.png")
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4), sharey=True)
+    n_sides_vals = sorted(trees["n_sides"].unique())
+    for ax, n_sides_val in zip(axes, n_sides_vals):
+        sub = trees[trees["n_sides"] == n_sides_val]
+        ax.hist(sub["total_unique_bunches"], bins=30)
+        ax.set_xlabel("Unique bunch count per tree")
+        ax.set_ylabel("Number of trees")
+        ax.set_title(f"{n_sides_val}-side trees (n={len(sub):,}, mean={sub['total_unique_bunches'].mean():.1f})")
+    fig.suptitle("Per-tree yield distribution")
+    save_plot("total_unique_bunches_hist_by_tree_type.png")
+
+    plt.figure(figsize=(8, 5))
+    trees_ratio = trees.assign(
+        det_per_unique=np.where(trees["total_unique_bunches"] > 0, trees["total_detections"] / trees["total_unique_bunches"], np.nan)
+    )
+    data = [trees_ratio[trees_ratio["n_sides"] == ns]["det_per_unique"].dropna().values for ns in n_sides_vals]
+    plt.boxplot(data, tick_labels=[f"{ns}-side" for ns in n_sides_vals], showfliers=True)
+    plt.ylabel("Detections per unique bunch (per tree)")
+    plt.title("Naive-sum overcount ratio by tree-type")
+    plt.axhline(1.0, color="gray", ls="--", lw=0.8)
+    save_plot("det_per_unique_box_by_tree_type.png")
 
     for cls in sorted(ann["class_name"].dropna().unique()):
         sub = ann[ann["class_name"] == cls]
@@ -569,7 +660,10 @@ def build_summary_md(
 
     app_gt4 = int((bunches["appearance_count"] > 4).sum())
     app_gt_tree_sides = int((bunches["appearance_count"] > bunches["tree_n_sides"]).sum())
-    mismatch_examples = mismatches.sort_values(["same_side_duplicate_count", "appearance_count"], ascending=False).head(20)
+    if len(mismatches) > 0 and {"same_side_duplicate_count", "appearance_count"}.issubset(mismatches.columns):
+        mismatch_examples = mismatches.sort_values(["same_side_duplicate_count", "appearance_count"], ascending=False).head(20)
+    else:
+        mismatch_examples = mismatches.head(0)
 
     per_tree_density = trees.assign(
         det_per_unique=np.where(trees["total_unique_bunches"] > 0, trees["total_detections"] / trees["total_unique_bunches"], np.nan)
@@ -596,26 +690,73 @@ def build_summary_md(
     for k, v in side_dist.items():
         lines.append(f"- {k} sides: {v:,} trees")
     lines.append("")
-    lines.append("## Appearance Distribution (Unique Bunches)")
-    for k, v in app_dist.items():
-        pct = 100 * v / len(bunches)
-        lines.append(f"- appearance_count={k}: {v:,} ({pct:.1f}%)")
+    lines.append("## Appearance Distribution (Unique Bunches) — per tree-type")
     lines.append("")
-    lines.append("## Unique Side Count Distribution (Unique Bunches)")
-    for k, v in unique_side_dist.items():
-        pct = 100 * v / len(bunches)
-        lines.append(f"- unique_side_count={k}: {v:,} ({pct:.1f}%)")
+    lines.append("Theoretical max appearance = `n_sides` (camera positions). Empty buckets shown explicitly.")
     lines.append("")
-    lines.append("## Same-side Duplicate Distribution")
-    for k, v in dup_dist.items():
-        pct = 100 * v / len(bunches)
-        lines.append(f"- same_side_duplicate_count={k}: {v:,} ({pct:.2f}%)")
+    for n_sides_val in sorted(bunches["tree_n_sides"].unique()):
+        sub = bunches[bunches["tree_n_sides"] == n_sides_val]
+        if sub.empty:
+            continue
+        lines.append(f"### {n_sides_val}-side trees (n_bunches={len(sub):,}, theoretical_max={n_sides_val})")
+        vc = sub["appearance_count"].value_counts()
+        for k in range(1, int(n_sides_val) + 1):
+            v = int(vc.get(k, 0))
+            pct = 100 * v / len(sub) if len(sub) else 0
+            lines.append(f"- appearance_count={k}: {v:,} ({pct:.1f}%)")
+        lines.append("")
+    lines.append("## Unique Side Count Distribution — per tree-type")
+    lines.append("")
+    for n_sides_val in sorted(bunches["tree_n_sides"].unique()):
+        sub = bunches[bunches["tree_n_sides"] == n_sides_val]
+        if sub.empty:
+            continue
+        lines.append(f"### {n_sides_val}-side trees (n_bunches={len(sub):,}, theoretical_max={n_sides_val})")
+        vc = sub["unique_side_count"].value_counts()
+        for k in range(1, int(n_sides_val) + 1):
+            v = int(vc.get(k, 0))
+            pct = 100 * v / len(sub) if len(sub) else 0
+            lines.append(f"- unique_side_count={k}: {v:,} ({pct:.1f}%)")
+        lines.append("")
+    lines.append("## Same-side Duplicates")
+    same_side_zero = int((bunches["same_side_duplicate_count"] == 0).sum())
+    same_side_nonzero = int((bunches["same_side_duplicate_count"] > 0).sum())
+    lines.append(f"- Bunches with 0 same-side duplicates: **{same_side_zero:,}** / {len(bunches):,}")
+    lines.append(f"- Bunches with ≥1 same-side duplicate: **{same_side_nonzero:,}** (GT clean post-fix 2026-05-16)")
     lines.append("")
     lines.append("## Key Anomaly Counters")
-    lines.append(f"- Bunches with `appearance_count > 4`: **{app_gt4:,}**")
-    lines.append(f"- Bunches with `appearance_count > tree_n_sides`: **{app_gt_tree_sides:,}**")
+    by_nsides_gt = {}
+    for n_sides_val in sorted(bunches["tree_n_sides"].unique()):
+        sub = bunches[bunches["tree_n_sides"] == n_sides_val]
+        cnt = int((sub["appearance_count"] > 4).sum())
+        by_nsides_gt[int(n_sides_val)] = (cnt, len(sub))
+    lines.append("- Bunches with `appearance_count > 4`:")
+    for ns, (cnt, total) in by_nsides_gt.items():
+        if ns <= 4:
+            lines.append(f"  - {ns}-side trees: **N/A** (theoretical max = {ns})")
+        else:
+            pct = 100 * cnt / total if total else 0
+            lines.append(f"  - {ns}-side trees: **{cnt:,}** / {total:,} ({pct:.1f}%)")
+    lines.append(f"- Bunches with `appearance_count > tree_n_sides` (impossible): **{app_gt_tree_sides:,}**")
     lines.append(f"- Rows in `tables/mismatches.csv`: **{len(mismatches):,}**")
     lines.append(f"- Rows in `tables/appearance_gt_tree_sides_cases.csv`: **{len(app_gt_side):,}**")
+    lines.append("")
+    lines.append("## Per-tree Yield Statistics")
+    yield_rows = []
+    for n_sides_val, grp in trees.groupby("n_sides"):
+        ratio = grp["total_detections"] / grp["total_unique_bunches"].replace(0, np.nan)
+        yield_rows.append({
+            "n_sides": int(n_sides_val),
+            "n_trees": len(grp),
+            "unique_mean": round(float(grp["total_unique_bunches"].mean()), 2),
+            "unique_median": float(grp["total_unique_bunches"].median()),
+            "unique_std": round(float(grp["total_unique_bunches"].std()), 2),
+            "det_mean": round(float(grp["total_detections"].mean()), 2),
+            "det_median": float(grp["total_detections"].median()),
+            "det_per_unique_mean": round(float(ratio.mean()), 3),
+            "det_per_unique_median": round(float(ratio.median()), 3),
+        })
+    lines.append(pd.DataFrame(yield_rows).to_markdown(index=False))
     lines.append("")
     lines.append("## Integrity Audit (JSON/TXT/Image)")
     lines.append(f"- Side rows audited: **{len(integrity):,}**")
@@ -634,6 +775,23 @@ def build_summary_md(
     by_class = trees[CLASSES].sum()
     for c in CLASSES:
         lines.append(f"- JSON unique bunch {c}: {int(by_class[c]):,}")
+    lines.append("")
+    lines.append("### Class Mix per Tree-Type (4-side vs 8-side)")
+    cls_by_nsides = trees.groupby("n_sides")[CLASSES].agg(["sum", "mean"])
+    rows = []
+    for n_sides_val, grp in trees.groupby("n_sides"):
+        n_t = len(grp)
+        totals = grp[CLASSES].sum()
+        means = grp[CLASSES].mean()
+        total_unique = int(totals.sum())
+        rows.append({
+            "n_sides": int(n_sides_val),
+            "n_trees": n_t,
+            **{f"{c}_total": int(totals[c]) for c in CLASSES},
+            **{f"{c}_per_tree": round(float(means[c]), 3) for c in CLASSES},
+            **{f"{c}_pct": round(100.0 * totals[c] / total_unique, 2) if total_unique else 0.0 for c in CLASSES},
+        })
+    lines.append(pd.DataFrame(rows).to_markdown(index=False))
     lines.append("")
     lines.append("### Detection Distribution from labels/*.txt")
     for raw_cls in sorted(label_class_counts.keys(), key=lambda z: int(z) if z.isdigit() else 99):
@@ -678,6 +836,84 @@ def build_summary_md(
     (OUT / "SUMMARY.md").write_text("\n".join(lines), encoding="utf-8")
 
 
+def build_anomaly_casebook(records: list[dict], advanced: dict[str, pd.DataFrame]) -> None:
+    cases = advanced["appearance_gt_tree_sides_cases"]
+    rec_by_id = {r["tree_id"]: r for r in records}
+
+    lines = []
+    lines.append("# Anomaly Casebook")
+    lines.append("")
+    lines.append("Source: `EDA_report/tables/appearance_gt_tree_sides_cases.csv`")
+    lines.append("")
+    lines.append("Cases where `appearance_count > tree_n_sides` with side-level evidence and `_confirmedLinks` edges touching the bunch.")
+    lines.append("")
+    lines.append(f"Total cases: **{len(cases)}**")
+    lines.append("")
+
+    if len(cases) == 0:
+        lines.append("_No anomalies after GT cleanup (2026-05-16). All trees satisfy `appearance_count <= tree_n_sides`._")
+        lines.append("")
+        (OUT / "ANOMALY_CASEBOOK.md").write_text("\n".join(lines), encoding="utf-8")
+        return
+
+    for _, row in cases.iterrows():
+        tree_id = row["tree_id"]
+        bunch_id = int(row["bunch_id"])
+        rec = rec_by_id.get(tree_id, {})
+        bunch = next((b for b in rec.get("bunches", []) if int(b.get("bunch_id", -1)) == bunch_id), None)
+        if bunch is None:
+            continue
+        appearances = bunch.get("appearances", [])
+        side_groups: dict[int, list[int]] = defaultdict(list)
+        bunch_node_keys = set()
+        for a in appearances:
+            si = int(a.get("side_index", -1))
+            bi = int(a.get("box_index", -1))
+            side_groups[si].append(bi)
+            bunch_node_keys.add((si, f"b{bi}"))
+        dup_sides = {si: sorted(bxs) for si, bxs in side_groups.items() if len(bxs) > 1}
+
+        lines.append(f"## {tree_id} / bunch_id={bunch_id}")
+        lines.append("")
+        lines.append(f"- class: `{row['class']}`")
+        lines.append(f"- tree_n_sides: `{int(row['tree_n_sides'])}`")
+        lines.append(f"- appearance_count: `{int(row['appearance_count'])}`")
+        lines.append(f"- unique_side_count: `{int(row['unique_side_count'])}`")
+        lines.append(f"- same_side_duplicates: `{int(row['appearance_count']) - int(row['unique_side_count'])}`")
+        lines.append("")
+        lines.append("Appearances:")
+        for a in appearances:
+            lines.append(
+                f"- side `{a.get('side','')}` (`{int(a.get('side_index', -1))}`) / "
+                f"box_index `{int(a.get('box_index', -1))}` / class `{a.get('class_name', bunch.get('class', ''))}`"
+            )
+        lines.append("")
+        if dup_sides:
+            lines.append("Duplicated side slots:")
+            for si, bxs in sorted(dup_sides.items()):
+                lines.append(f"- side_index `{si}` has multiple boxes: `{bxs}`")
+            lines.append("")
+        touching = []
+        for lk in rec.get("_confirmedLinks", []):
+            a_key = (int(lk.get("sideA", -1)), str(lk.get("bboxIdA", "")))
+            b_key = (int(lk.get("sideB", -1)), str(lk.get("bboxIdB", "")))
+            if a_key in bunch_node_keys or b_key in bunch_node_keys:
+                both = int(a_key in bunch_node_keys and b_key in bunch_node_keys)
+                touching.append((lk.get("linkId", ""), a_key, b_key, both))
+        if touching:
+            lines.append("Touching `_confirmedLinks`:")
+            for lid, ak, bk, both in touching:
+                lines.append(
+                    f"- `{lid}`: side `{ak[0]}`/`{ak[1]}` <-> side `{bk[0]}`/`{bk[1]}` (both_in_bunch={both})"
+                )
+            lines.append("")
+        lines.append("Interpretation:")
+        lines.append("- This case exceeds tree-side limit, so count inflation is caused by multi-box appearances within one or more sides, not extra camera sides.")
+        lines.append("")
+
+    (OUT / "ANOMALY_CASEBOOK.md").write_text("\n".join(lines), encoding="utf-8")
+
+
 def main() -> None:
     ensure_out()
     records = load_json_records()
@@ -698,6 +934,7 @@ def main() -> None:
     write_advanced_stats(tables, advanced, split_manifest_df)
     make_plots(tables, label_class_counts)
     build_summary_md(tables, advanced, label_class_counts, split_manifest_df, parquet_df)
+    build_anomaly_casebook(records, advanced)
     print(f"EDA complete. Output: {OUT}")
 
 

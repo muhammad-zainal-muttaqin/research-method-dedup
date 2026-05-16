@@ -9,46 +9,69 @@
 
 ## Global Counts
 - Trees (JSON): **953**
-- Unique bunches: **9,739**
-- Annotation rows (YOLO-like entries in JSON images): **18,541**
-- Confirmed links: **8,802**
+- Unique bunches: **9,823**
+- Annotation rows (YOLO-like entries in JSON images): **18,540**
+- Confirmed links: **8,717**
 
 ## Side Distribution (Trees)
 - 4 sides: 908 trees
 - 8 sides: 45 trees
 
-## Appearance Distribution (Unique Bunches)
-- appearance_count=1: 2,448 (25.1%)
-- appearance_count=2: 6,203 (63.7%)
-- appearance_count=3: 800 (8.2%)
-- appearance_count=4: 186 (1.9%)
-- appearance_count=5: 78 (0.8%)
-- appearance_count=6: 17 (0.2%)
-- appearance_count=7: 5 (0.1%)
-- appearance_count=8: 2 (0.0%)
+## Appearance Distribution (Unique Bunches) — per tree-type
 
-## Unique Side Count Distribution (Unique Bunches)
-- unique_side_count=1: 2,448 (25.1%)
-- unique_side_count=2: 6,203 (63.7%)
-- unique_side_count=3: 800 (8.2%)
-- unique_side_count=4: 197 (2.0%)
-- unique_side_count=5: 71 (0.7%)
-- unique_side_count=6: 15 (0.2%)
-- unique_side_count=7: 4 (0.0%)
-- unique_side_count=8: 1 (0.0%)
+Theoretical max appearance = `n_sides` (camera positions). Empty buckets shown explicitly.
 
-## Same-side Duplicate Distribution
-- same_side_duplicate_count=0: 9,728 (99.89%)
-- same_side_duplicate_count=1: 7 (0.07%)
-- same_side_duplicate_count=2: 2 (0.02%)
-- same_side_duplicate_count=3: 1 (0.01%)
-- same_side_duplicate_count=4: 1 (0.01%)
+### 4-side trees (n_bunches=9,278, theoretical_max=4)
+- appearance_count=1: 2,394 (25.8%)
+- appearance_count=2: 6,165 (66.4%)
+- appearance_count=3: 719 (7.7%)
+- appearance_count=4: 0 (0.0%)
+
+### 8-side trees (n_bunches=545, theoretical_max=8)
+- appearance_count=1: 101 (18.5%)
+- appearance_count=2: 99 (18.2%)
+- appearance_count=3: 115 (21.1%)
+- appearance_count=4: 147 (27.0%)
+- appearance_count=5: 71 (13.0%)
+- appearance_count=6: 12 (2.2%)
+- appearance_count=7: 0 (0.0%)
+- appearance_count=8: 0 (0.0%)
+
+## Unique Side Count Distribution — per tree-type
+
+### 4-side trees (n_bunches=9,278, theoretical_max=4)
+- unique_side_count=1: 2,394 (25.8%)
+- unique_side_count=2: 6,165 (66.4%)
+- unique_side_count=3: 719 (7.7%)
+- unique_side_count=4: 0 (0.0%)
+
+### 8-side trees (n_bunches=545, theoretical_max=8)
+- unique_side_count=1: 101 (18.5%)
+- unique_side_count=2: 99 (18.2%)
+- unique_side_count=3: 115 (21.1%)
+- unique_side_count=4: 147 (27.0%)
+- unique_side_count=5: 71 (13.0%)
+- unique_side_count=6: 12 (2.2%)
+- unique_side_count=7: 0 (0.0%)
+- unique_side_count=8: 0 (0.0%)
+
+## Same-side Duplicates
+- Bunches with 0 same-side duplicates: **9,823** / 9,823
+- Bunches with ≥1 same-side duplicate: **0** (GT clean post-fix 2026-05-16)
 
 ## Key Anomaly Counters
-- Bunches with `appearance_count > 4`: **102**
-- Bunches with `appearance_count > tree_n_sides`: **11**
-- Rows in `tables/mismatches.csv`: **11**
-- Rows in `tables/appearance_gt_tree_sides_cases.csv`: **11**
+- Bunches with `appearance_count > 4`:
+  - 4-side trees: **N/A** (theoretical max = 4)
+  - 8-side trees: **83** / 545 (15.2%)
+- Bunches with `appearance_count > tree_n_sides` (impossible): **0**
+- Rows in `tables/mismatches.csv`: **0**
+- Rows in `tables/appearance_gt_tree_sides_cases.csv`: **0**
+
+## Per-tree Yield Statistics
+|   n_sides |   n_trees |   unique_mean |   unique_median |   unique_std |   det_mean |   det_median |   det_per_unique_mean |   det_per_unique_median |
+|----------:|----------:|--------------:|----------------:|-------------:|-----------:|-------------:|----------------------:|------------------------:|
+|         4 |       908 |         10.22 |              10 |         3.71 |      18.59 |           19 |                 1.845 |                   1.833 |
+|         8 |        45 |         12.11 |              12 |         3.89 |      36.87 |           38 |                 3.107 |                   3.062 |
 
 ## Integrity Audit (JSON/TXT/Image)
 - Side rows audited: **3,992**
@@ -64,57 +87,51 @@
 - Max graph degree: **2**
 
 ## Class Distribution
-- JSON unique bunch B1: 937
-- JSON unique bunch B2: 1,780
-- JSON unique bunch B3: 5,013
-- JSON unique bunch B4: 2,009
+- JSON unique bunch B1: 954
+- JSON unique bunch B2: 1,791
+- JSON unique bunch B3: 5,067
+- JSON unique bunch B4: 2,011
+
+### Class Mix per Tree-Type (4-side vs 8-side)
+|   n_sides |   n_trees |   B1_total |   B2_total |   B3_total |   B4_total |   B1_per_tree |   B2_per_tree |   B3_per_tree |   B4_per_tree |   B1_pct |   B2_pct |   B3_pct |   B4_pct |
+|----------:|----------:|-----------:|-----------:|-----------:|-----------:|--------------:|--------------:|--------------:|--------------:|---------:|---------:|---------:|---------:|
+|         4 |       908 |        898 |       1687 |       4756 |       1937 |         0.989 |         1.858 |         5.238 |         2.133 |     9.68 |    18.18 |    51.26 |    20.88 |
+|         8 |        45 |         56 |        104 |        311 |         74 |         1.244 |         2.311 |         6.911 |         1.644 |    10.28 |    19.08 |    57.06 |    13.58 |
 
 ### Detection Distribution from labels/*.txt
-- Label class 0 (B1): 2,046
-- Label class 1 (B2): 3,493
-- Label class 2 (B3): 9,688
-- Label class 3 (B4): 3,314
+- Label class 0 (B1): 2,032
+- Label class 1 (B2): 3,500
+- Label class 2 (B3): 9,701
+- Label class 3 (B4): 3,307
 
 ## Split Summary (from JSON)
 | split   |   B1 |   B2 |   B3 |   B4 |   total_unique_bunches |   total_detections |
 |:--------|-----:|-----:|-----:|-----:|-----------------------:|-------------------:|
-| test    |  160 |  283 |  888 |  376 |                   1707 |               3154 |
-| train   |  648 | 1158 | 3188 | 1231 |                   6225 |              11851 |
-| val     |  129 |  339 |  937 |  402 |                   1807 |               3536 |
+| test    |  163 |  283 |  890 |  378 |                   1714 |               3141 |
+| train   |  667 | 1172 | 3240 | 1233 |                   6312 |              11926 |
+| val     |  124 |  336 |  937 |  400 |                   1797 |               3473 |
 
 ## Top Trees by Detection-per-Unique-Bunch Ratio
 | tree_id           | split   |   n_sides |   total_detections |   total_unique_bunches |   det_per_unique |
 |:------------------|:--------|----------:|-------------------:|-----------------------:|-----------------:|
-| DAMIMAS_A21B_0848 | val     |         8 |                 25 |                      5 |          5       |
 | DAMIMAS_A21B_0820 | train   |         8 |                 47 |                     10 |          4.7     |
-| DAMIMAS_A21B_0323 | test    |         4 |                 13 |                      3 |          4.33333 |
-| DAMIMAS_A21B_0824 | val     |         8 |                 41 |                     10 |          4.1     |
-| DAMIMAS_A21B_0823 | train   |         8 |                 57 |                     14 |          4.07143 |
 | DAMIMAS_A21B_0836 | train   |         8 |                 36 |                      9 |          4       |
 | DAMIMAS_A21B_0831 | train   |         8 |                 52 |                     13 |          4       |
 | DAMIMAS_A21B_0818 | train   |         8 |                 40 |                     10 |          4       |
 | DAMIMAS_A21B_0839 | val     |         8 |                 35 |                      9 |          3.88889 |
+| DAMIMAS_A21B_0824 | val     |         8 |                 41 |                     11 |          3.72727 |
 | DAMIMAS_A21B_0846 | train   |         8 |                 26 |                      7 |          3.71429 |
-| DAMIMAS_A21B_0362 | train   |         4 |                 26 |                      7 |          3.71429 |
 | DAMIMAS_A21B_0832 | train   |         8 |                 37 |                     10 |          3.7     |
 | DAMIMAS_A21B_0815 | train   |         8 |                 51 |                     14 |          3.64286 |
-| DAMIMAS_A21B_0812 | val     |         8 |                 40 |                     11 |          3.63636 |
-| LONSUM_A21A_0049  | test    |         4 |                  7 |                      2 |          3.5     |
+| DAMIMAS_A21B_0848 | val     |         8 |                 25 |                      7 |          3.57143 |
+| DAMIMAS_A21B_0826 | val     |         8 |                 21 |                      6 |          3.5     |
+| DAMIMAS_A21B_0817 | val     |         8 |                 28 |                      8 |          3.5     |
+| DAMIMAS_A21B_0814 | test    |         8 |                 24 |                      7 |          3.42857 |
+| DAMIMAS_A21B_0812 | train   |         8 |                 40 |                     12 |          3.33333 |
+| DAMIMAS_A21B_0850 | train   |         8 |                 43 |                     13 |          3.30769 |
 
 ## Sample Mismatch Cases (same bunch repeated in same side)
-| tree_id           | split   | domain   |   bunch_id | class   |   appearance_count |   unique_side_count |   same_side_duplicate_count |   tree_n_sides |
-|:------------------|:--------|:---------|-----------:|:--------|-------------------:|--------------------:|----------------------------:|---------------:|
-| DAMIMAS_A21B_0362 | train   | DAMIMAS  |          1 | B3      |                  8 |                   4 |                           4 |              4 |
-| DAMIMAS_A21B_0323 | test    | DAMIMAS  |          1 | B3      |                  7 |                   4 |                           3 |              4 |
-| DAMIMAS_A21B_0335 | train   | DAMIMAS  |          1 | B1      |                  6 |                   4 |                           2 |              4 |
-| DAMIMAS_A21B_0362 | train   | DAMIMAS  |          3 | B3      |                  6 |                   4 |                           2 |              4 |
-| DAMIMAS_A21B_0287 | train   | DAMIMAS  |          1 | B1      |                  5 |                   4 |                           1 |              4 |
-| DAMIMAS_A21B_0309 | train   | DAMIMAS  |          1 | B1      |                  5 |                   4 |                           1 |              4 |
-| DAMIMAS_A21B_0320 | train   | DAMIMAS  |          4 | B3      |                  5 |                   4 |                           1 |              4 |
-| DAMIMAS_A21B_0323 | test    | DAMIMAS  |          2 | B3      |                  5 |                   4 |                           1 |              4 |
-| DAMIMAS_A21B_0336 | train   | DAMIMAS  |          1 | B1      |                  5 |                   4 |                           1 |              4 |
-| DAMIMAS_A21B_0359 | val     | DAMIMAS  |          1 | B1      |                  5 |                   4 |                           1 |              4 |
-| DAMIMAS_A21B_0362 | train   | DAMIMAS  |          2 | B3      |                  5 |                   4 |                           1 |              4 |
+- No mismatch rows.
 
 ## split_manifest.csv quick checks
 - Rows in split_manifest.csv: **953**
